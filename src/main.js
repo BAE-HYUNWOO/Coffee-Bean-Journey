@@ -19,20 +19,10 @@ const BASE_URL = import.meta.env.BASE_URL;
 
 const HERO_SLIDE_CANDIDATES = [
   "coffee-1.jpg",
-  "coffee-1.png",
-  "coffee-1.webp",
   "coffee-2.jpg",
-  "coffee-2.png",
-  "coffee-2.webp",
   "coffee-3.jpg",
-  "coffee-3.png",
-  "coffee-3.webp",
   "coffee-4.jpg",
-  "coffee-4.png",
-  "coffee-4.webp",
   "coffee-5.jpg",
-  "coffee-5.png",
-  "coffee-5.webp",
 ].map((fileName) => `${BASE_URL}images/hero-slides/${fileName}`);
 
 function getCurrentPageId() {
