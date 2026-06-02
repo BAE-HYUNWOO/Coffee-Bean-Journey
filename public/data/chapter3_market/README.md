@@ -1,3 +1,3 @@
 # chapter3_market
 
-Place cleaned and processed data files for this chapter in the `processed` folder.
+Put raw files in `raw/` and final D3-ready CSV files in `processed/`.

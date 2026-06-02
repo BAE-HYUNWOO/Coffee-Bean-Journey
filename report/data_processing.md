@@ -1,3 +1,3 @@
 # Data Processing Notes
 
-Document how raw data was cleaned and transformed for each visualization.
+Describe cleaning steps for each chapter here.

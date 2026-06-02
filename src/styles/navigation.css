@@ -1,0 +1,71 @@
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  min-height: var(--header-height);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 20px;
+  padding: 0 var(--page-pad);
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 248, 239, 0.86);
+  backdrop-filter: blur(18px);
+}
+
+.site-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-width: max-content;
+  color: var(--coffee-dark);
+}
+
+.logo-bean {
+  width: 30px;
+  height: 22px;
+  border-radius: 50%;
+  background:
+    linear-gradient(90deg, transparent 44%, rgba(255, 242, 223, 0.55) 49%, transparent 55%),
+    linear-gradient(145deg, #9a6040, #3a2115);
+  box-shadow: 0 8px 18px rgba(88, 50, 26, 0.18);
+  transform: rotate(-24deg);
+}
+
+.logo-text {
+  font-family: "Playfair Display", "Cormorant Garamond", serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(1.45rem, 2.25vw, 2.3rem);
+  letter-spacing: -0.055em;
+  white-space: nowrap;
+}
+
+.site-menu {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: clamp(4px, 0.8vw, 12px);
+  height: 100%;
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  height: 42px;
+  padding: 0 clamp(10px, 1.2vw, 18px);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: clamp(0.82rem, 0.95vw, 0.98rem);
+  font-weight: 750;
+  transition: 0.2s ease;
+}
+
+.nav-link:hover,
+.nav-link.is-active {
+  color: var(--coffee-dark);
+  border-color: var(--line-strong);
+  background: rgba(111, 67, 43, 0.08);
+}

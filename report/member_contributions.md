@@ -1,7 +1,3 @@
-# Member Contributions
+# Contributions
 
-- Member A:
-- Member B:
-- Member C:
-- Member D:
-- Member E:
+Fill in final contribution details here.

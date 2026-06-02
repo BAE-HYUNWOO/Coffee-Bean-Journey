@@ -1,1 +1,3 @@
-// Shared utilities can be added here later.
+export function mapNote() {
+  return "Replace placeholder with final GeoJSON-based D3 map.";
+}

@@ -1,0 +1,31 @@
+import * as d3 from "d3";
+
+export function chartFrame(containerSelector, options = {}) {
+  const {
+    title = "Visualization",
+    tag = "D3 slot",
+    description = "Replace this placeholder with the final visualization.",
+    wide = false,
+  } = options;
+
+  const frame = d3.select(containerSelector)
+    .append("article")
+    .attr("class", `chart-frame ${wide ? "chart-wide" : ""}`);
+
+  const header = frame.append("div").attr("class", "chart-frame-header");
+  header.append("div").html(`<span>${tag}</span><h3>${title}</h3>`);
+  header.append("em").text("placeholder");
+
+  const body = frame.append("div").attr("class", "chart-frame-body");
+  frame.append("p").attr("class", "chart-frame-description").text(description);
+
+  return { frame, body };
+}
+
+export function getSvg(body, height = 270) {
+  const width = Math.max(340, body.node()?.getBoundingClientRect().width || 640);
+  const svg = body.append("svg")
+    .attr("viewBox", `0 0 ${width} ${height}`)
+    .attr("preserveAspectRatio", "xMidYMid meet");
+  return { svg, width, height };
+}

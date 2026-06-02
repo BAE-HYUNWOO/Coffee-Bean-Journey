@@ -1,9 +1,8 @@
-# Coffee Bean Journey
+# A Coffee Bean's Journey Around the World
 
-A polished scrollytelling scaffold for the data visualization course project:
-**A Coffee Bean's Journey Around the World**.
+A polished D3.js scrollytelling site template for a coffee data visualization project.
 
-## Quick Start
+## Run locally
 
 ```bash
 npm install
@@ -12,17 +11,12 @@ npm run dev
 
 ## Structure
 
-- `src/main.js` – app entry
-- `src/chapterRegistry.js` – all chapter definitions
-- `src/chapters/*` – one folder per teammate / chapter
-- `src/components/PlaceholderViz.js` – placeholder cards for future D3 charts
-- `public/data/...` – ready folders for processed chapter datasets
+Each chapter has its own code and data folder:
 
-## Suggested Team Workflow
+- Chapter 1 Origin: `src/chapters/chapter1_origin/`
+- Chapter 2 Trade: `src/chapters/chapter2_trade/`
+- Chapter 3 Market: `src/chapters/chapter3_market/`
+- Chapter 4 Consumption: `src/chapters/chapter4_consumption/`
+- Chapter 5 Climate: `src/chapters/chapter5_climate/`
 
-- Member A: `chapter1_origin`
-- Member B: `chapter2_trade`
-- Member C: `chapter3_market`
-- Member D: `chapter4_consumption`
-- Member E: `chapter5_climate`
-- Integrator/Lead: `main.js`, `chapterRegistry.js`, shared styles, deployment
+The current version contains polished placeholder visualization slots. Replace the placeholders with final D3 charts as datasets are cleaned.

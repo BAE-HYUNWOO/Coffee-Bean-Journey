@@ -1,250 +1,90 @@
-import { chapter1Story } from './chapters/chapter1_origin/story.js';
-import { chapter2Story } from './chapters/chapter2_trade/story.js';
-import { chapter3Story } from './chapters/chapter3_market/story.js';
-import { chapter4Story } from './chapters/chapter4_consumption/story.js';
-import { chapter5Story } from './chapters/chapter5_climate/story.js';
+import { renderChapter1 } from "./chapters/chapter1_origin/index.js";
+import { renderChapter2 } from "./chapters/chapter2_trade/index.js";
+import { renderChapter3 } from "./chapters/chapter3_market/index.js";
+import { renderChapter4 } from "./chapters/chapter4_consumption/index.js";
+import { renderChapter5 } from "./chapters/chapter5_climate/index.js";
 
-export const heroMetrics = [
-  { label: 'Core Narrative', value: '5 Chapters', caption: 'Origin → Trade → Market → Consumption → Climate' },
-  { label: 'Visual Types', value: '10+ Slots', caption: 'Maps, rankings, timelines, Sankey, network, scatter' },
-  { label: 'Team Workflow', value: '5 Members', caption: 'One chapter and one data pipeline per teammate' },
-  { label: 'Final Form', value: 'Scrollytelling', caption: 'D3-ready web story with chapter-based progression' },
+export const pages = [
+  {
+    id: "home",
+    path: "#home",
+    navTitle: "Home",
+    eyebrow: "A Coffee Bean's Journey Around the World",
+    title: "From farm to cup, one bean connects the world.",
+    lead:
+      "Explore how coffee grows, moves, becomes a global business, shapes everyday consumption, and faces future environmental pressure.",
+    render: null,
+  },
+  {
+    id: "origin",
+    path: "#origin",
+    number: "01",
+    navTitle: "Origin",
+    title: "Where does coffee come from?",
+    question: "Coffee begins as an agricultural crop grown across tropical regions.",
+    description:
+      "This page introduces the geography of coffee production: producing countries, production scale, and how output has changed across time.",
+    dataset: "FAOSTAT",
+    sourceLabel: "Production, area, yield",
+    themeClass: "theme-origin",
+    render: renderChapter1,
+  },
+  {
+    id: "trade",
+    path: "#trade",
+    number: "02",
+    navTitle: "Trade",
+    title: "How does coffee travel?",
+    question: "Before reaching cafés, coffee moves through a dense global trade network.",
+    description:
+      "This page follows coffee across borders through export-import routes, major trade corridors, and international market connections.",
+    dataset: "UN Comtrade HS0901",
+    sourceLabel: "Export/import value and quantity",
+    themeClass: "theme-trade",
+    render: renderChapter2,
+  },
+  {
+    id: "market",
+    path: "#market",
+    number: "03",
+    navTitle: "Market",
+    title: "Who controls the coffee market?",
+    question: "Coffee is not only a crop, but also a branded global business.",
+    description:
+      "This page moves from beans to brands, showing the spatial expansion of coffee chains and the market power behind everyday consumption.",
+    dataset: "Starbucks Store Dataset + brand reports",
+    sourceLabel: "Stores, brands, market share",
+    themeClass: "theme-market",
+    render: renderChapter3,
+  },
+  {
+    id: "consumption",
+    path: "#consumption",
+    number: "04",
+    navTitle: "Consumption",
+    title: "Who drinks coffee?",
+    question: "Coffee consumption differs sharply between total demand and per-capita habits.",
+    description:
+      "This page compares coffee-drinking patterns across countries and highlights how culture, population, and income shape consumption.",
+    dataset: "Our World in Data + ICO",
+    sourceLabel: "Total and per-capita consumption",
+    themeClass: "theme-consumption",
+    render: renderChapter4,
+  },
+  {
+    id: "prosperity",
+    path: "#prosperity",
+    number: "05",
+    navTitle: "Prosperity",
+    title: "Can coffee remain prosperous in the future?",
+    question: "Climate pressure could reshape the regions and communities that depend on coffee.",
+    description:
+      "This page connects temperature, rainfall, suitability, and risk to explore the future sustainability of coffee production.",
+    dataset: "WorldClim + World Bank Climate",
+    sourceLabel: "Temperature, rainfall, suitability",
+    themeClass: "theme-climate",
+    render: renderChapter5,
+  },
 ];
 
-export const projectHighlights = [
-  {
-    title: 'Elegant coffee-themed UI',
-    body: 'Warm earthy colors, premium editorial typography, soft glass cards, and scrollytelling spacing.',
-  },
-  {
-    title: 'Chapter-by-chapter ownership',
-    body: 'Each teammate gets clear visual slots, dataset ownership, and chapter-specific folder targets.',
-  },
-  {
-    title: 'Ready for real D3 work',
-    body: 'Current placeholders already mark which chart should go where, so replacement work is easy later.',
-  },
-];
-
-export const chapters = [
-  {
-    id: 'chapter1',
-    order: '01',
-    member: 'Member A',
-    title: 'Chapter 1 · Where does coffee come from?',
-    shortTitle: 'Origin',
-    question: 'Which countries and regions drive global coffee production, and how has output changed over time?',
-    dataset: 'FAOSTAT',
-    deliverable: 'Origin dashboard',
-    folder: 'src/chapters/chapter1_origin',
-    accentClass: 'theme-origin',
-    gridClass: 'grid-origin',
-    storyPoints: chapter1Story,
-    notes: [
-      'Best for a choropleth or proportional-symbol world map.',
-      'Use one rank view and one trend view so the story has both scale and time.',
-    ],
-    visuals: [
-      {
-        title: 'Global Production Map',
-        subtitle: 'Main visual · world map placeholder',
-        type: 'Map / Choropleth',
-        fileHint: '/public/data/chapter1_origin/processed/production_by_country.csv',
-        owner: 'Member A',
-        size: 'large',
-      },
-      {
-        title: 'Top 10 Producers',
-        subtitle: 'Supporting visual · ranking view',
-        type: 'Bar Chart',
-        fileHint: '/public/data/chapter1_origin/processed/top10_producers.csv',
-        owner: 'Member A',
-        size: 'medium',
-      },
-      {
-        title: 'Production Over Time',
-        subtitle: 'Supporting visual · temporal trend',
-        type: 'Line Chart',
-        fileHint: '/public/data/chapter1_origin/processed/production_by_year.csv',
-        owner: 'Member A',
-        size: 'medium',
-      },
-    ],
-  },
-  {
-    id: 'chapter2',
-    order: '02',
-    member: 'Member B',
-    title: 'Chapter 2 · How does coffee travel around the world?',
-    shortTitle: 'Trade',
-    question: 'How do export countries connect with importing markets, and what structure does the trade network reveal?',
-    dataset: 'UN Comtrade · HS0901',
-    deliverable: 'Trade flow dashboard',
-    folder: 'src/chapters/chapter2_trade',
-    accentClass: 'theme-trade',
-    gridClass: 'grid-trade',
-    storyPoints: chapter2Story,
-    notes: [
-      'This is likely the most visually impressive chapter if the Sankey is done well.',
-      'Use route emphasis to make the world-spanning movement feel narrative and cinematic.',
-    ],
-    visuals: [
-      {
-        title: 'Global Trade Flow Map',
-        subtitle: 'Main visual · routes between exporting and importing countries',
-        type: 'Flow Map',
-        fileHint: '/public/data/chapter2_trade/processed/trade_flows.csv',
-        owner: 'Member B',
-        size: 'large',
-      },
-      {
-        title: 'Coffee Trade Sankey',
-        subtitle: 'Main supporting visual · origin → destination paths',
-        type: 'Sankey Diagram',
-        fileHint: '/public/data/chapter2_trade/processed/sankey_nodes.csv + sankey_links.csv',
-        owner: 'Member B',
-        size: 'large',
-      },
-      {
-        title: 'Trade Network Structure',
-        subtitle: 'Optional advanced visual · network relationships',
-        type: 'Network Graph',
-        fileHint: '/public/data/chapter2_trade/processed/trade_flows.csv',
-        owner: 'Member B',
-        size: 'small',
-      },
-    ],
-  },
-  {
-    id: 'chapter3',
-    order: '03',
-    member: 'Member C',
-    title: 'Chapter 3 · Who controls the global coffee market?',
-    shortTitle: 'Market',
-    question: 'Which firms dominate coffee retail presence, and how does brand expansion reflect market power?',
-    dataset: 'Kaggle Store Dataset + brand statistics',
-    deliverable: 'Brand landscape dashboard',
-    folder: 'src/chapters/chapter3_market',
-    accentClass: 'theme-market',
-    gridClass: 'grid-market',
-    storyPoints: chapter3Story,
-    notes: [
-      'If time is short, focus on Starbucks first and add brand comparison as a second layer.',
-      'This chapter works best with a global store map plus one comparative ranking view.',
-    ],
-    visuals: [
-      {
-        title: 'Global Store Distribution',
-        subtitle: 'Main visual · retail footprint map',
-        type: 'Point Map',
-        fileHint: '/public/data/chapter3_market/processed/starbucks_locations.csv',
-        owner: 'Member C',
-        size: 'large',
-      },
-      {
-        title: 'Stores by Country',
-        subtitle: 'Supporting visual · market concentration',
-        type: 'Bar Chart',
-        fileHint: '/public/data/chapter3_market/processed/stores_by_country.csv',
-        owner: 'Member C',
-        size: 'medium',
-      },
-      {
-        title: 'Brand Market Share',
-        subtitle: 'Optional visual · high-level market comparison',
-        type: 'Donut / Bar',
-        fileHint: '/public/data/chapter3_market/processed/brand_market_share.csv',
-        owner: 'Member C',
-        size: 'medium',
-      },
-    ],
-  },
-  {
-    id: 'chapter4',
-    order: '04',
-    member: 'Member D',
-    title: 'Chapter 4 · Who drinks coffee?',
-    shortTitle: 'Consumption',
-    question: 'Which countries consume the most coffee overall and per person, and what cultural patterns emerge?',
-    dataset: 'Our World in Data + ICO',
-    deliverable: 'Consumption landscape dashboard',
-    folder: 'src/chapters/chapter4_consumption',
-    accentClass: 'theme-consumption',
-    gridClass: 'grid-consumption',
-    storyPoints: chapter4Story,
-    notes: [
-      'A per-capita map and a total-consumption ranking together create a strong comparative story.',
-      'Try to explain why some countries are high on total volume while others dominate per capita.',
-    ],
-    visuals: [
-      {
-        title: 'Per Capita Consumption Map',
-        subtitle: 'Main visual · who drinks the most per person?',
-        type: 'Map / Choropleth',
-        fileHint: '/public/data/chapter4_consumption/processed/consumption_per_capita.csv',
-        owner: 'Member D',
-        size: 'large',
-      },
-      {
-        title: 'Top Coffee Consumers',
-        subtitle: 'Supporting visual · country ranking',
-        type: 'Bar Chart',
-        fileHint: '/public/data/chapter4_consumption/processed/top10_consumers.csv',
-        owner: 'Member D',
-        size: 'medium',
-      },
-      {
-        title: 'Total Consumption Comparison',
-        subtitle: 'Optional visual · scale comparison',
-        type: 'Dot Plot / Bar',
-        fileHint: '/public/data/chapter4_consumption/processed/total_consumption.csv',
-        owner: 'Member D',
-        size: 'medium',
-      },
-    ],
-  },
-  {
-    id: 'chapter5',
-    order: '05',
-    member: 'Member E',
-    title: 'Chapter 5 · Can we still drink coffee in the future?',
-    shortTitle: 'Climate',
-    question: 'How might temperature, rainfall, and climate risk reshape the geography of coffee production?',
-    dataset: 'WorldClim + Climate Change Knowledge Portal',
-    deliverable: 'Climate risk dashboard',
-    folder: 'src/chapters/chapter5_climate',
-    accentClass: 'theme-climate',
-    gridClass: 'grid-climate',
-    storyPoints: chapter5Story,
-    notes: [
-      'This chapter should feel more urgent and reflective than earlier sections.',
-      'Use a risk map plus a relationship chart to connect climate pressure with production outcomes.',
-    ],
-    visuals: [
-      {
-        title: 'Climate Risk Map',
-        subtitle: 'Main visual · vulnerable regions at a glance',
-        type: 'Risk Map',
-        fileHint: '/public/data/chapter5_climate/processed/climate_risk_by_country.csv',
-        owner: 'Member E',
-        size: 'large',
-      },
-      {
-        title: 'Temperature vs Yield',
-        subtitle: 'Supporting visual · climate-production relationship',
-        type: 'Scatter Plot',
-        fileHint: '/public/data/chapter5_climate/processed/temperature_yield.csv',
-        owner: 'Member E',
-        size: 'medium',
-      },
-      {
-        title: 'Future Suitability Shift',
-        subtitle: 'Optional advanced visual · projected change',
-        type: 'Area / Slope / Scenario View',
-        fileHint: '/public/data/chapter5_climate/processed/future_suitability.csv',
-        owner: 'Member E',
-        size: 'medium',
-      },
-    ],
-  },
-];
+export const chapters = pages.filter((page) => page.id !== "home");

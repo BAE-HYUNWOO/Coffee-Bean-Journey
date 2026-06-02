@@ -1,1 +1,1 @@
-// Future reusable D3 component placeholder.
+export { drawBarSlot } from "./placeholderCharts.js";

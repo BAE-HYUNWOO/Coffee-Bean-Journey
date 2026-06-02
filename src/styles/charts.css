@@ -1,0 +1,144 @@
+.chart-frame {
+  min-height: 350px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 18rem),
+    rgba(255,255,255,0.48);
+}
+
+.chart-frame-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 18px 8px;
+}
+
+.chart-frame-header span {
+  color: var(--soft);
+  font-size: 0.7rem;
+  font-weight: 850;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.chart-frame-header h3 {
+  margin: 7px 0 0;
+  color: var(--coffee-dark);
+  font-size: 1.08rem;
+  letter-spacing: -0.02em;
+}
+
+.chart-frame-header em {
+  height: fit-content;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--accent);
+  background: rgba(255, 248, 239, 0.58);
+  font-size: 0.66rem;
+  font-style: normal;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.chart-frame-body {
+  padding: 0 10px;
+}
+
+.chart-frame-description {
+  margin: 0;
+  padding: 8px 18px 18px;
+  color: var(--muted);
+  font-size: 0.83rem;
+  line-height: 1.58;
+}
+
+.chart-frame svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.map-surface {
+  fill: rgba(255, 255, 255, 0.36);
+  stroke: rgba(91, 58, 38, 0.12);
+}
+
+.map-blob {
+  fill: rgba(91, 58, 38, 0.06);
+  stroke: rgba(91, 58, 38, 0.12);
+}
+
+.map-point,
+.line-point,
+.scatter-point,
+.network-node {
+  fill: var(--accent);
+  opacity: 0.88;
+}
+
+.bar-shape,
+.sankey-node {
+  fill: var(--accent);
+  opacity: 0.66;
+}
+
+.line-shape,
+.trend-shape {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3.2;
+  stroke-linecap: round;
+}
+
+.line-shape.secondary {
+  opacity: 0.38;
+}
+
+.flow-shape {
+  fill: none;
+  stroke: var(--accent);
+  stroke-linecap: round;
+  opacity: 0.32;
+}
+
+.network-edge {
+  stroke: rgba(91, 58, 38, 0.18);
+  stroke-width: 1.4;
+}
+
+.network-node.hub {
+  fill: var(--coffee-dark);
+}
+
+.slot-label,
+.axis-text,
+.node-text {
+  fill: rgba(43, 26, 18, 0.72);
+  font-size: 12px;
+  font-weight: 760;
+}
+
+.axis-text {
+  fill: rgba(109, 85, 69, 0.82);
+}
+
+.tooltip {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 200;
+  max-width: 260px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  pointer-events: none;
+  opacity: 0;
+  color: var(--coffee-dark);
+  background: rgba(255, 248, 239, 0.94);
+  box-shadow: var(--shadow);
+  transition: opacity 0.14s ease;
+}

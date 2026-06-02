@@ -1,1 +1,4 @@
-# Add data cleaning logic here later.
+"""
+Clean UN Comtrade HS0901 coffee trade data.
+Fill this script after downloading the real dataset.
+"""

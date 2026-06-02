@@ -1,1 +1,4 @@
-# Add data cleaning logic here later.
+"""
+Clean FAOSTAT production data.
+Fill this script after downloading the real dataset.
+"""
