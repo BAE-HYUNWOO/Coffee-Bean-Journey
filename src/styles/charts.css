@@ -1,0 +1,17 @@
+.chart-placeholder {
+    background: #f0ede8;
+    border-radius: 12px;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #8b8b8b;
+    font-style: italic;
+}
+
+.chapter4-tooltip {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.4;
+    pointer-events: none;
+    z-index: 1000;
+}

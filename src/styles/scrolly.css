@@ -1,0 +1,8 @@
+/* 用于滚动时的过渡效果 */
+.chapter {
+    opacity: 0.8;
+    transition: opacity 0.3s;
+}
+.chapter.is-active {
+    opacity: 1;
+}

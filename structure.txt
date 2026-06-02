@@ -36,11 +36,8 @@ Coffee-Bean-Journey/
 │  │  │  └─ README.md
 │  │  │
 │  │  ├─ chapter4_consumption/
-│  │  │  ├─ raw/
+│  │  │  ├─ archive/
 │  │  │  ├─ processed/
-│  │  │  │  ├─ consumption_per_capita.csv
-│  │  │  │  ├─ total_consumption.csv
-│  │  │  │  └─ top10_consumers.csv
 │  │  │  └─ README.md
 │  │  │
 │  │  └─ chapter5_climate/

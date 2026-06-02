@@ -1,0 +1,23 @@
+#chart4 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem;
+}
+
+#chart4 svg {
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+#chart4 .tooltip {
+    position: absolute;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    pointer-events: none;
+}

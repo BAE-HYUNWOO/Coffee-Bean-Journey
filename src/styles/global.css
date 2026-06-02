@@ -1,0 +1,28 @@
+:root {
+    --primary: #4E342E;
+    --secondary: #6D4C41;
+    --accent: #A1887F;
+    --bg: #F8F5F0;
+    --text: #212121;
+    --success: #2E7D32;
+    --warning: #F9A825;
+    --danger: #C62828;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+}
+
+h1, h2, h3 {
+    font-family: 'Merriweather', serif;
+    font-weight: 700;
+}

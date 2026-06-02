@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Coffee Bean's Journey Around the World</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="src/styles/global.css">
+    <link rel="stylesheet" href="src/styles/layout.css">
+    <link rel="stylesheet" href="src/styles/scrolly.css">
+    <link rel="stylesheet" href="src/styles/charts.css">
+</head>
+<body>
+    <main>
+        <!-- Hero -->
+        <section id="hero" class="hero-section">
+            <div class="hero-content">
+                <h1>A Coffee Bean's Journey Around the World</h1>
+                <p class="subtitle">Follow one coffee bean from farm to cup.</p>
+            </div>
+        </section>
+
+        <!-- Chapters -->
+        <section id="chapter1" class="chapter" data-chapter="1">
+            <div class="chapter-text">
+                <h2>Chapter 1: 咖啡从哪里来？</h2>
+                <p>全球咖啡主要种植在热带地区，巴西、越南、哥伦比亚是最大的生产国。</p>
+                <div class="chart-placeholder">[生产地图占位]</div>
+            </div>
+        </section>
+
+        <section id="chapter2" class="chapter" data-chapter="2">
+            <div class="chapter-text">
+                <h2>Chapter 2: 咖啡如何环游世界？</h2>
+                <p>咖啡从产地通过海运运往欧美消费市场，贸易网络错综复杂。</p>
+                <div class="chart-placeholder">[桑基图占位]</div>
+            </div>
+        </section>
+
+        <section id="chapter3" class="chapter" data-chapter="3">
+            <div class="chapter-text">
+                <h2>Chapter 3: 谁掌控全球咖啡市场？</h2>
+                <p>星巴克等跨国公司主导了咖啡价值链的利润分配。</p>
+                <div class="chart-placeholder">[门店地图占位]</div>
+            </div>
+        </section>
+
+        <section id="chapter4" class="chapter" data-chapter="4">
+            <div class="chapter-text">
+                <h2>Chapter 4: 谁在喝咖啡？</h2>
+                <p>咖啡消费主要集中在欧美和巴西，人均消费量最高的国家是芬兰等北欧国家。</p>
+                <div id="chart4" class="chart-container"></div>
+            </div>
+        </section>
+
+        <section id="chapter5" class="chapter" data-chapter="5">
+            <div class="chapter-text">
+                <h2>Chapter 5: 未来还能喝到咖啡吗？</h2>
+                <p>气候变化可能导致适宜种植区减少，威胁咖啡供应。</p>
+                <div class="chart-placeholder">[气候风险地图占位]</div>
+            </div>
+        </section>
+
+        <!-- Conclusion -->
+        <section id="conclusion" class="conclusion-section">
+            <h2>Conclusion</h2>
+            <p>从热带农场到城市咖啡馆，一粒咖啡豆连接着全球经济、文化与环境。</p>
+        </section>
+
+        <footer>
+            <p>数据来源: ICO, USDA, Our World in Data | 项目成员: A, B, C, D, E</p>
+        </footer>
+    </main>
+
+    <script src="https://unpkg.com/scrollama@3.2.0/build/scrollama.min.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "d3": "https://cdn.skypack.dev/d3@7",
+                "scrollama": "https://unpkg.com/scrollama@3.2.0/build/scrollama.min.js"
+            }
+        }
+    </script>
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>
