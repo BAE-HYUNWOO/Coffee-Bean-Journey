@@ -1,1 +1,105 @@
-/* Add chapter-specific styles for chapter1_origin here. */
+/* Chapter 1 — Origin: chapter-specific styles */
+
+/* Map controls */
+.map-controls select:hover,
+.map-controls input:hover {
+  border-color: var(--accent) !important;
+}
+
+.map-controls select:focus,
+.map-controls input:focus {
+  border-color: var(--accent) !important;
+}
+
+.map-controls button:hover {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+
+/* Country path transitions */
+.country-path {
+  transition: fill 0.3s ease, stroke 0.15s ease;
+}
+
+/* Map detail panel */
+.map-detail {
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.map-detail-close:hover {
+  color: var(--coffee-dark) !important;
+}
+
+/* Timeline */
+.timeline-legend-bar button:hover {
+  border-color: var(--accent) !important;
+}
+
+.timeline-crosshair {
+  pointer-events: none;
+}
+
+/* Bar race */
+.race-year-display {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.race-play-btn:hover {
+  background: var(--accent) !important;
+  color: #fff !important;
+}
+
+.bar-race-controls input[type="range"] {
+  accent-color: var(--accent);
+}
+
+.bar-race-controls label:hover {
+  color: var(--text) !important;
+}
+
+/* Bar transitions */
+.bar-group {
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Progress bar */
+.bar-race-svg-wrap + div > div:first-child {
+  transition: width 0.3s ease;
+}
+
+/* Loading state */
+#chapter1-loading {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Responsive adjustments for chart controls */
+@media (max-width: 720px) {
+  .map-controls,
+  .bar-race-controls,
+  .timeline-legend-bar {
+    gap: 6px !important;
+  }
+
+  .bar-race-controls {
+    justify-content: center;
+  }
+
+  .race-year-display {
+    font-size: 1.6rem !important;
+    min-width: 50px !important;
+  }
+
+  .map-controls input[type="text"] {
+    width: 100px !important;
+  }
+}

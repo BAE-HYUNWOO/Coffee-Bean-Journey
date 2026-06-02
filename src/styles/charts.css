@@ -131,7 +131,7 @@
   left: 0;
   top: 0;
   z-index: 200;
-  max-width: 260px;
+  max-width: 360px;
   padding: 12px 14px;
   border: 1px solid var(--line);
   border-radius: 14px;
