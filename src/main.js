@@ -1,21 +1,7 @@
 import * as d3 from "d3";
 import { pages, chapters } from "./chapterRegistry.js";
 
-import "./styles/global.css";
-import "./styles/navigation.css";
-import "./styles/layout.css";
-import "./styles/sections.css";
-import "./styles/charts.css";
-import "./styles/responsive.css";
-
-const app = d3.select("#app");
-
-let heroSlideTimer = null;
-
-// Important for GitHub Pages:
-// On local dev, BASE_URL is "/"
-// On GitHub Pages, BASE_URL becomes "/Coffee-Bean-Journey/"
-const BASE_URL = import.meta.env.BASE_URL;
+const HERO_SLIDE_ROOTS = ["./images", "./public/images"];
 
 const HERO_SLIDE_CANDIDATES = [
   "coffee-1.jpg",
@@ -23,7 +9,11 @@ const HERO_SLIDE_CANDIDATES = [
   "coffee-3.jpg",
   "coffee-4.jpg",
   "coffee-5.jpg",
-].map((fileName) => `${BASE_URL}images/hero-slides/${fileName}`);
+].flatMap((fileName) => HERO_SLIDE_ROOTS.map((root) => `${root}/${fileName}`));
+
+const app = d3.select("#app");
+
+let heroSlideTimer = null;
 
 function getCurrentPageId() {
   const hash = window.location.hash.replace("#", "");

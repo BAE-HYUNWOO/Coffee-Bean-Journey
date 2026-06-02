@@ -1,7 +1,6 @@
 import * as d3 from "d3";
 import { drawMapSlot, drawBarSlot, drawLineSlot } from "../../components/placeholderCharts.js";
 import { drawMetricCards } from "../../components/metricCards.js";
-import "./style.css";
 
 export function renderChapter1(containerSelector) {
   const container = d3.select(containerSelector);

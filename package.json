@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "copy:dist": "node scripts/deploy-dist.js",
+    "deploy:docs": "npm run build && npm run copy:dist"
   },
   "dependencies": {
     "d3": "^7.9.0",
