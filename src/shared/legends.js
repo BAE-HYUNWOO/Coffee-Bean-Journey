@@ -1,4 +1,4 @@
-import * as d3 from "d3";
+
 
 export function drawLegend(containerSelector, items = []) {
   const legend = d3.select(containerSelector).append("div").attr("class", "legend");

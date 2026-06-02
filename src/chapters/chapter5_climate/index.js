@@ -1,4 +1,3 @@
-import * as d3 from "d3";
 import { drawMapSlot, drawScatterSlot, drawLineSlot } from "../../components/placeholderCharts.js";
 import { drawMetricCards } from "../../components/metricCards.js";
 

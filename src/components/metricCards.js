@@ -1,4 +1,4 @@
-import * as d3 from "d3";
+
 
 export function drawMetricCards(containerSelector, cards = []) {
   const root = d3.select(containerSelector).append("div").attr("class", "chapter-stats");

@@ -1,4 +1,4 @@
-import * as d3 from "d3";
+
 import { chartFrame, getSvg } from "./chartFrame.js";
 
 export function drawMapSlot(containerSelector, options = {}) {

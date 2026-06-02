@@ -1,4 +1,3 @@
-import * as d3 from "d3";
 import { pages, chapters } from "./chapterRegistry.js";
 
 const HERO_SLIDE_ROOTS = ["./images", "./public/images"];
