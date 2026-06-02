@@ -2,12 +2,13 @@
   "name": "coffee-bean-journey",
   "version": "1.1.0",
   "private": true,
-  "description": "A polished D3.js scrollytelling visualization project about coffee's global journey.",
+  "description": "A D3.js visualization project about a coffee bean's global journey.",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "d3": "^7.9.0",
@@ -15,5 +16,7 @@
     "topojson-client": "^3.1.0",
     "vite": "^7.0.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
+  }
 }

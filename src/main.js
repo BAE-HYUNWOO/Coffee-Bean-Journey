@@ -12,23 +12,28 @@ const app = d3.select("#app");
 
 let heroSlideTimer = null;
 
+// Important for GitHub Pages:
+// On local dev, BASE_URL is "/"
+// On GitHub Pages, BASE_URL becomes "/Coffee-Bean-Journey/"
+const BASE_URL = import.meta.env.BASE_URL;
+
 const HERO_SLIDE_CANDIDATES = [
-  "/images/hero-slides/coffee-1.jpg",
-  "/images/hero-slides/coffee-1.png",
-  "/images/hero-slides/coffee-1.webp",
-  "/images/hero-slides/coffee-2.jpg",
-  "/images/hero-slides/coffee-2.png",
-  "/images/hero-slides/coffee-2.webp",
-  "/images/hero-slides/coffee-3.jpg",
-  "/images/hero-slides/coffee-3.png",
-  "/images/hero-slides/coffee-3.webp",
-  "/images/hero-slides/coffee-4.jpg",
-  "/images/hero-slides/coffee-4.png",
-  "/images/hero-slides/coffee-4.webp",
-  "/images/hero-slides/coffee-5.jpg",
-  "/images/hero-slides/coffee-5.png",
-  "/images/hero-slides/coffee-5.webp",
-];
+  "coffee-1.jpg",
+  "coffee-1.png",
+  "coffee-1.webp",
+  "coffee-2.jpg",
+  "coffee-2.png",
+  "coffee-2.webp",
+  "coffee-3.jpg",
+  "coffee-3.png",
+  "coffee-3.webp",
+  "coffee-4.jpg",
+  "coffee-4.png",
+  "coffee-4.webp",
+  "coffee-5.jpg",
+  "coffee-5.png",
+  "coffee-5.webp",
+].map((fileName) => `${BASE_URL}images/hero-slides/${fileName}`);
 
 function getCurrentPageId() {
   const hash = window.location.hash.replace("#", "");
