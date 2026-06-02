@@ -9,6 +9,8 @@ npm install
 npm run dev
 ```
 
+> Note: Do not open `index.html` directly from the filesystem. This project requires Vite to resolve imports like `d3`.
+
 ## Structure
 
 Each chapter has its own code and data folder:
