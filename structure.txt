@@ -1,0 +1,120 @@
+Coffee-Bean-Journey/
+│
+├─ index.html
+├─ package.json
+├─ README.md
+├─ .gitignore
+│
+├─ public/
+│  ├─ data/
+│  │  ├─ common/
+│  │  │  ├─ world.geojson
+│  │  │  └─ country_name_mapping.csv
+│  │  │
+│  │  ├─ chapter1_origin/
+│  │  │  ├─ raw/
+│  │  │  ├─ processed/
+│  │  │  │  ├─ production_by_country.csv
+│  │  │  │  ├─ production_by_year.csv
+│  │  │  │  └─ top10_producers.csv
+│  │  │  └─ README.md
+│  │  │
+│  │  ├─ chapter2_trade/
+│  │  │  ├─ raw/
+│  │  │  ├─ processed/
+│  │  │  │  ├─ trade_flows.csv
+│  │  │  │  ├─ sankey_nodes.csv
+│  │  │  │  └─ sankey_links.csv
+│  │  │  └─ README.md
+│  │  │
+│  │  ├─ chapter3_market/
+│  │  │  ├─ raw/
+│  │  │  ├─ processed/
+│  │  │  │  ├─ starbucks_locations.csv
+│  │  │  │  ├─ stores_by_country.csv
+│  │  │  │  └─ brand_market_share.csv
+│  │  │  └─ README.md
+│  │  │
+│  │  ├─ chapter4_consumption/
+│  │  │  ├─ raw/
+│  │  │  ├─ processed/
+│  │  │  │  ├─ consumption_per_capita.csv
+│  │  │  │  ├─ total_consumption.csv
+│  │  │  │  └─ top10_consumers.csv
+│  │  │  └─ README.md
+│  │  │
+│  │  └─ chapter5_climate/
+│  │     ├─ raw/
+│  │     ├─ processed/
+│  │     │  ├─ climate_risk_by_country.csv
+│  │     │  ├─ temperature_yield.csv
+│  │     │  └─ future_suitability.csv
+│  │     └─ README.md
+│  │
+│  └─ images/
+│
+├─ src/
+│  ├─ main.js
+│  ├─ chapterRegistry.js
+│  │
+│  ├─ styles/
+│  │  ├─ global.css
+│  │  ├─ layout.css
+│  │  ├─ scrolly.css
+│  │  └─ charts.css
+│  │
+│  ├─ shared/
+│  │  ├─ loadData.js
+│  │  ├─ tooltip.js
+│  │  ├─ legends.js
+│  │  ├─ formatters.js
+│  │  ├─ mapBase.js
+│  │  └─ colors.js
+│  │
+│  ├─ components/
+│  │  ├─ metricCards.js
+│  │  ├─ worldMap.js
+│  │  ├─ barChart.js
+│  │  ├─ lineChart.js
+│  │  ├─ sankeyChart.js
+│  │  ├─ scatterPlot.js
+│  │  └─ networkGraph.js
+│  │
+│  └─ chapters/
+│     ├─ chapter1_origin/
+│     │  ├─ index.js
+│     │  ├─ story.js
+│     │  └─ style.css
+│     │
+│     ├─ chapter2_trade/
+│     │  ├─ index.js
+│     │  ├─ story.js
+│     │  └─ style.css
+│     │
+│     ├─ chapter3_market/
+│     │  ├─ index.js
+│     │  ├─ story.js
+│     │  └─ style.css
+│     │
+│     ├─ chapter4_consumption/
+│     │  ├─ index.js
+│     │  ├─ story.js
+│     │  └─ style.css
+│     │
+│     └─ chapter5_climate/
+│        ├─ index.js
+│        ├─ story.js
+│        └─ style.css
+│
+├─ scripts/
+│  ├─ chapter1_clean_faostat.py
+│  ├─ chapter2_clean_comtrade.py
+│  ├─ chapter3_clean_starbucks.py
+│  ├─ chapter4_clean_consumption.py
+│  └─ chapter5_clean_climate.py
+│
+└─ report/
+   ├─ member_contributions.md
+   ├─ data_sources.md
+   ├─ data_processing.md
+   └─ screenshots/
