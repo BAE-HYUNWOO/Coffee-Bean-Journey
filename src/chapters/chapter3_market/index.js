@@ -28,8 +28,8 @@ export function renderChapter3(containerSelector) {
     const DATA_URLS = {
         worldMap:
             "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson",
-        expansion: BASE_URL + "public/data/chapter3_market/processed/starbucks_expansion.json",
-        stores2021: BASE_URL + "public/data/chapter3_market/processed/starbucks_2021_locations.csv",
+        expansion: BASE_URL + "data/chapter3_market/processed/starbucks_expansion.json",
+        stores2021: BASE_URL + "data/chapter3_market/processed/starbucks_2021_locations.csv",
     };
 
     Promise.all([
