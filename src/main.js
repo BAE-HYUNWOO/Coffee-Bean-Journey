@@ -184,13 +184,25 @@ function renderPageShell(page) {
 
   const copy = intro.append("div").attr("class", "page-intro-copy");
   copy.append("p").attr("class", "section-label").text(`Chapter ${page.number}`);
-  copy.append("h1").text(page.title);
-  copy.append("p").attr("class", "page-question").text(page.question);
-  copy.append("p").attr("class", "page-description").text(page.description);
+  if (page.title) {
+    copy.append("h1").text(page.title);
+  }
+  if (page.question) {
+    copy.append("p").attr("class", "page-question").text(page.question);
+  }
+  if (page.description) {
+    copy.append("p").attr("class", "page-description").text(page.description);
+  }
 
-  const meta = intro.append("div").attr("class", "page-meta");
-  meta.append("div").html(`<strong>Dataset</strong><span>${page.dataset}</span>`);
-  meta.append("div").html(`<strong>Main fields</strong><span>${page.sourceLabel}</span>`);
+  if (page.dataset || page.sourceLabel) {
+    const meta = intro.append("div").attr("class", "page-meta");
+    if (page.dataset) {
+      meta.append("div").html(`<strong>Dataset</strong><span>${page.dataset}</span>`);
+    }
+    if (page.sourceLabel) {
+      meta.append("div").html(`<strong>Main fields</strong><span>${page.sourceLabel}</span>`);
+    }
+  }
 
   const board = main.append("section")
     .attr("class", "page-board")
