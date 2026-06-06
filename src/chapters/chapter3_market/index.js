@@ -1,5 +1,5 @@
 // src/chapters/chapter3_market/index.js
-
+import * as d3 from "d3";
 import { drawMetricCards } from "../../components/metricCards.js";
 import { drawExpansionSlot } from "./ExpansionMap.js";
 
