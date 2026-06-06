@@ -1,4 +1,5 @@
 // src/chapters/chapter3_market/ExpansionMap.js
+import * as d3 from "d3";
 import { chartFrame } from "../../components/chartFrame.js";
 
 const ZOOM_SINGLE = 3.0;
