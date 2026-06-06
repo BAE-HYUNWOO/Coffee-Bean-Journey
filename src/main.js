@@ -1,6 +1,8 @@
 import { pages, chapters } from "./chapterRegistry.js";
 
-const HERO_SLIDE_ROOTS = ["./images", "./public/images"];
+const HERO_SLIDE_ROOTS = [
+  "/images/hero-slides"
+];
 
 const HERO_SLIDE_CANDIDATES = [
   "coffee-1.jpg",
