@@ -657,9 +657,10 @@ function renderViolinComparison(containerSelector, rows, { field, metric, title,
 
   const stats = buildViolinStats(rows, field, metric, categories, labelMap)
     .sort((a, b) => d3.descending(a.median, b.median) || d3.ascending(a.label, b.label));
-  const width = Math.max(620, body.node()?.getBoundingClientRect().width || 860);
-  const height = horizontal ? Math.max(240, stats.length * 44 + 52) : 300;
+  const width = Math.max(horizontal ? 620 : 920, body.node()?.getBoundingClientRect().width || 920);
+  const height = horizontal ? Math.max(240, stats.length * 44 + 52) : 282;
   const { svg } = getSvg(body, height);
+  svg.attr("viewBox", `0 0 ${width} ${height}`);
   const allValues = stats.flatMap((d) => d.values);
   const sortedValues = [...allValues].sort(d3.ascending);
   const extent = [
@@ -667,7 +668,7 @@ function renderViolinComparison(containerSelector, rows, { field, metric, title,
     d3.quantileSorted(sortedValues, 0.95) ?? 0,
   ];
   const range = (extent[1] ?? 0) - (extent[0] ?? 0);
-  const pad = metric === "caffeine" ? Math.max(2, range * 0.22) : Math.max(0.01, range * 0.22);
+  const pad = metric === "caffeine" ? Math.max(8, range * 0.3) : Math.max(0.08, range * 0.3);
   const axisTitle = metric === "caffeine" ? (horizontal ? "Caffeine intake (mg/day)" : "Caffeine intake (mg/day)") : (horizontal ? "Coffee intake (cups/day)" : "Coffee intake (cups/day)");
   const warmScale = d3.scaleSequential(d3.interpolateRgbBasis(["#f1d7bd", "#ddb07f", "#b07342", "#5b3a26"])).domain([0, Math.max(1, stats.length - 1)]);
 
@@ -770,7 +771,7 @@ function renderViolinComparison(containerSelector, rows, { field, metric, title,
   } else {
     const x = d3.scaleBand()
       .domain(stats.map((d) => d.label))
-      .range([82, width - 28])
+      .range([68, width - 18])
       .padding(0.34);
     const y = d3.scaleLinear()
       .domain([
@@ -778,17 +779,17 @@ function renderViolinComparison(containerSelector, rows, { field, metric, title,
         (extent[1] ?? 0) + pad,
       ])
       .nice()
-      .range([height - 42, 24]);
+      .range([height - 42, 38]);
     const violinScale = d3.scaleLinear()
       .domain([0, 1])
-      .range([0, x.bandwidth() * 0.44]);
+      .range([0, x.bandwidth() * 0.34]);
 
     svg.append("g")
       .selectAll("line.grid")
       .data(y.ticks(5))
       .join("line")
-      .attr("x1", 82)
-      .attr("x2", width - 28)
+      .attr("x1", 68)
+      .attr("x2", width - 18)
       .attr("y1", (d) => y(d))
       .attr("y2", (d) => y(d))
       .attr("stroke", "rgba(70,40,24,0.08)");
@@ -800,7 +801,7 @@ function renderViolinComparison(containerSelector, rows, { field, metric, title,
       .call((g) => g.selectAll("text").style("font-size", "11px").style("font-weight", "700"));
 
     svg.append("g")
-      .attr("transform", "translate(82, 0)")
+      .attr("transform", "translate(68, 0)")
       .call(d3.axisLeft(y).ticks(5).tickFormat((d) => formatAxisValue(d)))
       .call((g) => g.select(".domain").remove())
       .call((g) => g.selectAll("text").style("font-size", "10px"));
@@ -1258,12 +1259,12 @@ export function renderCoffeeSleepScatter(containerSelector, rows) {
     .attr("text-anchor", "middle")
     .text((d) => `${d3.format(".2f")(d.median)} h`);
 
-  svg.append("text")
-    .attr("x", width / 2)
-    .attr("y", height - 8)
-    .attr("text-anchor", "middle")
-    .attr("class", "chapter4-axis-label")
-    .text("Coffee intake quartiles");
+    svg.append("text")
+      .attr("x", width / 2)
+      .attr("y", height - 8)
+      .attr("text-anchor", "middle")
+      .attr("class", "chapter4-axis-label")
+      .text("Coffee intake quartiles");
 
   svg.append("text")
     .attr("transform", "rotate(-90)")
@@ -1974,39 +1975,218 @@ export function renderOutcomeMetric(containerSelector, rows, outcome = "sleep") 
 }
 
 const FOCUS_TIMES = {
-  morning: { tag: "Morning", flag: "time_of_day_morning" },
-  afternoon: { tag: "Afternoon", flag: "time_of_day_afternoon" },
-  evening: { tag: "Evening", flag: "time_of_day_evening" },
+  Morning: { tag: "Morning", color: "#5b3a26" },
+  Afternoon: { tag: "Afternoon", color: "#c6874e" },
+  Evening: { tag: "Evening", color: "#ddb07f" },
 };
 
-export function renderFocusTiming(containerSelector, rows, time = "morning") {
-  const config = FOCUS_TIMES[time] ?? FOCUS_TIMES.morning;
-  const { frame, body } = makeFrame(containerSelector, {
-    tag: config.tag,
-    title: `How does focus differ after ${config.tag.toLowerCase()} caffeine?`,
-    description: "",
-    wide: true,
-  });
-  const groups = ["Q1", "Q2", "Q3", "Q4"].map((quartile) => buildTimedFocusQuartileComparison(rows, config.flag, quartile));
-  groups.forEach((group) => {
-    group.label = group.quartile;
-  });
-  renderQuartileBoxPlot(body, groups, {
-    axisLabel: "Focus level (0-1)",
-    valueFormat: (value) => d3.format(".2f")(value),
-    quartileLabel: "Caffeine quartiles: low to high",
+function medianRegression(points) {
+  const finite = points.filter((point) => Number.isFinite(point.x) && Number.isFinite(point.y));
+  if (finite.length < 2) {
+    const y = finite.length ? finite[0].y : 0;
+    return { slope: 0, intercept: y };
+  }
+
+  const slopes = [];
+  for (let i = 0; i < finite.length; i += 1) {
+    for (let j = i + 1; j < finite.length; j += 1) {
+      const dx = finite[j].x - finite[i].x;
+      if (!dx) continue;
+      slopes.push((finite[j].y - finite[i].y) / dx);
+    }
+  }
+
+  const slope = slopes.length ? d3.median(slopes) ?? 0 : 0;
+  const intercept = d3.median(finite.map((point) => point.y - slope * point.x)) ?? 0;
+  return { slope, intercept };
+}
+
+function buildFocusQuartileStats(rows) {
+  const assigned = getQuartileAssignments(rows, "caffeine").filter((row) => FOCUS_TIMES[row.timeOfDay] && Number.isFinite(row.focus));
+  const quartiles = ["Q1", "Q2", "Q3", "Q4"];
+  const times = Object.keys(FOCUS_TIMES);
+  const groups = [];
+
+  quartiles.forEach((quartile, quartileIndex) => {
+    times.forEach((timeOfDay) => {
+      const values = assigned
+        .filter((row) => row.quartile === quartile && row.timeOfDay === timeOfDay)
+        .map((row) => Number(row.focus))
+        .filter((value) => Number.isFinite(value))
+        .sort(d3.ascending);
+      groups.push({
+        quartile,
+        quartileIndex: quartileIndex + 1,
+        timeOfDay,
+        values,
+        min: values[0] ?? 0,
+        q1: d3.quantileSorted(values, 0.25) ?? 0,
+        median: d3.quantileSorted(values, 0.5) ?? 0,
+        q3: d3.quantileSorted(values, 0.75) ?? 0,
+        max: values[values.length - 1] ?? 0,
+        mean: values.length ? d3.mean(values) : 0,
+        count: values.length,
+      });
+    });
   });
 
-  const legend = frame.append("div").attr("class", "chapter4-legend");
-  [["Median", "#2e1a12"], ["Mean", "#5b3a26"]].forEach(([label, color]) => {
+  return groups;
+}
+
+export function renderFocusScatter(containerSelector, rows) {
+  const { frame, body } = makeFrame(containerSelector, {
+    tag: "Time of day",
+    title: "Does focus change with caffeine intake?",
+    description: "Focus is shown by caffeine-intake quartile (Q1 to Q4). Morning, afternoon, and evening are color coded, each box marks the median, and the trend lines use median regression.",
+    wide: true,
+  });
+
+  const width = Math.max(820, body.node()?.getBoundingClientRect().width || 960);
+  const height = 330;
+  const margins = { top: 24, right: 24, bottom: 50, left: 68 };
+  const svg = body.append("svg")
+    .attr("viewBox", `0 0 ${width} ${height}`)
+    .attr("preserveAspectRatio", "xMidYMid meet");
+
+  const groups = buildFocusQuartileStats(rows);
+  const yExtent = d3.extent(groups.flatMap((group) => group.values));
+  const yPad = Math.max(0.04, ((yExtent[1] ?? 0) - (yExtent[0] ?? 0)) * 0.18);
+  const xOuter = d3.scaleBand()
+    .domain(["Q1", "Q2", "Q3", "Q4"])
+    .range([92, width - 32])
+    .padding(0.22);
+  const xInner = d3.scaleBand()
+    .domain(Object.keys(FOCUS_TIMES))
+    .range([0, xOuter.bandwidth()])
+    .padding(0.12);
+  const y = d3.scaleLinear()
+    .domain([
+      Math.max(0, (yExtent[0] ?? 0) - yPad),
+      (yExtent[1] ?? 0) + yPad,
+    ])
+    .nice()
+    .range([height - margins.bottom, margins.top]);
+
+  svg.append("g")
+    .selectAll("line.grid")
+    .data(y.ticks(5))
+    .join("line")
+    .attr("x1", 92)
+    .attr("x2", width - 32)
+    .attr("y1", (d) => y(d))
+    .attr("y2", (d) => y(d))
+    .attr("stroke", "rgba(70,40,24,0.08)");
+
+  svg.append("g")
+    .attr("transform", `translate(0, ${height - margins.bottom})`)
+    .call(d3.axisBottom(xOuter))
+    .call((g) => g.select(".domain").remove())
+    .call((g) => g.selectAll("text").style("font-size", "11px").style("font-weight", "700"));
+
+  svg.append("g")
+    .attr("transform", `translate(92, 0)`)
+    .call(d3.axisLeft(y).ticks(5).tickFormat((d) => d3.format(".2f")(d)))
+    .call((g) => g.select(".domain").remove())
+    .call((g) => g.selectAll("text").style("font-size", "10px"));
+
+  const boxWidth = Math.min(66, Math.max(20, xInner.bandwidth() * 0.76));
+
+  groups.forEach((group) => {
+    if (!group.values.length) return;
+    const config = FOCUS_TIMES[group.timeOfDay];
+    const center = xOuter(group.quartile) + xInner(group.timeOfDay) + xInner.bandwidth() / 2;
+
+    svg.append("line")
+      .attr("x1", center)
+      .attr("x2", center)
+      .attr("y1", y(group.min))
+      .attr("y2", y(group.max))
+      .attr("stroke", config.color)
+      .attr("stroke-width", 2);
+
+    svg.append("rect")
+      .attr("x", center - boxWidth / 2)
+      .attr("y", y(group.q3))
+      .attr("width", boxWidth)
+      .attr("height", Math.max(0, y(group.q1) - y(group.q3)))
+      .attr("rx", 8)
+      .attr("fill", config.color)
+      .attr("fill-opacity", 0.45)
+      .attr("stroke", config.color)
+      .attr("stroke-width", 1.2);
+
+    svg.append("line")
+      .attr("x1", center - boxWidth / 2)
+      .attr("x2", center + boxWidth / 2)
+      .attr("y1", y(group.median))
+      .attr("y2", y(group.median))
+      .attr("stroke", "#2e1a12")
+      .attr("stroke-width", 2.4);
+
+    svg.append("circle")
+      .attr("cx", center)
+      .attr("cy", y(group.mean))
+      .attr("r", 4.3)
+      .attr("fill", "#2e1a12");
+
+    svg.append("text")
+      .attr("class", "value-label")
+      .attr("x", center)
+      .attr("y", y(group.median) - 10)
+      .attr("text-anchor", "middle")
+      .text(d3.format(".2f")(group.median));
+  });
+
+  Object.entries(FOCUS_TIMES).forEach(([timeOfDay, config]) => {
+    const points = groups
+      .filter((group) => group.timeOfDay === timeOfDay && group.values.length)
+      .map((group) => ({ x: group.quartileIndex, y: group.median }));
+    if (points.length < 2) return;
+    const fit = medianRegression(points);
+    const x1 = xOuter("Q1") + xOuter.bandwidth() / 2;
+    const x2 = xOuter("Q4") + xOuter.bandwidth() / 2;
+    svg.append("line")
+      .attr("x1", x1)
+      .attr("x2", x2)
+      .attr("y1", y(fit.slope * 1 + fit.intercept))
+      .attr("y2", y(fit.slope * 4 + fit.intercept))
+      .attr("stroke", config.color)
+      .attr("stroke-width", 2.2)
+      .attr("stroke-dasharray", "6 4")
+      .attr("opacity", 0.9);
+  });
+
+  svg.append("text")
+    .attr("x", width / 2)
+    .attr("y", height - 8)
+    .attr("text-anchor", "middle")
+    .attr("class", "chapter4-axis-label")
+    .text("Caffeine intake quartiles");
+
+  svg.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -height / 2)
+    .attr("y", 18)
+    .attr("text-anchor", "middle")
+    .attr("class", "chapter4-axis-label")
+    .text("Focus level");
+
+  const legend = frame.append("div").attr("class", "chapter4-legend chapter4-focus-legend");
+  Object.entries(FOCUS_TIMES).forEach(([timeOfDay, config]) => {
+    const points = groups.filter((group) => group.timeOfDay === timeOfDay && group.values.length).map((group) => ({ x: group.quartileIndex, y: group.median }));
+    const fit = points.length ? medianRegression(points) : { slope: 0 };
     const item = legend.append("div").attr("class", "chapter4-legend-item");
     item.append("span")
-      .attr("class", `chapter4-legend-swatch is-${label.toLowerCase()}`)
-      .style("background", color);
-    item.append("span").text(label);
+      .attr("class", "chapter4-legend-swatch")
+      .style("background", config.color);
+    item.append("span").html(`<strong>${config.tag}</strong> median β=${d3.format("+.4f")(fit.slope)}`);
   });
 
   return { frame, body };
+}
+
+export function renderFocusTiming(containerSelector, rows, time = "morning") {
+  return renderFocusScatter(containerSelector, rows, time);
 }
 
 export function renderOutcomeComparisonGrid(containerSelector, rows) {
@@ -2152,6 +2332,774 @@ export function renderQuartileBreakdown(containerSelector, rows, dimension = "Sl
   frame.append("div")
     .attr("class", "chapter4-callout")
     .html(`<strong>${d3.format(".0%")(baselineShare)}</strong> in Q1 versus <strong>${d3.format(".0%")(favorableShare)}</strong> in Q4 for ${config.favorable.join(" + ").toLowerCase()} share.`);
+
+  return { frame, body };
+}
+
+const CQI_DIMENSION_LABELS = {
+  Aroma: "Aroma",
+  Flavor: "Flavor",
+  Aftertaste: "Aftertaste",
+  Acidity: "Acidity",
+  Body: "Body",
+  Balance: "Balance",
+  CleanCup: "Clean Cup",
+};
+
+const BEAN_COLORS = { Arabica: "#5b3a26", Robusta: "#c6874e" };
+
+export function renderBeanShare(containerSelector, data) {
+  const { frame, body } = makeFrame(containerSelector, {
+    tag: "Species split",
+    title: "Global coffee production by species",
+    description: "Arabica dominates the market at roughly 65 %, while Robusta accounts for about 30 % and Liberica makes up the remainder. The two main species also differ sharply in caffeine content.",
+  });
+  const width = Math.max(340, body.node()?.getBoundingClientRect().width || 620);
+  const height = 290;
+  const svg = body.append("svg")
+    .attr("viewBox", `0 0 ${width} ${height}`)
+    .attr("preserveAspectRatio", "xMidYMid meet")
+    .style("width", "100%")
+    .style("height", "auto");
+  const radius = Math.min(width, height) * 0.28;
+  const centerX = width / 2;
+  const centerY = height / 2 + 2;
+
+  const pie = d3.pie().value((d) => d.value).sort(null);
+  const arc = d3.arc().innerRadius(radius * 0.52).outerRadius(radius);
+  const palette = ["#5b3a26", "#c6874e", "#ddb07f"];
+
+  const pieLayer = svg.append("g")
+    .attr("transform", `translate(${centerX}, ${centerY})`);
+
+  const slices = pieLayer.append("g")
+    .selectAll("path")
+    .data(pie(data))
+    .join("path")
+    .attr("d", arc)
+    .attr("fill", (_, i) => palette[i])
+    .attr("stroke", "#fff")
+    .attr("stroke-width", 2);
+
+  slices.append("title")
+    .text((d) => `${d.data.label}: ${d.data.value}%\nCaffeine: ${d.data.caffeine}`);
+
+  const labelArc = d3.arc().innerRadius(radius + 12).outerRadius(radius + 12);
+  pieLayer.append("g")
+    .selectAll("text")
+    .data(pie(data))
+    .join("text")
+    .attr("transform", (d) => `translate(${labelArc.centroid(d)})`)
+    .attr("text-anchor", "middle")
+    .attr("dy", "0.35em")
+    .attr("font-size", "10px")
+    .attr("font-weight", "700")
+    .attr("fill", "#2e1a12")
+    .text((d) => `${d.data.label} ${d.data.value}%`);
+
+  svg.append("text")
+    .attr("x", centerX)
+    .attr("y", centerY + 6)
+    .attr("text-anchor", "middle")
+    .attr("font-size", "22px")
+    .attr("font-weight", "800")
+    .attr("fill", "#2e1a12")
+    .text("Coffee");
+
+  const legend = frame.append("div").attr("class", "chapter4-legend");
+  data.forEach((d, i) => {
+    const item = legend.append("div").attr("class", "chapter4-legend-item");
+    item.append("span").attr("class", "chapter4-legend-swatch").style("background", palette[i]);
+    item.append("span").html(`<strong>${d.label}</strong> — caffeine ${d.caffeine}`);
+  });
+
+  return { frame, body };
+}
+
+export function renderSensoryRadar(containerSelector, arabica, robusta) {
+  const { frame, body } = makeFrame(containerSelector, {
+    tag: "Sensory profile",
+    title: "Arabica vs Robusta: sensory scores",
+    description: "Averaged scores across 7 CQI dimensions. Arabica (n = " + arabica.count + ") leads Robusta (n = " + robusta.count + ") on every measure, with the widest gap in aroma, acidity, and flavour.",
+    wide: true,
+  });
+  const dims = Object.keys(CQI_DIMENSION_LABELS);
+  const width = Math.max(420, body.node()?.getBoundingClientRect().width || 760);
+  const rowHeight = 30;
+  const height = 78 + dims.length * rowHeight;
+  const svg = body.append("svg")
+    .attr("viewBox", `0 0 ${width} ${height}`)
+    .attr("preserveAspectRatio", "xMidYMid meet")
+    .style("width", "100%")
+    .style("height", "auto")
+    .style("overflow", "visible");
+
+  const margins = { top: 24, right: 26, bottom: 18, left: 162 };
+  const x = d3.scaleLinear()
+    .domain([6, 10])
+    .range([margins.left, width - margins.right]);
+  const y = d3.scaleBand()
+    .domain(dims)
+    .range([margins.top, height - margins.bottom])
+    .padding(0.34);
+  const barHeight = Math.max(8, y.bandwidth() * 0.28);
+  const offset = barHeight * 0.7;
+
+  svg.append("g")
+    .selectAll("line.grid")
+    .data([6, 7, 8, 9, 10])
+    .join("line")
+    .attr("x1", (d) => x(d))
+    .attr("x2", (d) => x(d))
+    .attr("y1", margins.top - 4)
+    .attr("y2", height - margins.bottom + 2)
+    .attr("stroke", "rgba(91,58,38,0.08)");
+
+  svg.append("g")
+    .attr("transform", `translate(0, ${height - margins.bottom + 4})`)
+    .call(d3.axisBottom(x).tickValues([6, 7, 8, 9, 10]).tickFormat((d) => d3.format(".0f")(d)))
+    .call((g) => g.select(".domain").remove())
+    .call((g) => g.selectAll("text").style("font-size", "10px"));
+
+  svg.append("g")
+    .selectAll("text.row")
+    .data(dims)
+    .join("text")
+    .attr("x", margins.left - 12)
+    .attr("y", (dim) => y(dim) + y.bandwidth() / 2 + 4)
+    .attr("text-anchor", "end")
+    .attr("font-size", "10px")
+    .attr("font-weight", "700")
+    .attr("fill", "#2e1a12")
+    .text((dim) => CQI_DIMENSION_LABELS[dim]);
+
+  const rows = dims.map((dim) => ({
+    dim,
+    arabica: arabica.dimensions[dim],
+    robusta: robusta.dimensions[dim],
+  }));
+
+  svg.append("g")
+    .selectAll("rect.arabica")
+    .data(rows)
+    .join("rect")
+    .attr("x", x(6))
+    .attr("y", (d) => y(d.dim) + y.bandwidth() / 2 - offset - barHeight / 2)
+    .attr("width", (d) => Math.max(2, x(d.arabica) - x(6)))
+    .attr("height", barHeight)
+    .attr("rx", 999)
+    .attr("fill", BEAN_COLORS.Arabica)
+    .attr("fill-opacity", 0.88);
+
+  svg.append("g")
+    .selectAll("rect.robusta")
+    .data(rows)
+    .join("rect")
+    .attr("x", x(6))
+    .attr("y", (d) => y(d.dim) + y.bandwidth() / 2 + offset - barHeight / 2)
+    .attr("width", (d) => Math.max(2, x(d.robusta) - x(6)))
+    .attr("height", barHeight)
+    .attr("rx", 999)
+    .attr("fill", BEAN_COLORS.Robusta)
+    .attr("fill-opacity", 0.88);
+
+  svg.append("g")
+    .selectAll("text.arabica-value")
+    .data(rows)
+    .join("text")
+    .attr("x", (d) => x(d.arabica) + 6)
+    .attr("y", (d) => y(d.dim) + y.bandwidth() / 2 - offset + 4)
+    .attr("font-size", "9px")
+    .attr("font-weight", "700")
+    .attr("fill", "rgba(46,26,18,0.72)")
+    .text((d) => d3.format(".2f")(d.arabica));
+
+  svg.append("g")
+    .selectAll("text.robusta-value")
+    .data(rows)
+    .join("text")
+    .attr("x", (d) => x(d.robusta) + 6)
+    .attr("y", (d) => y(d.dim) + y.bandwidth() / 2 + offset + 4)
+    .attr("font-size", "9px")
+    .attr("font-weight", "700")
+    .attr("fill", "rgba(46,26,18,0.72)")
+    .text((d) => d3.format(".2f")(d.robusta));
+
+  svg.append("text")
+    .attr("x", width / 2)
+    .attr("y", height - 4)
+    .attr("text-anchor", "middle")
+    .attr("class", "chapter4-axis-label")
+    .text("CQI score");
+
+  frame.style("overflow", "visible");
+  body.style("overflow", "visible");
+
+  const legend = frame.append("div").attr("class", "chapter4-legend");
+  [arabica, robusta].forEach((species) => {
+    const item = legend.append("div").attr("class", "chapter4-legend-item");
+    item.append("span").attr("class", "chapter4-legend-swatch").style("background", BEAN_COLORS[species.species]);
+    item.append("span").html(`<strong>${species.species}</strong> — overall ${(species.species === "Arabica" ? arabica.totalScoreAvg : robusta.totalScoreAvg).toFixed(1)} pts (n=${species.count})`);
+  });
+
+  return { frame, body };
+}
+
+export function renderAltitudeQuality(containerSelector, data) {
+  const { frame, body } = makeFrame(containerSelector, {
+    tag: "Altitude lens",
+    title: "Altitude vs cup score",
+    description: "Scores are grouped by altitude quartile (Q1 to Q4). Arabica and Robusta are color coded, each box marks the median, and the trend lines use median regression.",
+    wide: true,
+  });
+  const width = Math.max(820, body.node()?.getBoundingClientRect().width || 960);
+  const height = 330;
+  const margins = { top: 24, right: 24, bottom: 50, left: 68 };
+  const { svg } = getSvg(body, height);
+  svg.attr("viewBox", `0 0 ${width} ${height}`);
+
+  const assigned = getQuartileAssignments(data, "altitude").filter((row) => Number.isFinite(row.score));
+  const groups = ["Q1", "Q2", "Q3", "Q4"].map((quartile, quartileIndex) => {
+    const subset = assigned.filter((row) => row.quartile === quartile);
+    const values = subset.map((row) => Number(row.score)).sort(d3.ascending);
+    return {
+      quartile,
+      quartileIndex: quartileIndex + 1,
+      values,
+      arabica: subset.filter((row) => row.species === "Arabica"),
+      robusta: subset.filter((row) => row.species === "Robusta"),
+    };
+  });
+
+  const yExtent = d3.extent(groups.flatMap((group) => group.values));
+  const yPad = Math.max(0.18, ((yExtent[1] ?? 0) - (yExtent[0] ?? 0)) * 0.18);
+  const xOuter = d3.scaleBand()
+    .domain(["Q1", "Q2", "Q3", "Q4"])
+    .range([92, width - 32])
+    .padding(0.22);
+  const xInner = d3.scaleBand()
+    .domain(["Arabica", "Robusta"])
+    .range([0, xOuter.bandwidth()])
+    .padding(0.12);
+  const y = d3.scaleLinear()
+    .domain([
+      Math.max(0, (yExtent[0] ?? 0) - yPad),
+      (yExtent[1] ?? 0) + yPad,
+    ])
+    .nice()
+    .range([height - margins.bottom, 38]);
+
+  svg.append("g")
+    .selectAll("line.grid")
+    .data(y.ticks(5))
+    .join("line")
+    .attr("x1", 92)
+    .attr("x2", width - 32)
+    .attr("y1", (d) => y(d))
+    .attr("y2", (d) => y(d))
+    .attr("stroke", "rgba(70,40,24,0.08)");
+
+  svg.append("g")
+    .attr("transform", `translate(0, ${height - margins.bottom})`)
+    .call(d3.axisBottom(xOuter))
+    .call((g) => g.select(".domain").remove())
+    .call((g) => g.selectAll("text").style("font-size", "11px").style("font-weight", "700"));
+
+  svg.append("g")
+    .attr("transform", `translate(92, 0)`)
+    .call(d3.axisLeft(y).ticks(5).tickFormat((d) => formatAxisValue(d)))
+    .call((g) => g.select(".domain").remove())
+    .call((g) => g.selectAll("text").style("font-size", "10px"));
+
+  const boxWidth = Math.min(66, Math.max(20, xInner.bandwidth() * 0.76));
+  const speciesPoints = { Arabica: [], Robusta: [] };
+
+  groups.forEach((group) => {
+    ["Arabica", "Robusta"].forEach((species) => {
+      const values = group[species.toLowerCase()];
+      if (!values.length) return;
+      const stats = values.map((row) => Number(row.score)).filter(Number.isFinite).sort(d3.ascending);
+      const min = stats[0] ?? 0;
+      const q1 = d3.quantileSorted(stats, 0.25) ?? 0;
+      const median = d3.quantileSorted(stats, 0.5) ?? 0;
+      const q3 = d3.quantileSorted(stats, 0.75) ?? 0;
+      const max = stats[stats.length - 1] ?? 0;
+      const center = xOuter(group.quartile) + xInner(species) + xInner.bandwidth() / 2;
+      speciesPoints[species].push({ x: group.quartileIndex, y: median });
+
+      svg.append("line")
+        .attr("x1", center)
+        .attr("x2", center)
+        .attr("y1", y(min))
+        .attr("y2", y(max))
+        .attr("stroke", BEAN_COLORS[species])
+        .attr("stroke-width", 2);
+
+      svg.append("rect")
+        .attr("x", center - boxWidth / 2)
+        .attr("y", y(q3))
+        .attr("width", boxWidth)
+        .attr("height", Math.max(0, y(q1) - y(q3)))
+        .attr("rx", 8)
+        .attr("fill", BEAN_COLORS[species])
+        .attr("fill-opacity", 0.45)
+        .attr("stroke", BEAN_COLORS[species])
+        .attr("stroke-width", 1.2);
+
+      svg.append("line")
+        .attr("x1", center - boxWidth / 2)
+        .attr("x2", center + boxWidth / 2)
+        .attr("y1", y(median))
+        .attr("y2", y(median))
+        .attr("stroke", "#2e1a12")
+        .attr("stroke-width", 2.2);
+
+      svg.append("circle")
+        .attr("cx", center)
+        .attr("cy", y(d3.mean(stats)))
+        .attr("r", 4.2)
+        .attr("fill", "#2e1a12");
+
+      svg.append("text")
+        .attr("class", "value-label")
+        .attr("x", center)
+        .attr("y", y(median) - 10)
+        .attr("text-anchor", "middle")
+        .text(`${d3.format(".1f")(median)} pts`);
+    });
+  });
+
+  Object.entries(BEAN_COLORS).forEach(([species, color]) => {
+    const points = speciesPoints[species];
+    if (points.length < 2) return;
+    const fit = medianRegression(points);
+    const x1 = xOuter("Q1") + xOuter.bandwidth() / 2;
+    const x2 = xOuter("Q4") + xOuter.bandwidth() / 2;
+    svg.append("line")
+      .attr("x1", x1)
+      .attr("x2", x2)
+      .attr("y1", y(fit.slope * 1 + fit.intercept))
+      .attr("y2", y(fit.slope * 4 + fit.intercept))
+      .attr("stroke", color)
+      .attr("stroke-width", 2.2)
+      .attr("stroke-dasharray", "6 4")
+      .attr("opacity", 0.85);
+  });
+
+  svg.append("text")
+    .attr("x", width / 2)
+    .attr("y", height - 8)
+    .attr("text-anchor", "middle")
+    .attr("class", "chapter4-axis-label")
+    .text("Altitude quartiles");
+
+  svg.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -height / 2)
+    .attr("y", 18)
+    .attr("text-anchor", "middle")
+    .attr("class", "chapter4-axis-label")
+    .text("Cup score");
+
+  const legend = frame.append("div").attr("class", "chapter4-legend");
+  [["Arabica", "#5b3a26"], ["Robusta", "#c6874e"]].forEach(([label, color]) => {
+    const item = legend.append("div").attr("class", "chapter4-legend-item");
+    item.append("span")
+      .attr("class", "chapter4-legend-swatch")
+      .style("background", color);
+    item.append("span").text(label);
+  });
+
+  return { frame, body };
+}
+
+export function renderProcessingMethod(containerSelector, stats) {
+  const { frame, body } = makeFrame(containerSelector, {
+    tag: "Processing",
+    title: "Score distribution by processing method",
+    description: "Washed and honey-processed Arabica lots show slightly higher median scores. The 'Other' category includes experimental methods.",
+  });
+  const height = Math.max(220, stats.length * 42 + 52);
+  const { svg, width } = getSvg(body, height);
+  const margins = { top: 24, right: 54, bottom: 50, left: 140 };
+
+  const x = d3.scaleLinear()
+    .domain([d3.min(stats, (d) => d.min) - 2, d3.max(stats, (d) => d.max) + 2])
+    .nice()
+    .range([margins.left, width - margins.right]);
+  const y = d3.scaleBand()
+    .domain(stats.map((d) => d.method))
+    .range([margins.top, height - margins.bottom])
+    .padding(0.28);
+  const palette = d3.scaleSequential(d3.interpolateRgbBasis(["#ddb07f", "#b07342", "#5b3a26"])).domain([0, Math.max(1, stats.length - 1)]);
+
+  svg.append("g")
+    .selectAll("line")
+    .data(x.ticks(5))
+    .join("line")
+    .attr("x1", (d) => x(d))
+    .attr("x2", (d) => x(d))
+    .attr("y1", margins.top)
+    .attr("y2", height - margins.bottom)
+    .attr("stroke", "rgba(91,58,38,0.08)");
+
+  svg.append("g")
+    .attr("transform", `translate(0, ${height - margins.bottom})`)
+    .call(d3.axisBottom(x).ticks(5))
+    .call((g) => g.select(".domain").remove())
+    .call((g) => g.selectAll("text").style("font-size", "10px"));
+
+  svg.append("g")
+    .attr("transform", `translate(${margins.left}, 0)`)
+    .call(d3.axisLeft(y).tickSize(0))
+    .call((g) => g.select(".domain").remove())
+    .call((g) => g.selectAll("text").style("font-size", "10px").style("font-weight", "700"));
+
+  stats.forEach((d, i) => {
+    const center = y(d.method) + y.bandwidth() / 2;
+
+    svg.append("line")
+      .attr("x1", x(d.min))
+      .attr("x2", x(d.max))
+      .attr("y1", center)
+      .attr("y2", center)
+      .attr("stroke", "#8c5a38")
+      .attr("stroke-width", 2);
+
+    svg.append("rect")
+      .attr("x", x(d.q1))
+      .attr("y", y(d.method))
+      .attr("width", Math.max(0, x(d.q3) - x(d.q1)))
+      .attr("height", y.bandwidth())
+      .attr("rx", 10)
+      .attr("fill", palette(i))
+      .attr("stroke", "#8c5a38")
+      .attr("stroke-width", 1.2);
+
+    svg.append("line")
+      .attr("x1", x(d.median))
+      .attr("x2", x(d.median))
+      .attr("y1", y(d.method))
+      .attr("y2", y(d.method) + y.bandwidth())
+      .attr("stroke", "#2e1a12")
+      .attr("stroke-width", 2.2);
+
+    svg.append("text")
+      .attr("class", "value-label")
+      .attr("x", x(d.max) + 6)
+      .attr("y", center + 4)
+      .text(d.median.toFixed(1) + " (n=" + d.count + ")");
+  });
+
+  svg.append("text")
+    .attr("x", width / 2)
+    .attr("y", height - 8)
+    .attr("text-anchor", "middle")
+    .attr("class", "chapter4-axis-label")
+    .text("Total Cup Points");
+
+  return { frame, body };
+}
+
+export function renderCaffeineRange(containerSelector, data) {
+  const { frame, body } = makeFrame(containerSelector, {
+    tag: "Caffeine",
+    title: "Caffeine range by beverage category",
+    description: "Straight brewed coffee tops the chart; frappuccinos and tea-based drinks anchor the low end. The bar shows the average, with the full range marked by the thin line.",
+  });
+  const height = Math.max(280, data.length * 32 + 48);
+  const { svg, width } = getSvg(body, height);
+  const margins = { top: 20, right: 44, bottom: 50, left: 180 };
+
+  const x = d3.scaleLinear()
+    .domain([0, d3.max(data, (d) => d.max) * 1.06])
+    .nice()
+    .range([margins.left, width - margins.right]);
+  const y = d3.scaleBand()
+    .domain(data.map((d) => d.category))
+    .range([margins.top, height - margins.bottom])
+    .padding(0.22);
+
+  svg.append("g")
+    .selectAll("line")
+    .data(x.ticks(5))
+    .join("line")
+    .attr("x1", (d) => x(d))
+    .attr("x2", (d) => x(d))
+    .attr("y1", margins.top)
+    .attr("y2", height - margins.bottom)
+    .attr("stroke", "rgba(91,58,38,0.08)");
+
+  svg.append("g")
+    .attr("transform", `translate(0, ${height - margins.bottom})`)
+    .call(d3.axisBottom(x).ticks(6))
+    .call((g) => g.select(".domain").remove())
+    .call((g) => g.selectAll("text").style("font-size", "10px"));
+
+  svg.append("g")
+    .attr("transform", `translate(${margins.left}, 0)`)
+    .call(d3.axisLeft(y).tickSize(0))
+    .call((g) => g.select(".domain").remove())
+    .call((g) => g.selectAll("text").style("font-size", "10px").style("font-weight", "700"));
+
+  const warmScale = d3.scaleSequential(d3.interpolateRgbBasis(["#f1d7bd", "#ddb07f", "#b07342", "#5b3a26"])).domain([0, Math.max(1, data.length - 1)]);
+
+  data.forEach((d, i) => {
+    const center = y(d.category) + y.bandwidth() / 2;
+
+    svg.append("line")
+      .attr("x1", x(d.min))
+      .attr("x2", x(d.max))
+      .attr("y1", center)
+      .attr("y2", center)
+      .attr("stroke", "#8c5a38")
+      .attr("stroke-width", 1.2);
+
+    svg.append("rect")
+      .attr("x", x(0))
+      .attr("y", y(d.category))
+      .attr("width", Math.max(2, x(d.avg) - x(0)))
+      .attr("height", y.bandwidth())
+      .attr("rx", 8)
+      .attr("fill", warmScale(i));
+
+    svg.append("text")
+      .attr("class", "value-label")
+      .attr("x", x(d.avg) + 4)
+      .attr("y", center + 4)
+      .text(d3.format(".0f")(d.avg) + " mg");
+  });
+
+  svg.append("text")
+    .attr("x", width / 2)
+    .attr("y", height - 8)
+    .attr("text-anchor", "middle")
+    .attr("class", "chapter4-axis-label")
+    .text("Caffeine (mg)");
+
+  return { frame, body };
+}
+
+export function renderNutrientCompare(containerSelector, data) {
+  const { frame, body } = makeFrame(containerSelector, {
+    tag: "Grande nutrition",
+    title: "Nutritional profile of classic Grande drinks",
+    description: "Six espresso-based beverages in the standard Grande size. The chart uses min-max normalisation per nutrient so the relative composition is visible at a glance.",
+  });
+  const nutrients = [
+    { key: "caffeine", label: "Caffeine (mg)", color: "#2e1a12" },
+    { key: "calories", label: "Calories", color: "#5b3a26" },
+    { key: "fat", label: "Fat (g)", color: "#8c5a38" },
+    { key: "carbs", label: "Carbs (g)", color: "#b07342" },
+    { key: "protein", label: "Protein (g)", color: "#ddb07f" },
+  ];
+  const height = 320;
+  const { svg, width } = getSvg(body, height);
+  const margins = { top: 44, right: 24, bottom: 56, left: 84 };
+
+  const maxValues = {};
+  nutrients.forEach((n) => {
+    maxValues[n.key] = d3.max(data, (d) => d[n.key]) ?? 1;
+  });
+
+  const x = d3.scaleBand()
+    .domain(data.map((d) => d.beverage))
+    .range([margins.left, width - margins.right])
+    .padding(0.18);
+  const y = d3.scaleBand()
+    .domain(nutrients.map((n) => n.label))
+    .range([margins.top, height - margins.bottom])
+    .padding(0.14);
+  const colorScale = d3.scaleOrdinal().domain(nutrients.map((n) => n.label)).range(nutrients.map((n) => n.color));
+
+  const heatData = data.flatMap((row) =>
+    nutrients.map((n) => ({
+      beverage: row.beverage,
+      nutrient: n.label,
+      value: row[n.key] / maxValues[n.key],
+      raw: row[n.key],
+    })),
+  );
+
+  svg.append("g")
+    .attr("transform", `translate(0, ${height - margins.bottom})`)
+    .call(d3.axisBottom(x))
+    .call((g) => g.select(".domain").remove())
+    .call((g) => g.selectAll("text").style("font-size", "10px").style("font-weight", "700"));
+
+  svg.append("g")
+    .attr("transform", `translate(${margins.left}, 0)`)
+    .call(d3.axisLeft(y).tickSize(0))
+    .call((g) => g.select(".domain").remove())
+    .call((g) => g.selectAll("text").style("font-size", "10px").style("font-weight", "650"));
+
+  const cells = svg.append("g")
+    .selectAll("rect")
+    .data(heatData)
+    .join("rect")
+    .attr("x", (d) => x(d.beverage))
+    .attr("y", (d) => y(d.nutrient))
+    .attr("width", x.bandwidth())
+    .attr("height", y.bandwidth())
+    .attr("rx", 6)
+    .attr("fill", (d) => colorScale(d.nutrient))
+    .attr("fill-opacity", (d) => 0.2 + d.value * 0.65)
+    .attr("stroke", (d) => colorScale(d.nutrient))
+    .attr("stroke-width", 0.8)
+    .attr("stroke-opacity", 0.4);
+
+  cells.append("title")
+    .text((d) => `${d.beverage}\n${d.nutrient}: ${d.raw}`);
+
+  svg.append("g")
+    .selectAll("text")
+    .data(heatData)
+    .join("text")
+    .attr("x", (d) => x(d.beverage) + x.bandwidth() / 2)
+    .attr("y", (d) => y(d.nutrient) + y.bandwidth() / 2 + 4)
+    .attr("text-anchor", "middle")
+    .attr("font-size", "9px")
+    .attr("font-weight", "700")
+    .attr("fill", "#2e1a12")
+    .text((d) => {
+      if (d.nutrient === "Caffeine (mg)") return d3.format(".0f")(d.raw);
+      return d3.format(".0f")(d.raw);
+    });
+
+  const legend = frame.append("div").attr("class", "chapter4-legend");
+  nutrients.forEach((n) => {
+    const item = legend.append("div").attr("class", "chapter4-legend-item");
+    item.append("span").attr("class", "chapter4-legend-swatch").style("background", n.color);
+    item.append("span").text(n.label);
+  });
+
+  return { frame, body };
+}
+
+export function renderMilkChoice(containerSelector, data) {
+  const { frame, body } = makeFrame(containerSelector, {
+    tag: "Milk matters",
+    title: "Latte nutrition by milk type and size",
+    description: "Each row is one size. Filled circles = nonfat, outlined = 2 %, diamond = soy. The gap between nonfat and 2 % is consistent across sizes.",
+  });
+  const sizes = ["Short", "Tall", "Grande", "Venti"];
+  const metrics = [
+    { key: "calories", label: "Calories", unit: "" },
+    { key: "fat", label: "Fat (g)", unit: "g" },
+    { key: "carbs", label: "Carbs (g)", unit: "g" },
+    { key: "protein", label: "Protein (g)", unit: "g" },
+  ];
+  const milkStyles = {
+    Nonfat: { symbol: "circle", fill: "#5b3a26", stroke: "#5b3a26" },
+    "2%": { symbol: "circle", fill: "none", stroke: "#b07342" },
+    Soy: { symbol: "diamond", fill: "#ddb07f", stroke: "#ddb07f" },
+  };
+
+  const height = sizes.length * 86 + 44;
+  const { svg, width } = getSvg(body, height);
+  const margins = { top: 28, right: 20, bottom: 24, left: 90 };
+  const pad = 16;
+  const columnWidth = (width - margins.left - margins.right - pad * (metrics.length - 1)) / metrics.length;
+  const rowGap = 86;
+  const milkOrder = [
+    { key: "Nonfat", dy: -14 },
+    { key: "2%", dy: 0 },
+    { key: "Soy", dy: 14 },
+  ];
+
+  metrics.forEach((metric, mi) => {
+    const x0 = margins.left + mi * (columnWidth + pad);
+    const xRange = [x0 + 18, x0 + columnWidth - 10];
+    const allVals = data.filter((d) => Number.isFinite(d[metric.key])).map((d) => d[metric.key]);
+    const xScale = d3.scaleLinear()
+      .domain([0, (d3.max(allVals) ?? 0) * 1.12 || 1])
+      .nice()
+      .range(xRange);
+
+    svg.append("text")
+      .attr("x", x0 + columnWidth / 2)
+      .attr("y", 18)
+      .attr("text-anchor", "middle")
+      .attr("font-size", "11px")
+      .attr("font-weight", "700")
+      .attr("fill", "#2e1a12")
+      .text(metric.label);
+
+    svg.append("line")
+      .attr("x1", x0 + 14)
+      .attr("x2", x0 + columnWidth - 10)
+      .attr("y1", 28)
+      .attr("y2", 28)
+      .attr("stroke", "rgba(91, 58, 38, 0.10)");
+
+    sizes.forEach((size) => {
+      const yPos = 58 + sizes.indexOf(size) * rowGap;
+      const subset = data.filter((d) => d.size === size);
+
+      svg.append("text")
+        .attr("x", margins.left - 12)
+        .attr("y", yPos + 4)
+        .attr("text-anchor", "end")
+        .attr("font-size", "10px")
+        .attr("font-weight", "700")
+        .attr("fill", "rgba(46,26,18,0.6)")
+        .text(size);
+
+      subset.forEach((d) => {
+        const style = milkStyles[d.milk];
+        if (!style) return;
+        const cx = xScale(d[metric.key]);
+        const cy = yPos + (milkOrder.find((entry) => entry.key === d.milk)?.dy ?? 0);
+        const labelX = Math.min(cx + 9, x0 + columnWidth - 4);
+
+        if (style.symbol === "circle") {
+          svg.append("circle")
+            .attr("cx", cx)
+            .attr("cy", cy)
+            .attr("r", 6)
+            .attr("fill", style.fill === "none" ? "white" : style.fill)
+            .attr("fill-opacity", style.fill === "none" ? 1 : 0.85)
+            .attr("stroke", style.stroke)
+            .attr("stroke-width", style.fill === "none" ? 2.5 : 0);
+        } else {
+          svg.append("polygon")
+            .attr("points", `0,-6 5,0 0,6 -5,0`)
+            .attr("transform", `translate(${cx}, ${cy})`)
+            .attr("fill", style.fill)
+            .attr("fill-opacity", 0.85);
+        }
+
+        svg.append("rect")
+          .attr("x", cx + 7)
+          .attr("y", cy - 7)
+          .attr("width", 30)
+          .attr("height", 14)
+          .attr("rx", 7)
+          .attr("fill", "rgba(255, 251, 245, 0.82)");
+
+        svg.append("text")
+          .attr("x", labelX)
+          .attr("y", cy + 4)
+          .attr("font-size", "8.5px")
+          .attr("font-weight", "700")
+          .attr("fill", "rgba(46,26,18,0.72)")
+          .text(d3.format(".0f")(d[metric.key]));
+      });
+    });
+  });
+
+  const legend = frame.append("div").attr("class", "chapter4-legend");
+  [["Nonfat", "#5b3a26", "circle"], ["2% Milk", "#b07342", "circle-hollow"], ["Soymilk", "#ddb07f", "diamond"]].forEach(([label, color, type]) => {
+    const item = legend.append("div").attr("class", "chapter4-legend-item");
+    const swatch = item.append("span")
+      .attr("class", "chapter4-legend-swatch");
+    if (type === "circle-hollow") {
+      swatch.style("background", "white").style("border", `2px solid ${color}`);
+    } else {
+      swatch.style("background", color);
+    }
+    item.append("span").text(label);
+  });
 
   return { frame, body };
 }

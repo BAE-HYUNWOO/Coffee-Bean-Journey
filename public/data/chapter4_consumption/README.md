@@ -2,14 +2,6 @@
 
 Put raw files in `raw/` and final D3-ready CSV files in `processed/`.
 
-https://www.kaggle.com/datasets/yamaerenay/ico-coffee-dataset-worldwide
-
-https://www.kaggle.com/datasets/waqi786/worldwide-coffee-habits-dataset
-
-https://www.kaggle.com/datasets/parasrupani/coffee-distribution-across-94-counties
-
-
-
 目前chapter4真实用到的数据集：
 
 https://www.kaggle.com/datasets/prekshad2166/caffeine-intake-tracker-csv  
@@ -65,3 +57,13 @@ https://www.kaggle.com/datasets/uom190346a/global-coffee-health-dataset
 | **Soluble Dom. Cons.**     | 国内速溶咖啡消费量                     |
 | **Total Supply**           | 总供给                                 |
 | **Total Distribution**     | 总分配（总使用）                       |
+
+
+
+新的数据源
+
+https://github.com/jldbc/coffee-quality-database?utm_source=chatgpt.com
+
+https://github.com/rfordatascience/tidytuesday/tree/main/data/2020/2020-07-07?utm_source=chatgpt.com
+
+https://www.kaggle.com/datasets/henryshan/starbucks

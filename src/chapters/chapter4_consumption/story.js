@@ -1,9 +1,44 @@
 export const story = {
   chapterLabel: "Chapter 04",
-  title: "Who drinks coffee?",
+  title: "From bean to cup",
   intro:
-    "This chapter shifts the question from coffee as a commodity to coffee as a daily habit. The first half builds a consumer profile across country, age, gender, occupation, drinking, and smoking. The second half turns to what tends to travel with heavier intake in everyday life, and then uses a second tracker dataset to look at timing and focus.",
+    "This chapter traces coffee from the raw bean to the final cup. It starts with the two main commercial species and their sensory profiles, then moves to what those beans become on the Starbucks menu. The second half shifts to global consumption patterns, and the last part builds a compact consumer profile to see what travels with heavier intake without repeating the same chart five times.",
   sections: [
+    {
+      key: "beanShare",
+      title: "Not all coffee beans are the same",
+      body: "Coffee's two main commercial species — Arabica and Robusta — dominate the market, and they differ not only in price but also in caffeine content and flavour chemistry.",
+    },
+    {
+      key: "sensoryRadar",
+      title: "How do Arabica and Robusta compare across every dimension?",
+      body: "The Coffee Quality Institute's sensory scores reveal a consistent gap: Arabica leads across aroma, flavour, acidity, body, and balance. The radar chart makes the profile difference instantly visible.",
+    },
+    {
+      key: "altitudeQuality",
+      title: "Does higher altitude really mean better coffee?",
+      body: "Conventional wisdom says high-altitude beans taste better. Each dot represents a CQI-graded lot. The pattern is real but noisier than expected.",
+    },
+    {
+      key: "processingMethod",
+      title: "How does processing method shape quality?",
+      body: "Washed, natural, honey-processed — the method used to remove the cherry pulp leaves a measurable signature on the final cup score.",
+    },
+    {
+      key: "caffeineRange",
+      title: "What drink packs the most caffeine?",
+      body: "The Starbucks menu spans from a mellow espresso-based latte to a Venti brewed coffee that delivers 410 mg of caffeine. This chart ranks every beverage category by its average and range.",
+    },
+    {
+      key: "nutrientCompare",
+      title: "What is really inside a coffee drink?",
+      body: "Six classic espresso-based drinks in the standard Grande size show that a coffee order is never just caffeine — it carries calories, fat, carbs, and protein, which vary enormously with what you order.",
+    },
+    {
+      key: "milkChoice",
+      title: "Does milk choice matter?",
+      body: "Switching from 2% to nonfat or soy changes the nutritional profile of a latte more than most people expect.",
+    },
     {
       key: "worldTrend",
       title: "How has global coffee consumption changed?",
@@ -14,7 +49,7 @@ export const story = {
       key: "consumption",
       title: "Which countries consume the most coffee?",
       body:
-        "The latest three marketing years compare national domestic consumption and split each total into roasted-and-ground and soluble coffee.",
+        "The latest three marketing years keep this panel focused and readable. The full multi-year trend already appears above, so this view only spotlights 2020, 2021, and 2022 instead of turning every year into a separate facet.",
     },
     {
       key: "ranking",
@@ -23,34 +58,10 @@ export const story = {
         "The first view ranks countries by average coffee intake per person. You can re-sort the same data by sleep hours or caffeine intake to see how the picture changes when the lens changes.",
     },
     {
-      key: "age",
-      title: "Does coffee intake change across age bands?",
+      key: "profile",
+      title: "What shapes coffee intake across people?",
       body:
-        "The second view compresses the individual rows into age groups. It helps test whether coffee looks like a habit that belongs to one generation, or a routine that stays fairly stable across adulthood.",
-    },
-    {
-      key: "gender",
-      title: "Does coffee intake differ by gender?",
-      body:
-        "The third view compares coffee intake across gender groups with a boxplot. The main point is not a dramatic split; it is to show how similar the distributions really are, and to keep the page honest about a subtle effect.",
-    },
-    {
-      key: "occupation",
-      title: "Does coffee intake vary by occupation?",
-      body:
-        "The next set of views begins the consumer profile. Occupation is a useful anchor because it often sits close to daily routine and caffeine use, so the same groups are flipped between coffee intake and caffeine intake.",
-    },
-    {
-      key: "alcohol",
-      title: "Does coffee intake vary with drinking?",
-      body:
-        "This panel compares drinkers and non-drinkers on coffee and caffeine. It is a small but useful habit marker for the user profile.",
-    },
-    {
-      key: "smoking",
-      title: "Does coffee intake vary with smoking?",
-      body:
-        "This is the same flip-card idea applied to smoking. The point is to show whether the profile splits into distinct groups or stays fairly mixed.",
+        "Use the vertical buttons to switch between age, gender, occupation, alcohol, and smoking, then use the coffee/caffeine toggle above to compare the same population from two angles without duplicating the layout five times. The card now stays fixed in size and flips like the other interactive panels.",
     },
     {
       key: "scatter",
@@ -60,11 +71,11 @@ export const story = {
     },
     {
       key: "focus",
-      title: "Does caffeine timing change focus?",
+      title: "Does caffeine intake change focus?",
       body:
-        "The last panel uses the tracker dataset to compare focus across morning, afternoon, and evening intake. Each card flips between low and high caffeine so timing stays visible.",
+        "The last panel uses the tracker dataset to compare focus across caffeine quartiles. Morning, afternoon, and evening are color coded, each box marks the median, and the trend lines use median regression.",
     },
   ],
   note:
-    "The dataset is synthetic and descriptive rather than medical. The goal here is to read patterns, not to prove a cause-and-effect relationship.",
+    "Sections 1-7 use Starbucks nutritional data and CQI sensory data. Sections 8-10 use USDA consumption data. Section 11 and 12 use synthetic health survey data. Section 13 uses tracker data. The synthetic dataset is descriptive rather than medical — the goal is to read patterns, not to prove cause-and-effect.",
 };

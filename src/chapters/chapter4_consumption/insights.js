@@ -151,6 +151,55 @@ function focusAnswer(rows, flag, period) {
   return `For ${period} consumption, median focus ${direction} from ${d3.format(".2f")(values[0])} in Q1 to ${d3.format(".2f")(values.at(-1))} in Q4.`;
 }
 
+function focusScatterSummary(rows) {
+  const assigned = getQuartileAssignments(rows, "caffeine").filter((row) => row.timeOfDay && Number.isFinite(row.focus));
+  const quartileIndex = { Q1: 1, Q2: 2, Q3: 3, Q4: 4 };
+  const groups = [
+    { key: "Morning", label: "Morning" },
+    { key: "Afternoon", label: "Afternoon" },
+    { key: "Evening", label: "Evening" },
+  ];
+
+  const medianRegression = (points) => {
+    const finite = points.filter((point) => Number.isFinite(point.x) && Number.isFinite(point.y));
+    if (finite.length < 2) return 0;
+    const slopes = [];
+    for (let i = 0; i < finite.length; i += 1) {
+      for (let j = i + 1; j < finite.length; j += 1) {
+        const dx = finite[j].x - finite[i].x;
+        if (!dx) continue;
+        slopes.push((finite[j].y - finite[i].y) / dx);
+      }
+    }
+    return d3.median(slopes) ?? 0;
+  };
+
+  const parts = groups.map(({ key, label }) => {
+    const subset = assigned.filter((row) => row.timeOfDay === key);
+    if (!subset.length) return `${label} has too few points to fit a trend.`;
+    const quartiles = ["Q1", "Q2", "Q3", "Q4"].map((quartile) => {
+      const values = subset
+        .filter((row) => row.quartile === quartile)
+        .map((row) => Number(row.focus))
+        .filter((value) => Number.isFinite(value))
+        .sort(d3.ascending);
+      return {
+        quartile,
+        x: quartileIndex[quartile],
+        median: d3.median(values) ?? 0,
+        count: values.length,
+      };
+    }).filter((group) => group.count > 0);
+    if (!quartiles.length) return `${label} has too few points to fit a trend.`;
+    const beta = medianRegression(quartiles.map((group) => ({ x: group.x, y: group.median })));
+    const q1 = quartiles.find((group) => group.quartile === "Q1")?.median ?? 0;
+    const q4 = quartiles.find((group) => group.quartile === "Q4")?.median ?? q1;
+    return `${label} (n=${subset.length}) has median β=${d3.format("+.4f")(beta)} and median focus moves from ${d3.format(".2f")(q1)} in Q1 to ${d3.format(".2f")(q4)} in Q4.`;
+  });
+
+  return parts.join(" ");
+}
+
 function consumptionAnswers(consumptionByYear) {
   return Object.fromEntries(consumptionByYear.map(({ year, countries }) => {
     const leader = countries[0];
@@ -170,7 +219,30 @@ function worldTrendAnswer(trend) {
 }
 
 export function buildChapter4Answers(data) {
+  const ar = data.cqiArabica;
+  const rb = data.cqiRobusta;
   return {
+    beanShare: {
+      all: `Arabica dominates at ~65% of global production with 0.8-1.4% caffeine, while Robusta (30%) packs 1.7-4.0% caffeine and Liberica (<5%) rounds out the supply.`,
+    },
+    sensoryRadar: {
+      all: `Arabica (avg ${ar.totalScoreAvg.toFixed(1)} pts, n=${ar.count}) outpaces Robusta (${rb.totalScoreAvg.toFixed(1)} pts, n=${rb.count}) across all seven sensory dimensions, with the largest gaps in aroma (${ar.dimensions.Aroma.toFixed(2)} vs ${rb.dimensions.Aroma.toFixed(2)}) and acidity (${ar.dimensions.Acidity.toFixed(2)} vs ${rb.dimensions.Acidity.toFixed(2)}).`,
+    },
+    altitudeQuality: {
+      all: `Across ${data.altitudeData.length} CQI-graded lots, the correlation between altitude and cup score is modest. Arabica spans a wider altitude range (${d3.min(data.altitudeData.filter(d => d.species === 'Arabica'), d => d.altitude).toFixed(0)}–${d3.max(data.altitudeData.filter(d => d.species === 'Arabica'), d => d.altitude).toFixed(0)} m) while Robusta clusters below 2000 m.`,
+    },
+    processingMethod: {
+      all: `Washed processing is the most common method (${data.processingStats.find(d => d.method === 'Washed / Wet')?.count ?? 0} lots) and shows a slightly higher median than natural/dry processing. Semi-washed and honey methods occupy the middle ground.`,
+    },
+    caffeineRange: {
+      all: `Brewed coffee leads with an average of ${d3.format(".0f")(data.categoryCaffeine.find(d => d.category === 'Coffee')?.avg ?? 0)} mg, peaking at ${d3.format(".0f")(data.categoryCaffeine.find(d => d.category === 'Coffee')?.max ?? 0)} mg for a Venti. Classic espresso drinks average ${d3.format(".0f")(data.categoryCaffeine.find(d => d.category === 'Classic Espresso Drinks')?.avg ?? 0)} mg.`,
+    },
+    nutrientCompare: {
+      all: `Among six classic Grande drinks, the Caffè Mocha is the most calorie-dense at ${data.beverageNutrients.find(d => d.beverage === 'Caffè Mocha')?.calories ?? 0} cal, while Americano and Espresso keep calories below 20. Protein varies from ${d3.min(data.beverageNutrients, d => d.protein).toFixed(1)} g to ${d3.max(data.beverageNutrients, d => d.protein).toFixed(1)} g.`,
+    },
+    milkChoice: {
+      all: `Switching from 2% to nonfat milk in a Grande latte cuts calories by about ${((data.milkComparison.find(d => d.size === 'Grande' && d.milk === '2%')?.calories ?? 0) - (data.milkComparison.find(d => d.size === 'Grande' && d.milk === 'Nonfat')?.calories ?? 0)).toFixed(0)} cal and fat by ${((data.milkComparison.find(d => d.size === 'Grande' && d.milk === '2%')?.fat ?? 0) - (data.milkComparison.find(d => d.size === 'Grande' && d.milk === 'Nonfat')?.fat ?? 0)).toFixed(1)} g, while protein remains similar. Soy milk sits between the two.`,
+    },
     worldTrend: {
       all: worldTrendAnswer(data.worldConsumptionTrend),
     },
@@ -193,9 +265,7 @@ export function buildChapter4Answers(data) {
     }),
     outcome: outcomeAnswers(data.rows),
     focus: {
-      morning: focusAnswer(data.trackerRows, "time_of_day_morning", "morning"),
-      afternoon: focusAnswer(data.trackerRows, "time_of_day_afternoon", "afternoon"),
-      evening: focusAnswer(data.trackerRows, "time_of_day_evening", "evening"),
+      all: focusScatterSummary(data.trackerRows),
     },
   };
 }

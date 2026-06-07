@@ -161,7 +161,7 @@
   width: min(100%, 680px);
   overflow: visible;
   justify-self: end;
-  padding: 12px 12px 6px;
+  padding: 12px 12px 2px;
   border-radius: 22px;
   border: 1px solid rgba(91, 58, 38, 0.12);
   background: rgba(255, 251, 245, 0.8);
@@ -170,6 +170,10 @@
 
 .chapter4-section.is-reversed .chapter4-panel {
   justify-self: start;
+}
+
+.chapter4-panel--wide {
+  width: min(100%, 940px);
 }
 
 .chapter4-panel .chart-frame {
@@ -321,6 +325,105 @@
   display: flex;
   justify-content: flex-end;
   margin-bottom: 10px;
+}
+
+.chapter4-profile-shell {
+  display: grid;
+  grid-template-columns: 168px minmax(0, 1fr);
+  gap: 14px;
+  align-items: stretch;
+  min-height: 0;
+}
+
+.chapter4-profile-rail {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 12px;
+  padding-top: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+.chapter4-profile-label {
+  color: var(--soft);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.chapter4-profile-dimension-controls {
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 16px;
+  height: auto;
+  min-height: 0;
+  margin-top: 0;
+}
+
+.chapter4-profile-dimension-controls .chapter4-chip {
+  width: 100%;
+  flex: 0 0 auto;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.chapter4-profile-main {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-self: start;
+  min-width: 0;
+  min-height: 0;
+  flex: 0 0 auto;
+}
+
+.chapter4-profile-toolbar {
+  justify-content: flex-start;
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.chapter4-profile-metric-controls {
+  justify-content: space-between;
+  width: 100%;
+}
+
+.chapter4-profile-metric-controls .chapter4-chip {
+  flex: 1;
+  justify-content: center;
+}
+
+.chapter4-profile-stage {
+  display: flex;
+  flex: 0 0 auto;
+  min-height: 0;
+}
+
+.chapter4-profile-deck {
+  width: 100%;
+  min-height: 0;
+  height: 100%;
+}
+
+.chapter4-profile-deck .chart-frame {
+  min-height: 0;
+}
+
+.chapter4-profile-deck .chart-frame-body {
+  padding-bottom: 0;
+}
+
+.chapter4-profile-deck .chapter4-legend {
+  margin-top: 0;
+  padding-bottom: 0;
+}
+
+.chapter4-profile-chart {
+  min-width: 0;
 }
 
 .chapter4-controls {
@@ -533,6 +636,41 @@
 
   .chapter4-chip {
     padding: 8px 11px;
+  }
+
+  .chapter4-profile-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .chapter4-profile-rail {
+    padding-top: 0;
+    gap: 12px;
+  }
+
+  .chapter4-profile-dimension-controls {
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex: 0 0 auto;
+    justify-content: flex-start;
+    height: auto;
+  }
+
+  .chapter4-profile-dimension-controls .chapter4-chip {
+    width: auto;
+    flex: 0 0 auto;
+  }
+
+  .chapter4-profile-metric-controls {
+    justify-content: flex-start;
+  }
+
+  .chapter4-profile-metric-controls .chapter4-chip {
+    flex: 0 0 auto;
+  }
+
+  .chapter4-profile-deck {
+    height: auto;
+    min-height: 430px;
   }
 
   .chapter4-prologue-copy h2 {

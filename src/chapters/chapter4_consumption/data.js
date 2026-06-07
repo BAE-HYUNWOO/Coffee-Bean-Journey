@@ -1,6 +1,9 @@
 const PROFILE_DATA_URL = `${import.meta.env.BASE_URL}data/chapter4_consumption/processed/synthetic_coffee_health_10000.csv`;
 const FOCUS_DATA_URL = `${import.meta.env.BASE_URL}data/chapter4_consumption/processed/caffeine_intake_tracker.csv`;
 const CONSUMPTION_DATA_URL = `${import.meta.env.BASE_URL}data/chapter4_consumption/processed/final.csv`;
+const CQI_ARABICA_URL = `${import.meta.env.BASE_URL}data/chapter4_consumption/processed/ Coffee Quality Institute Database Mirror/arabica_data_cleaned.csv`;
+const CQI_ROBUSTA_URL = `${import.meta.env.BASE_URL}data/chapter4_consumption/processed/ Coffee Quality Institute Database Mirror/robusta_data_cleaned.csv`;
+const STARBUCKS_URL = `${import.meta.env.BASE_URL}data/chapter4_consumption/processed/starbucks/starbucks.csv`;
 const CONSUMPTION_ATTRIBUTES = new Set([
   "Domestic Consumption",
   "Rst,Ground Dom. Consum",
@@ -280,11 +283,177 @@ function buildConsumptionByYear(rows) {
   };
 }
 
+const CQI_FIELD_MAP = {
+  Aroma: { arabica: "Aroma", robusta: "Fragrance...Aroma" },
+  Flavor: { arabica: "Flavor", robusta: "Flavor" },
+  Aftertaste: { arabica: "Aftertaste", robusta: "Aftertaste" },
+  Acidity: { arabica: "Acidity", robusta: "Salt...Acid" },
+  Body: { arabica: "Body", robusta: "Mouthfeel" },
+  Balance: { arabica: "Balance", robusta: "Balance" },
+  CleanCup: { arabica: "Clean.Cup", robusta: "Clean.Cup" },
+};
+
+function parseCqiRow(row, species) {
+  const col = species === "Arabica" ? "arabica" : "robusta";
+  const getField = (dim) => CQI_FIELD_MAP[dim][col];
+  const num = (dim) => {
+    const v = Number(row[getField(dim)]);
+    return Number.isFinite(v) ? v : null;
+  };
+  return {
+    species,
+    country: String(row["Country.of.Origin"] ?? "").trim(),
+    processing: String(row["Processing.Method"] ?? "").trim(),
+    altitude: Number(row["altitude_mean_meters"]),
+    totalScore: Number(row["Total.Cup.Points"]),
+    dimensions: Object.keys(CQI_FIELD_MAP).reduce((acc, dim) => {
+      acc[dim] = num(dim);
+      return acc;
+    }, {}),
+  };
+}
+
+function loadCqiFresh(url, species) {
+  return fetch(url, { cache: "no-store" }).then((r) => {
+    if (!r.ok) throw new Error(`Failed to load CQI ${species}: ${r.status}`);
+    return r.text().then((text) => d3.csvParse(text, (row) => parseCqiRow(row, species)));
+  });
+}
+
+function parseStarbucksRow(row) {
+  const num = (field) => {
+    const v = Number(row[field]);
+    return Number.isFinite(v) ? v : null;
+  };
+  return {
+    category: String(row["Beverage_category"] ?? "").trim(),
+    beverage: String(row["Beverage"] ?? "").trim(),
+    prep: String(row["Beverage_prep"] ?? "").trim(),
+    calories: num("Calories"),
+    fat: num(" Total Fat (g)"),
+    saturatedFat: num("Saturated Fat (g)"),
+    carbs: num(" Total Carbohydrates (g) "),
+    sugars: num(" Sugars (g)"),
+    protein: num(" Protein (g) "),
+    caffeine: num("Caffeine (mg)"),
+    sodium: num(" Sodium (mg)"),
+  };
+}
+
+function buildCqiAverages(rows) {
+  const dims = Object.keys(CQI_FIELD_MAP);
+  return {
+    species: rows[0]?.species ?? "",
+    count: rows.length,
+    countryCount: new Set(rows.map((r) => r.country)).size,
+    altitudeAvg: d3.mean(rows, (r) => r.altitude > 0 && r.altitude <= 5000 ? r.altitude : null) ?? 0,
+    totalScoreAvg: d3.mean(rows, (r) => r.totalScore > 0 ? r.totalScore : null) ?? 0,
+    dimensions: Object.fromEntries(
+      dims.map((dim) => [
+        dim,
+        d3.mean(rows, (r) => r.dimensions[dim] != null ? r.dimensions[dim] : null) ?? 0,
+      ]),
+    ),
+  };
+}
+
+function buildCqiAltitudeData(arabicaRows, robustaRows) {
+  const valid = (r) => r.totalScore > 0 && r.altitude > 0 && r.altitude <= 5000;
+  return [
+    ...arabicaRows.filter(valid).map((r) => ({ species: "Arabica", altitude: r.altitude, score: r.totalScore })),
+    ...robustaRows.filter(valid).map((r) => ({ species: "Robusta", altitude: r.altitude, score: r.totalScore })),
+  ];
+}
+
+function buildProcessingStats(arabicaRows) {
+  const groups = d3.rollup(
+    arabicaRows.filter((r) => r.totalScore > 0 && r.processing),
+    (values) => values.map((r) => r.totalScore),
+    (r) => r.processing,
+  );
+  return Array.from(groups, ([method, scores]) => {
+    const sorted = [...scores].sort(d3.ascending);
+    return {
+      method,
+      count: sorted.length,
+      min: sorted[0],
+      q1: d3.quantileSorted(sorted, 0.25),
+      median: d3.quantileSorted(sorted, 0.5),
+      q3: d3.quantileSorted(sorted, 0.75),
+      max: sorted[sorted.length - 1],
+      mean: d3.mean(sorted),
+    };
+  }).filter((d) => d.count >= 10)
+   .sort((a, b) => d3.descending(a.median, b.median));
+}
+
+function buildStarbucksCategoryCaffeine(rows) {
+  return Array.from(
+    d3.rollup(
+      rows.filter((r) => r.caffeine != null),
+      (values) => {
+        const vals = values.map((r) => r.caffeine);
+        return {
+          avg: d3.mean(vals),
+          min: d3.min(vals),
+          max: d3.max(vals),
+          count: vals.length,
+        };
+      },
+      (r) => r.category,
+    ),
+    ([category, stats]) => ({ category, ...stats }),
+  ).sort((a, b) => d3.descending(a.avg, b.avg));
+}
+
+function buildStarbucksBeverageNutrients(rows) {
+  const lookup = [
+    { name: "Caffè Americano", prep: "Grande" },
+    { name: "Caffè Latte", prep: "2% Milk" },
+    { name: "Cappuccino", prep: "2% Milk" },
+    { name: "Caffè Mocha (Without Whipped Cream)", prep: "2% Milk" },
+    { name: "Espresso", prep: "Doppio" },
+  ];
+  return lookup.map(({ name, prep }) => {
+    const match = rows.find((r) => r.beverage === name && r.prep === prep);
+    if (!match) return null;
+    return {
+      beverage: name.replace(" (Without Whipped Cream)", ""),
+      calories: match.calories,
+      fat: match.fat,
+      carbs: match.carbs,
+      protein: match.protein,
+      caffeine: match.caffeine,
+    };
+  }).filter(Boolean);
+}
+
+function buildStarbucksMilkComparison(rows) {
+  const SIZE_ORDER = ["Short", "Tall", "Grande", "Venti"];
+  const MILK_ORDER = ["Nonfat", "2%", "Soy"];
+  const entries = rows.filter((r) => r.beverage === "Caffè Latte");
+  return entries.map((r, i) => {
+    const gi = Math.floor(i / 3);
+    const mi = i % 3;
+    const hasSize = /^(Short|Tall|Grande|Venti)\s/.test(r.prep);
+    const size = hasSize
+      ? SIZE_ORDER.find((s) => r.prep.startsWith(s)) ?? "Unknown"
+      : SIZE_ORDER[gi] ?? "Unknown";
+    const milk = r.prep.includes("Nonfat") ? "Nonfat"
+                : r.prep.includes("Soy") ? "Soy"
+                : r.prep.includes("2%") ? "2%" : MILK_ORDER[mi] ?? "Unknown";
+    return { size, milk, calories: r.calories, fat: r.fat, carbs: r.carbs, protein: r.protein, caffeine: r.caffeine };
+  });
+}
+
 export async function loadChapter4Data() {
-  const [rawRows, focusRows, consumptionRows] = await Promise.all([
+  const [rawRows, focusRows, consumptionRows, arabicaCqi, robustaCqi, starbucksRows] = await Promise.all([
     loadCsvFresh(PROFILE_DATA_URL),
     loadCsvFresh(FOCUS_DATA_URL),
     loadConsumptionFresh(CONSUMPTION_DATA_URL),
+    loadCqiFresh(CQI_ARABICA_URL, "Arabica"),
+    loadCqiFresh(CQI_ROBUSTA_URL, "Robusta"),
+    loadCsvFresh(STARBUCKS_URL).then((rows) => rows.map(parseStarbucksRow)),
   ]);
   const rows = parseRows(rawRows);
   const trackerRows = parseTrackerRows(focusRows);
@@ -292,6 +461,19 @@ export async function loadChapter4Data() {
   const ageProfiles = buildAgeProfiles(rows);
   const consumptionSeries = buildConsumptionByYear(consumptionRows);
   const meta = buildMeta(rows);
+
+  const beanShare = [
+    { label: "Arabica", value: 65, caffeine: "0.8-1.4%" },
+    { label: "Robusta", value: 30, caffeine: "1.7-4.0%" },
+    { label: "Liberica", value: 5, caffeine: "< 1.0%" },
+  ];
+  const cqiArabica = buildCqiAverages(arabicaCqi);
+  const cqiRobusta = buildCqiAverages(robustaCqi);
+  const altitudeData = buildCqiAltitudeData(arabicaCqi, robustaCqi);
+  const processingStats = buildProcessingStats(arabicaCqi);
+  const categoryCaffeine = buildStarbucksCategoryCaffeine(starbucksRows);
+  const beverageNutrients = buildStarbucksBeverageNutrients(starbucksRows);
+  const milkComparison = buildStarbucksMilkComparison(starbucksRows);
 
   return {
     rows,
@@ -304,6 +486,14 @@ export async function loadChapter4Data() {
     orders: ORDERED_CATEGORIES,
     colorBuckets: COLOR_BUCKETS,
     displayNames: DISPLAY_NAMES,
+    beanShare,
+    cqiArabica,
+    cqiRobusta,
+    altitudeData,
+    processingStats,
+    categoryCaffeine,
+    beverageNutrients,
+    milkComparison,
   };
 }
 
@@ -323,14 +513,15 @@ export function getCategoryLabel(field, value) {
   return CATEGORY_LABELS[field]?.[String(value)] ?? String(value);
 }
 
-export function getQuartileAssignments(rows) {
-  const sorted = [...rows].sort((a, b) => d3.ascending(a.coffee, b.coffee));
-  const q1 = d3.quantileSorted(sorted.map((d) => d.coffee), 0.25);
-  const q2 = d3.quantileSorted(sorted.map((d) => d.coffee), 0.5);
-  const q3 = d3.quantileSorted(sorted.map((d) => d.coffee), 0.75);
+export function getQuartileAssignments(rows, field = "coffee") {
+  const sorted = [...rows].sort((a, b) => d3.ascending(a[field], b[field]));
+  const values = sorted.map((d) => d[field]).filter((value) => Number.isFinite(value));
+  const q1 = d3.quantileSorted(values, 0.25);
+  const q2 = d3.quantileSorted(values, 0.5);
+  const q3 = d3.quantileSorted(values, 0.75);
 
   return rows.map((row) => {
-    const value = row.coffee;
+    const value = Number(row[field]);
     let quartile = "Q4";
     if (value <= q1) quartile = "Q1";
     else if (value <= q2) quartile = "Q2";

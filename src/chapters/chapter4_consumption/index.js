@@ -7,15 +7,29 @@ import {
   renderCountryRanking,
   renderDomesticConsumption,
   renderWorldConsumptionTrend,
-  renderFocusTiming,
   renderGenderCoffeeComparison,
   renderOutcomeMetric,
+  renderBeanShare,
+  renderSensoryRadar,
+  renderAltitudeQuality,
+  renderProcessingMethod,
+  renderCaffeineRange,
+  renderNutrientCompare,
+  renderMilkChoice,
+  renderFocusScatter,
 } from "./charts.js";
 
 let renderSequence = 0;
 let activeMotionCleanup = () => {};
 
 const QUESTION_MAP = {
+  beanShare: { all: "What are the main commercial coffee species?" },
+  sensoryRadar: { all: "How do Arabica and Robusta compare sensorially?" },
+  altitudeQuality: { all: "Does higher altitude mean better coffee quality?" },
+  processingMethod: { all: "How does processing affect cup quality?" },
+  caffeineRange: { all: "Which Starbucks beverage has the most caffeine?" },
+  nutrientCompare: { all: "What nutrients are in classic espresso drinks?" },
+  milkChoice: { all: "How does milk choice affect nutrition?" },
   worldTrend: {
     all: "How has global coffee consumption changed?",
   },
@@ -53,9 +67,43 @@ const QUESTION_MAP = {
     healthIssues: "Do reported health issues change as coffee intake rises?",
   },
   focus: {
-    morning: "Does morning caffeine consumption change focus?",
-    afternoon: "Does afternoon caffeine consumption change focus?",
-    evening: "Does evening caffeine consumption change focus?",
+    all: "Does caffeine intake change focus?",
+  },
+};
+
+const PROFILE_DIMENSIONS = [
+  { value: "age", label: "Age" },
+  { value: "gender", label: "Gender" },
+  { value: "occupation", label: "Occupation" },
+  { value: "alcohol", label: "Alcohol" },
+  { value: "smoking", label: "Smoking" },
+];
+
+const PROFILE_METRICS = [
+  { value: "coffee", label: "Coffee intake" },
+  { value: "caffeine", label: "Caffeine" },
+];
+
+const PROFILE_QUESTION_MAP = {
+  age: {
+    coffee: "Does coffee intake change across age bands?",
+    caffeine: "Does caffeine intake change across age bands?",
+  },
+  gender: {
+    coffee: "Does coffee intake differ by gender?",
+    caffeine: "Does caffeine intake differ by gender?",
+  },
+  occupation: {
+    coffee: "Does coffee intake vary by occupation?",
+    caffeine: "Does caffeine intake vary by occupation?",
+  },
+  alcohol: {
+    coffee: "Does coffee intake vary with alcohol use?",
+    caffeine: "Does caffeine intake vary with alcohol use?",
+  },
+  smoking: {
+    coffee: "Does coffee intake vary with smoking?",
+    caffeine: "Does caffeine intake vary with smoking?",
   },
 };
 
@@ -102,7 +150,7 @@ function flipDeckMarkup(deckId, frontSlot, backSlot) {
   `;
 }
 
-function sectionShell({ id, section, reversed, controlGroup, controls, active, chartSlot, chartMarkup }) {
+function sectionShell({ id, section, reversed, controlGroup, controls, active, chartSlot, chartMarkup, panelClass = "" }) {
   const toolbar = controls && controls.length
     ? `
         <div class="chapter4-panel-toolbar">
@@ -120,7 +168,7 @@ function sectionShell({ id, section, reversed, controlGroup, controls, active, c
         <h3 data-question-for="${controlGroup}">${section.title}</h3>
         <p class="chapter4-answer" data-answer-for="${controlGroup}" aria-live="polite"></p>
       </div>
-      <div class="chapter4-panel" id="${id}">
+      <div class="chapter4-panel ${panelClass}" id="${id}">
         ${toolbar}
         ${chartMarkup ?? `<div id="${chartSlot}"></div>`}
       </div>
@@ -128,10 +176,121 @@ function sectionShell({ id, section, reversed, controlGroup, controls, active, c
   `;
 }
 
+function profileShellMarkup() {
+  return `
+    <div class="chapter4-profile-shell">
+      <aside class="chapter4-profile-rail" data-profile-dimension-rail>
+        <span class="chapter4-profile-label">Profile lens</span>
+        <div class="chapter4-controls chapter4-profile-dimension-controls">
+          ${PROFILE_DIMENSIONS.map((option) => `
+            <button
+              class="chapter4-chip"
+              type="button"
+              data-profile-dimension="${option.value}"
+            >
+              ${option.label}
+            </button>
+          `).join("")}
+        </div>
+      </aside>
+      <div class="chapter4-profile-main">
+        <div class="chapter4-panel-toolbar chapter4-profile-toolbar">
+          <div class="chapter4-controls chapter4-profile-metric-controls">
+            ${PROFILE_METRICS.map((option) => `
+              <button
+                class="chapter4-chip"
+                type="button"
+                data-profile-metric="${option.value}"
+              >
+              ${option.label}
+              </button>
+            `).join("")}
+          </div>
+        </div>
+        <div class="chapter4-profile-stage">
+          <div class="chapter4-flip-card chapter4-profile-deck" id="chapter4-profile-deck" data-visible="front">
+            <div class="chapter4-flip-inner">
+              <div class="chapter4-flip-face is-front" data-face="front">
+                <div id="chapter4-profile-front"></div>
+              </div>
+              <div class="chapter4-flip-face is-back" data-face="back">
+                <div id="chapter4-profile-back"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function renderShell() {
   const sectionByKey = (key) => story.sections.find((section) => section.key === key);
   return `
     <div class="chapter4-board is-motion-ready">
+      ${sectionShell({
+        id: "chapter4-bean-share-shell",
+        section: sectionByKey("beanShare"),
+        reversed: false,
+        controlGroup: "beanShare",
+        controls: [],
+        chartSlot: "chapter4-bean-share",
+      })}
+
+      ${sectionShell({
+        id: "chapter4-sensory-radar-shell",
+        section: sectionByKey("sensoryRadar"),
+        reversed: true,
+        controlGroup: "sensoryRadar",
+        controls: [],
+        chartSlot: "chapter4-sensory-radar",
+      })}
+
+      ${sectionShell({
+        id: "chapter4-altitude-quality-shell",
+        section: sectionByKey("altitudeQuality"),
+        reversed: false,
+        controlGroup: "altitudeQuality",
+        controls: [],
+        chartSlot: "chapter4-altitude-quality",
+      })}
+
+      ${sectionShell({
+        id: "chapter4-processing-method-shell",
+        section: sectionByKey("processingMethod"),
+        reversed: true,
+        controlGroup: "processingMethod",
+        controls: [],
+        chartSlot: "chapter4-processing-method",
+      })}
+
+      ${sectionShell({
+        id: "chapter4-caffeine-range-shell",
+        section: sectionByKey("caffeineRange"),
+        reversed: false,
+        controlGroup: "caffeineRange",
+        controls: [],
+        chartSlot: "chapter4-caffeine-range",
+      })}
+
+      ${sectionShell({
+        id: "chapter4-nutrient-compare-shell",
+        section: sectionByKey("nutrientCompare"),
+        reversed: true,
+        controlGroup: "nutrientCompare",
+        controls: [],
+        chartSlot: "chapter4-nutrient-compare",
+      })}
+
+      ${sectionShell({
+        id: "chapter4-milk-choice-shell",
+        section: sectionByKey("milkChoice"),
+        reversed: false,
+        controlGroup: "milkChoice",
+        controls: [],
+        chartSlot: "chapter4-milk-choice",
+      })}
+
       ${sectionShell({
         id: "chapter4-world-trend-shell",
         section: sectionByKey("worldTrend"),
@@ -170,68 +329,13 @@ function renderShell() {
       })}
 
       ${sectionShell({
-        id: "chapter4-age-shell",
-        section: sectionByKey("age"),
+        id: "chapter4-profile-shell",
+        section: sectionByKey("profile"),
         reversed: true,
-        controlGroup: "age",
-        controls: [
-          { value: "coffee", label: "Coffee intake" },
-          { value: "caffeine", label: "Caffeine" },
-        ],
-        active: "coffee",
-        chartMarkup: flipDeckMarkup("chapter4-age-deck", "chapter4-age-front", "chapter4-age-back"),
-      })}
-
-      ${sectionShell({
-        id: "chapter4-gender-shell",
-        section: sectionByKey("gender"),
-        reversed: false,
-        controlGroup: "gender",
-        controls: [
-          { value: "coffee", label: "Coffee intake" },
-          { value: "caffeine", label: "Caffeine" },
-        ],
-        active: "coffee",
-        chartMarkup: flipDeckMarkup("chapter4-gender-deck", "chapter4-gender-front", "chapter4-gender-back"),
-      })}
-
-      ${sectionShell({
-        id: "chapter4-occupation-shell",
-        section: sectionByKey("occupation"),
-        reversed: true,
-        controlGroup: "occupation",
-        controls: [
-          { value: "coffee", label: "Coffee intake" },
-          { value: "caffeine", label: "Caffeine" },
-        ],
-        active: "coffee",
-        chartMarkup: flipDeckMarkup("chapter4-occupation-deck", "chapter4-occupation-front", "chapter4-occupation-back"),
-      })}
-
-      ${sectionShell({
-        id: "chapter4-alcohol-shell",
-        section: sectionByKey("alcohol"),
-        reversed: false,
-        controlGroup: "alcohol",
-        controls: [
-          { value: "coffee", label: "Coffee intake" },
-          { value: "caffeine", label: "Caffeine" },
-        ],
-        active: "coffee",
-        chartMarkup: flipDeckMarkup("chapter4-alcohol-deck", "chapter4-alcohol-front", "chapter4-alcohol-back"),
-      })}
-
-      ${sectionShell({
-        id: "chapter4-smoking-shell",
-        section: sectionByKey("smoking"),
-        reversed: true,
-        controlGroup: "smoking",
-        controls: [
-          { value: "coffee", label: "Coffee intake" },
-          { value: "caffeine", label: "Caffeine" },
-        ],
-        active: "coffee",
-        chartMarkup: flipDeckMarkup("chapter4-smoking-deck", "chapter4-smoking-front", "chapter4-smoking-back"),
+        controlGroup: "profile",
+        controls: [],
+        panelClass: "chapter4-panel--wide",
+        chartMarkup: profileShellMarkup(),
       })}
 
       ${sectionShell({
@@ -256,28 +360,30 @@ function renderShell() {
         section: sectionByKey("focus"),
         reversed: true,
         controlGroup: "focus",
-        controls: [
-          { value: "morning", label: "Morning" },
-          { value: "afternoon", label: "Afternoon" },
-          { value: "evening", label: "Evening" },
-        ],
-        active: "morning",
-        chartMarkup: flipDeckMarkup("chapter4-focus-deck", "chapter4-focus-front", "chapter4-focus-back"),
+        controls: [],
+        chartSlot: "chapter4-focus",
       })}
     </div>
   `;
 }
 
-function setupFlipDeck(deckSelector) {
+function setupFlipDeck(deckSelector, options = {}) {
   const deck = document.querySelector(deckSelector);
   const frontSlot = deck.querySelector('[data-face="front"] > div');
   const backSlot = deck.querySelector('[data-face="back"] > div');
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const settings = {
+    fixedHeight: Number.isFinite(options.fixedHeight) ? options.fixedHeight : null,
+  };
   let visible = "front";
   let flipping = false;
   let queuedRender = null;
 
   const setHeight = () => {
+    if (settings.fixedHeight) {
+      deck.style.height = `${settings.fixedHeight}px`;
+      return;
+    }
     const faces = [deck.querySelector('[data-face="front"]'), deck.querySelector('[data-face="back"]')];
     const heights = faces.map((face) => face?.scrollHeight ?? 0);
     const maxHeight = Math.max(...heights, 0);
@@ -339,7 +445,16 @@ function setupFlipDeck(deckSelector) {
     fallbackTimer = setTimeout(finishFlip, prefersReducedMotion ? 0 : 900);
   };
 
-  return { renderInitial, flipTo };
+  return {
+    renderInitial,
+    flipTo,
+    setFixedHeight: (value) => {
+      if (Number.isFinite(value) && value > 0) {
+        settings.fixedHeight = value;
+        deck.style.height = `${value}px`;
+      }
+    },
+  };
 }
 
 function setupSectionReveal(container) {
@@ -460,16 +575,6 @@ function attachControlHandlers(container, state, renderers, copyController) {
         renderers.renderRanking(true);
       } else if (group.dataset.controlGroup === "consumption") {
         renderers.renderConsumption(true);
-      } else if (group.dataset.controlGroup === "age") {
-        renderers.renderAge(true);
-      } else if (group.dataset.controlGroup === "gender") {
-        renderers.renderGender(true);
-      } else if (group.dataset.controlGroup === "occupation") {
-        renderers.renderOccupation(true);
-      } else if (group.dataset.controlGroup === "alcohol") {
-        renderers.renderAlcohol(true);
-      } else if (group.dataset.controlGroup === "smoking") {
-        renderers.renderSmoking(true);
       } else if (group.dataset.controlGroup === "outcome") {
         renderers.renderOutcome(true);
       } else if (group.dataset.controlGroup === "focus") {
@@ -477,6 +582,131 @@ function attachControlHandlers(container, state, renderers, copyController) {
       }
     });
   });
+}
+
+function setupProfileExplorer(container, data, answers, state) {
+  const root = container.querySelector(".chapter4-profile-shell");
+  const question = container.querySelector('[data-question-for="profile"]');
+  const answer = container.querySelector('[data-answer-for="profile"]');
+  const dimensionButtons = Array.from(root?.querySelectorAll("[data-profile-dimension]") ?? []);
+  const metricButtons = Array.from(root?.querySelectorAll("[data-profile-metric]") ?? []);
+  const deckController = setupFlipDeck("#chapter4-profile-deck");
+
+  const buildRenderFn = (selector) => {
+    const dimension = state.profileDimension;
+    const metric = state.profileMetric;
+    if (dimension === "age") {
+      renderAgeProfile(selector, data.ageProfiles, metric);
+      return;
+    }
+    if (dimension === "gender") {
+      renderGenderCoffeeComparison(selector, data.rows, metric);
+      return;
+    }
+    const configByDimension = {
+      occupation: {
+        field: "Occupation",
+        tag: "Occupation lens",
+        title: metric === "caffeine" ? "How do caffeine habits vary by occupation?" : "How do coffee habits vary by occupation?",
+        description: "The same occupation groups are flipped between coffee intake and caffeine so the profile stays comparable.",
+        categories: ["Healthcare", "Office", "Other", "Service", "Student"],
+        sortMetric: "coffee",
+      },
+      alcohol: {
+        field: "Alcohol_Consumption",
+        tag: "Alcohol lens",
+        title: metric === "caffeine" ? "How do caffeine habits vary with alcohol use?" : "How do coffee habits vary with alcohol use?",
+        description: "Flip between coffee and caffeine to see whether drinkers and non-drinkers differ in their average intake.",
+        categories: ["0", "1"],
+        labelMap: {
+          0: "Non-drinker",
+          1: "Drinker",
+        },
+        sortMetric: "coffee",
+      },
+      smoking: {
+        field: "Smoking",
+        tag: "Smoking lens",
+        title: metric === "caffeine" ? "How do caffeine habits vary with smoking?" : "How do coffee habits vary with smoking?",
+        description: "Flip between coffee and caffeine to compare smokers and non-smokers on the same scale.",
+        categories: ["0", "1"],
+        labelMap: {
+          0: "Non-smoker",
+          1: "Smoker",
+        },
+        sortMetric: "coffee",
+      },
+    };
+    renderCategoryMetricFlip(selector, data.rows, {
+      ...configByDimension[dimension],
+      metric,
+    });
+  };
+
+  deckController.setFixedHeight(312);
+
+  const syncButtons = () => {
+    dimensionButtons.forEach((button) => {
+      const active = button.dataset.profileDimension === state.profileDimension;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+    metricButtons.forEach((button) => {
+      const active = button.dataset.profileMetric === state.profileMetric;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+  };
+
+  const syncCopy = () => {
+    if (question) {
+      question.textContent = PROFILE_QUESTION_MAP[state.profileDimension]?.[state.profileMetric] ?? question.textContent;
+    }
+    if (answer) {
+      answer.textContent = answers[state.profileDimension]?.[state.profileMetric] ?? "";
+      answer.classList.add("is-visible");
+    }
+  };
+
+  let profileRendered = false;
+  const renderProfile = () => {
+    const renderFn = buildRenderFn;
+    if (profileRendered) {
+      deckController.flipTo(renderFn);
+      return;
+    }
+    deckController.renderInitial(renderFn);
+    profileRendered = true;
+  };
+
+  const applyState = () => {
+    syncButtons();
+    syncCopy();
+    renderProfile();
+  };
+
+  root?.querySelectorAll("[data-profile-dimension]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const next = button.dataset.profileDimension;
+      if (!next || state.profileDimension === next) return;
+      state.profileDimension = next;
+      applyState();
+    });
+  });
+
+  root?.querySelectorAll("[data-profile-metric]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const next = button.dataset.profileMetric;
+      if (!next || state.profileMetric === next) return;
+      state.profileMetric = next;
+      applyState();
+    });
+  });
+
+  return {
+    initialize: applyState,
+    cleanup: () => {},
+  };
 }
 
 export function renderChapter4(containerSelector) {
@@ -491,32 +721,31 @@ export function renderChapter4(containerSelector) {
       if (currentRender !== renderSequence) return;
 
       const state = {
+        beanShare: "all",
+        sensoryRadar: "all",
+        altitudeQuality: "all",
+        processingMethod: "all",
+        caffeineRange: "all",
+        nutrientCompare: "all",
+        milkChoice: "all",
         worldTrend: "all",
         consumption: "2022",
         ranking: "coffee",
-        age: "coffee",
-        gender: "coffee",
-        occupation: "coffee",
-        alcohol: "coffee",
-        smoking: "coffee",
+        profileDimension: "age",
+        profileMetric: "coffee",
         outcome: "sleep",
-        focus: "morning",
+        focus: "all",
       };
       const answers = buildChapter4Answers(data);
 
       container.html(renderShell(data));
       const copyController = setupCopyController(container.node(), answers);
       copyController.initialize(state);
+      const profileController = setupProfileExplorer(container.node(), data, answers, state);
 
       const consumptionDeck = setupFlipDeck("#chapter4-consumption-deck");
       const rankingDeck = setupFlipDeck("#chapter4-ranking-deck");
-      const ageDeck = setupFlipDeck("#chapter4-age-deck");
-      const genderDeck = setupFlipDeck("#chapter4-gender-deck");
-      const occupationDeck = setupFlipDeck("#chapter4-occupation-deck");
-      const alcoholDeck = setupFlipDeck("#chapter4-alcohol-deck");
-      const smokingDeck = setupFlipDeck("#chapter4-smoking-deck");
       const outcomesDeck = setupFlipDeck("#chapter4-outcomes-deck");
-      const focusDeck = setupFlipDeck("#chapter4-focus-deck");
 
       const renderers = {
         renderWorldTrend: () => {
@@ -532,90 +761,36 @@ export function renderChapter4(containerSelector) {
           if (animate) rankingDeck.flipTo(renderFn);
           else rankingDeck.renderInitial(renderFn);
         },
-        renderAge: (animate = false) => {
-          const renderFn = (selector) => renderAgeProfile(selector, data.ageProfiles, state.age);
-          if (animate) ageDeck.flipTo(renderFn);
-          else ageDeck.renderInitial(renderFn);
-        },
-        renderGender: (animate = false) => {
-          const renderFn = (selector) => renderGenderCoffeeComparison(selector, data.rows, state.gender);
-          if (animate) genderDeck.flipTo(renderFn);
-          else genderDeck.renderInitial(renderFn);
-        },
-        renderOccupation: (animate = false) => {
-          const renderFn = (selector) => renderCategoryMetricFlip(selector, data.rows, {
-            field: "Occupation",
-            metric: state.occupation,
-            title: "How do coffee habits vary by occupation?",
-            tag: "Occupation lens",
-            description: "The same occupation groups are flipped between coffee intake and caffeine so the profile stays comparable.",
-            categories: ["Healthcare", "Office", "Other", "Service", "Student"],
-            sortMetric: "coffee",
-          });
-          if (animate) occupationDeck.flipTo(renderFn);
-          else occupationDeck.renderInitial(renderFn);
-        },
-        renderAlcohol: (animate = false) => {
-          const renderFn = (selector) => renderCategoryMetricFlip(selector, data.rows, {
-            field: "Alcohol_Consumption",
-            metric: state.alcohol,
-            title: "How do coffee habits vary with drinking?",
-            tag: "Alcohol lens",
-            description: "Flip between coffee and caffeine to see whether drinkers and non-drinkers differ in their average intake.",
-            categories: ["0", "1"],
-            labelMap: {
-              0: "Non-drinker",
-              1: "Drinker",
-            },
-            sortMetric: "coffee",
-          });
-          if (animate) alcoholDeck.flipTo(renderFn);
-          else alcoholDeck.renderInitial(renderFn);
-        },
-        renderSmoking: (animate = false) => {
-          const renderFn = (selector) => renderCategoryMetricFlip(selector, data.rows, {
-            field: "Smoking",
-            metric: state.smoking,
-            title: "How do coffee habits vary with smoking?",
-            tag: "Smoking lens",
-            description: "Flip between coffee and caffeine to compare smokers and non-smokers on the same scale.",
-            categories: ["0", "1"],
-            labelMap: {
-              0: "Non-smoker",
-              1: "Smoker",
-            },
-            sortMetric: "coffee",
-          });
-          if (animate) smokingDeck.flipTo(renderFn);
-          else smokingDeck.renderInitial(renderFn);
-        },
         renderOutcome: (animate = false) => {
           const renderFn = (selector) => renderOutcomeMetric(selector, data.rows, state.outcome);
           if (animate) outcomesDeck.flipTo(renderFn);
           else outcomesDeck.renderInitial(renderFn);
         },
-        renderFocus: (animate = false) => {
-          const renderFn = (selector) => renderFocusTiming(selector, data.trackerRows, state.focus);
-          if (animate) focusDeck.flipTo(renderFn);
-          else focusDeck.renderInitial(renderFn);
+        renderFocus: () => {
+          renderFocusScatter("#chapter4-focus", data.trackerRows);
         },
       };
+
+      renderBeanShare("#chapter4-bean-share", data.beanShare);
+      renderSensoryRadar("#chapter4-sensory-radar", data.cqiArabica, data.cqiRobusta);
+      renderAltitudeQuality("#chapter4-altitude-quality", data.altitudeData);
+      renderProcessingMethod("#chapter4-processing-method", data.processingStats);
+      renderCaffeineRange("#chapter4-caffeine-range", data.categoryCaffeine);
+      renderNutrientCompare("#chapter4-nutrient-compare", data.beverageNutrients);
+      renderMilkChoice("#chapter4-milk-choice", data.milkComparison);
 
       attachControlHandlers(container.node(), state, renderers, copyController);
       renderers.renderWorldTrend();
       renderers.renderConsumption(false);
       renderers.renderRanking(false);
-      renderers.renderAge(false);
-      renderers.renderGender(false);
-      renderers.renderOccupation(false);
-      renderers.renderAlcohol(false);
-      renderers.renderSmoking(false);
+      profileController.initialize();
       renderers.renderOutcome(false);
-      renderers.renderFocus(false);
+      renderers.renderFocus();
       const cleanupReveal = setupSectionReveal(container.node());
       activeMotionCleanup = () => {
         cleanupReveal();
         copyController.cleanup();
+        profileController.cleanup();
       };
     })
     .catch((error) => {
