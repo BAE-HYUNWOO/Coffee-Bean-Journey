@@ -229,11 +229,14 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
                         .style("stroke-width", "1px")
                         .style("stroke-dasharray", "none");
 
+                    const displayCode = market.code === "TW" ? "cn" : market.code.toLowerCase();
+                    const displayCountry = market.code === "TW" ? "Taiwan, China" : market.country;
+                    
                     hoverTooltip
                         .html(
-                            `<img src="https://flagcdn.com/w40/${market.code.toLowerCase()}.png" alt="flag">
+                            `<img src="https://flagcdn.com/w40/${displayCode}.png" alt="flag">
                             <div class="tt-text">
-                                <span class="tt-country">${market.country}</span>
+                                <span class="tt-country">${displayCountry}</span>
                                 <span class="tt-city">Entered: ${market.city} (${market.year})</span>
                             </div>`,
                         )
@@ -420,15 +423,17 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
                     .enter()
                     .append("div")
                     .attr("class", "milestone-tooltip")
-                    .html(
-                        (
-                            d,
-                        ) => `<img src="https://flagcdn.com/w40/${d.code.toLowerCase()}.png" alt="flag">
+                    .html((d) => {
+       
+                        const displayCode = d.code === "TW" ? "cn" : d.code.toLowerCase();
+                        const displayCountry = d.code === "TW" ? "Taiwan, China" : d.country;
+        
+                        return `<img src="https://flagcdn.com/w40/${displayCode}.png" alt="flag">
                         <div class="tt-text">
-                            <span class="tt-country">${d.country}</span>
+                            <span class="tt-country">${displayCountry}</span>
                             <span class="tt-city">Entered: ${d.city} (${d.year})</span>
-                        </div>`,
-                    );
+                        </div>`;
+    });
 
                 tooltipsEnter
                     .merge(tooltips)
