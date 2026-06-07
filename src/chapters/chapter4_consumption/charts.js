@@ -190,37 +190,41 @@ function formatScatterTooltip(row, colorBy) {
   return `<strong>${row.country}</strong><br>${getDisplayName(colorBy)}: ${row[colorBy]}<br>Coffee: ${d3.format(".2f")(row.coffee)} cups<br>Sleep: ${d3.format(".2f")(row.sleep)} h<br>Caffeine: ${d3.format(",.0f")(row.caffeine)} mg`;
 }
 
-export function renderWorldConsumptionTrend(containerSelector, trend) {
+export function renderWorldConsumptionTrend(containerSelector, worldData, topCountries) {
   const { frame, body } = makeFrame(containerSelector, {
     tag: "World total",
-    title: "Global domestic coffee consumption",
+    title: "Global domestic coffee consumption by country",
     description: "",
   });
-  const height = 330;
+  const height = 350;
   const { svg, width } = getSvg(body, height);
   const margins = { top: 22, right: 30, bottom: 52, left: 64 };
-  const data = trend.map((row) => ({
-    ...row,
-    roastedMillions: row.roasted / 1000,
-    solubleMillions: row.soluble / 1000,
-    totalMillions: row.total / 1000,
-  }));
+
+  const topList = Array.from(topCountries);
+  const years = worldData.map((d) => d.year);
+  const data = worldData.map(({ year, countries }) => {
+    const row = { year };
+    topList.forEach((country) => {
+      const entry = countries.find((c) => c.country === country);
+      row[country] = (entry?.total ?? 0) / 1000;
+    });
+    row.Others = (d3.sum(countries, (c) => c.total) - d3.sum(topList, (country) => row[country] * 1000)) / 1000;
+    return row;
+  });
+
   const x = d3.scaleLinear()
-    .domain(d3.extent(data, (row) => row.year))
+    .domain(d3.extent(years))
     .range([margins.left, width - margins.right]);
   const y = d3.scaleLinear()
-    .domain([0, d3.max(data, (row) => row.totalMillions)])
+    .domain([0, d3.max(data, (d) => d3.sum(topList.concat("Others"), (k) => d[k]))])
     .nice()
     .range([height - margins.bottom, margins.top]);
-  const stack = d3.stack().keys(["roastedMillions", "solubleMillions"])(data);
-  const colors = {
-    roastedMillions: "#6f452c",
-    solubleMillions: "#d7a36d",
-  };
+  const stack = d3.stack().keys(topList.concat("Others"))(data);
+  const palette = ["#5b3a26", "#8c5a38", "#b07342", "#c6874e", "#ddb07f", "#e8d5b7"];
   const area = d3.area()
-    .x((point) => x(point.data.year))
-    .y0((point) => y(point[0]))
-    .y1((point) => y(point[1]))
+    .x((d) => x(d.data.year))
+    .y0((d) => y(d[0]))
+    .y1((d) => y(d[1]))
     .curve(d3.curveMonotoneX);
 
   svg.append("g")
@@ -229,41 +233,29 @@ export function renderWorldConsumptionTrend(containerSelector, trend) {
     .join("line")
     .attr("x1", margins.left)
     .attr("x2", width - margins.right)
-    .attr("y1", (value) => y(value))
-    .attr("y2", (value) => y(value))
-    .attr("stroke", "rgba(91, 58, 38, 0.10)");
+    .attr("y1", (v) => y(v))
+    .attr("y2", (v) => y(v))
+    .attr("stroke", "rgba(91,58,38,0.10)");
 
   svg.append("g")
     .selectAll("path")
     .data(stack)
     .join("path")
     .attr("d", area)
-    .attr("fill", (series) => colors[series.key])
-    .attr("opacity", 0.94);
-
-  const totalLine = d3.line()
-    .x((row) => x(row.year))
-    .y((row) => y(row.totalMillions))
-    .curve(d3.curveMonotoneX);
-
-  svg.append("path")
-    .datum(data)
-    .attr("d", totalLine)
-    .attr("fill", "none")
-    .attr("stroke", "#2e1a12")
-    .attr("stroke-width", 2.2);
+    .attr("fill", (d, i) => palette[i])
+    .attr("opacity", 0.88);
 
   svg.append("g")
     .attr("transform", `translate(0, ${height - margins.bottom})`)
     .call(d3.axisBottom(x).ticks(7).tickFormat(d3.format("d")))
-    .call((group) => group.select(".domain").remove())
-    .call((group) => group.selectAll("text").style("font-size", "10px"));
+    .call((g) => g.select(".domain").remove())
+    .call((g) => g.selectAll("text").style("font-size", "10px"));
 
   svg.append("g")
     .attr("transform", `translate(${margins.left}, 0)`)
     .call(d3.axisLeft(y).ticks(5))
-    .call((group) => group.select(".domain").remove())
-    .call((group) => group.selectAll("text").style("font-size", "10px"));
+    .call((g) => g.select(".domain").remove())
+    .call((g) => g.selectAll("text").style("font-size", "10px"));
 
   svg.append("text")
     .attr("x", width / 2)
@@ -280,41 +272,10 @@ export function renderWorldConsumptionTrend(containerSelector, trend) {
     .attr("class", "chapter4-axis-label")
     .text("Million 60 kg bags");
 
-  const last = data.at(-1);
-  svg.append("circle")
-    .attr("cx", x(last.year))
-    .attr("cy", y(last.totalMillions))
-    .attr("r", 4)
-    .attr("fill", "#2e1a12");
-  svg.append("text")
-    .attr("class", "value-label")
-    .attr("x", x(last.year) - 6)
-    .attr("y", y(last.totalMillions) - 10)
-    .attr("text-anchor", "end")
-    .text(`${d3.format(".1f")(last.totalMillions)}m`);
-
-  const hoverPoints = svg.append("g")
-    .selectAll("circle")
-    .data(data)
-    .join("circle")
-    .attr("cx", (row) => x(row.year))
-    .attr("cy", (row) => y(row.totalMillions))
-    .attr("r", 8)
-    .attr("fill", "transparent");
-
-  hoverPoints.append("title")
-    .text((row) => `${row.year}\nTotal: ${d3.format(".1f")(row.totalMillions)} million bags\nRoasted & ground: ${d3.format(".1f")(row.roastedMillions)} million\nSoluble: ${d3.format(".1f")(row.solubleMillions)} million`);
-
   const legend = frame.append("div").attr("class", "chapter4-legend");
-  [
-    ["Roasted & ground", colors.roastedMillions],
-    ["Soluble", colors.solubleMillions],
-    ["Domestic total", "#2e1a12"],
-  ].forEach(([label, color], index) => {
+  topList.concat("Others").forEach((label, i) => {
     const item = legend.append("div").attr("class", "chapter4-legend-item");
-    item.append("span")
-      .attr("class", `chapter4-legend-swatch ${index === 2 ? "is-total-line" : ""}`)
-      .style("background", color);
+    item.append("span").attr("class", "chapter4-legend-swatch").style("background", palette[i]);
     item.append("span").text(label);
   });
 

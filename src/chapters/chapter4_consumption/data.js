@@ -249,7 +249,7 @@ function buildAgeProfiles(rows) {
 }
 
 function buildConsumptionByYear(rows) {
-  const excludedRegions = new Set(["European Union"]);
+  const excludedRegions = new Set(["European Union", "EU-27"]);
   const recordsByYear = d3.rollup(
     rows.filter((row) => row.year >= 1961 && !excludedRegions.has(row.country)),
     (values) => {
@@ -273,7 +273,7 @@ function buildConsumptionByYear(rows) {
 
   return {
     allYears,
-    latestYears: allYears.slice(-3),
+    latestYears: allYears.slice(-18),
     worldTrend: allYears.filter(({ year }) => year >= 2003).map(({ year, countries }) => ({
       year,
       total: d3.sum(countries, (row) => row.total),
@@ -462,6 +462,19 @@ export async function loadChapter4Data() {
   const consumptionSeries = buildConsumptionByYear(consumptionRows);
   const meta = buildMeta(rows);
 
+  const worldTrendCountries = consumptionSeries.allYears.filter(({ year }) => year >= 2003);
+  const allCountries = new Set();
+  worldTrendCountries.forEach(({ countries }) => countries.forEach((c) => allCountries.add(c.country)));
+  const countryTotals = Array.from(allCountries, (country) => {
+    let sum = 0;
+    worldTrendCountries.forEach(({ countries }) => {
+      const entry = countries.find((c) => c.country === country);
+      if (entry) sum += entry.total;
+    });
+    return { country, sum };
+  }).sort((a, b) => d3.descending(a.sum, b.sum));
+  const topCountries = new Set(countryTotals.slice(0, 5).map((d) => d.country));
+
   const beanShare = [
     { label: "Arabica", value: 65, caffeine: "0.8-1.4%" },
     { label: "Robusta", value: 30, caffeine: "1.7-4.0%" },
@@ -482,6 +495,8 @@ export async function loadChapter4Data() {
     ageProfiles,
     consumptionByYear: consumptionSeries.latestYears,
     worldConsumptionTrend: consumptionSeries.worldTrend,
+    worldTrendCountries,
+    topCountries,
     meta,
     orders: ORDERED_CATEGORIES,
     colorBuckets: COLOR_BUCKETS,

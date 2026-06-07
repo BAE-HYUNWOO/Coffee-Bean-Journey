@@ -23,51 +23,51 @@ let renderSequence = 0;
 let activeMotionCleanup = () => {};
 
 const QUESTION_MAP = {
-  beanShare: { all: "What are the main commercial coffee species?" },
-  sensoryRadar: { all: "How do Arabica and Robusta compare sensorially?" },
-  altitudeQuality: { all: "Does higher altitude mean better coffee quality?" },
-  processingMethod: { all: "How does processing affect cup quality?" },
-  caffeineRange: { all: "Which Starbucks beverage has the most caffeine?" },
-  nutrientCompare: { all: "What nutrients are in classic espresso drinks?" },
-  milkChoice: { all: "How does milk choice affect nutrition?" },
+  beanShare: { all: "不止一种豆——阿拉比卡和罗布斯塔到底差在哪？" },
+  sensoryRadar: { all: "阿拉比卡更贵，贵得有道理吗？" },
+  altitudeQuality: { all: "高海拔的咖啡豆真的更好喝？" },
+  processingMethod: { all: "水洗还是日晒——加工手法能改变什么？" },
+  caffeineRange: { all: "你手里的咖啡，到底含有多少咖啡因？" },
+  nutrientCompare: { all: "一杯拿铁不只是咖啡——里面还有什么？" },
+  milkChoice: { all: "换一种奶，热量能差多少？" },
   worldTrend: {
-    all: "How has global coffee consumption changed?",
+    all: "全球咖啡消费在涨还是在跌？",
   },
   ranking: {
-    coffee: "Which countries drink more on average?",
-    sleep: "Which countries sleep longer on average?",
-    caffeine: "Which countries consume more caffeine on average?",
+    coffee: "哪些国家的人喝咖啡最多？",
+    sleep: "这些国家的睡眠时长呢？",
+    caffeine: "换成咖啡因摄入量，排名会变吗？",
   },
   age: {
-    coffee: "Does coffee intake change across age bands?",
-    caffeine: "Does caffeine intake change across age bands?",
+    coffee: "咖啡是年轻人的饮料，还是中年人的习惯？",
+    caffeine: "不同年龄段，咖啡因摄入有什么变化？",
   },
   gender: {
-    coffee: "Does coffee intake differ by gender?",
-    caffeine: "Does caffeine intake differ by gender?",
+    coffee: "男性和女性，谁喝咖啡更多？",
+    caffeine: "性别差异在咖啡因摄入上也存在吗？",
   },
   occupation: {
-    coffee: "Does coffee intake vary by occupation?",
-    caffeine: "Does caffeine intake vary by occupation?",
+    coffee: "职业和咖啡摄入有关吗？",
+    caffeine: "换个角度，咖啡因摄入量的职业差异呢？",
   },
   alcohol: {
-    coffee: "Does coffee intake vary with drinking?",
-    caffeine: "Does caffeine intake vary with drinking?",
+    coffee: "喝酒的人和不喝酒的人，谁喝咖啡更多？",
+    caffeine: "酒精和咖啡因——这两个习惯有交集吗？",
   },
   smoking: {
-    coffee: "Does coffee intake vary with smoking?",
-    caffeine: "Does caffeine intake vary with smoking?",
+    coffee: "吸烟者和非吸烟者，咖啡习惯有差别吗？",
+    caffeine: "吸烟的咖啡因摄入者有什么不同？",
   },
   outcome: {
-    sleep: "Does heavier coffee intake travel with shorter sleep?",
-    sleepQuality: "Does heavier coffee intake travel with poorer sleep quality?",
-    stress: "Does heavier coffee intake travel with higher stress?",
-    bmi: "Does BMI change as coffee intake rises?",
-    activity: "Does activity change as coffee intake rises?",
-    healthIssues: "Do reported health issues change as coffee intake rises?",
+    sleep: "咖啡喝越多，睡得越少？",
+    sleepQuality: "咖啡喝越多，睡眠质量越差？",
+    stress: "咖啡喝越多，压力更大吗？",
+    bmi: "咖啡摄入量升高，BMI 会跟着涨吗？",
+    activity: "咖啡喝得多的人，运动量会变化吗？",
+    healthIssues: "咖啡喝多了，健康问题会增多吗？",
   },
   focus: {
-    all: "Does caffeine intake change focus?",
+    all: "咖啡因能提升专注力吗？什么时候喝效果最好？",
   },
 };
 
@@ -109,7 +109,7 @@ const PROFILE_QUESTION_MAP = {
 
 function getQuestion(groupName, value, fallback = "") {
   if (groupName === "consumption") {
-    return `Which countries consumed the most coffee in ${value}?`;
+    return `${value}年，哪个国家咖啡消费量最大？`;
   }
   return QUESTION_MAP[groupName]?.[value] ?? fallback;
 }
@@ -306,9 +306,24 @@ function renderShell() {
         reversed: true,
         controlGroup: "consumption",
         controls: [
-          { value: "2020", label: "2020" },
-          { value: "2021", label: "2021" },
           { value: "2022", label: "2022" },
+          { value: "2021", label: "2021" },
+          { value: "2020", label: "2020" },
+          { value: "2019", label: "2019" },
+          { value: "2018", label: "2018" },
+          { value: "2017", label: "2017" },
+          { value: "2016", label: "2016" },
+          { value: "2015", label: "2015" },
+          { value: "2014", label: "2014" },
+          { value: "2013", label: "2013" },
+          { value: "2012", label: "2012" },
+          { value: "2011", label: "2011" },
+          { value: "2010", label: "2010" },
+          { value: "2009", label: "2009" },
+          { value: "2008", label: "2008" },
+          { value: "2007", label: "2007" },
+          { value: "2006", label: "2006" },
+          { value: "2005", label: "2005" },
         ],
         active: "2022",
         chartMarkup: flipDeckMarkup("chapter4-consumption-deck", "chapter4-consumption-front", "chapter4-consumption-back"),
@@ -749,7 +764,7 @@ export function renderChapter4(containerSelector) {
 
       const renderers = {
         renderWorldTrend: () => {
-          renderWorldConsumptionTrend("#chapter4-world-trend", data.worldConsumptionTrend);
+          renderWorldConsumptionTrend("#chapter4-world-trend", data.worldTrendCountries, data.topCountries);
         },
         renderConsumption: (animate = false) => {
           const renderFn = (selector) => renderDomesticConsumption(selector, data.consumptionByYear, state.consumption);
