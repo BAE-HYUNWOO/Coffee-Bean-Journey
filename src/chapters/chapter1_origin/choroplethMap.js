@@ -173,13 +173,22 @@ export function drawChoroplethMap(containerSelector, { mapData, worldTopoJSON })
     .attr("height", mapHeight)
     .attr("fill", "#8FBCD4");
 
+  // Clip path so zoomed map content stays within ocean bounds
+  svg.append("defs").append("clipPath")
+    .attr("id", "map-clip")
+    .append("rect")
+    .attr("width", width)
+    .attr("height", mapHeight);
+
   // Projection — scale to fit world nicely
   const projection = d3.geoNaturalEarth1()
     .scale(width / 6.2)
     .translate([width / 2, mapHeight / 2]);
   const pathGen = d3.geoPath().projection(projection);
 
-  const g = svg.append("g");
+  // Wrapper group: clip stays fixed in SVG space regardless of zoom
+  const clipG = svg.append("g").attr("clip-path", "url(#map-clip)");
+  const g = clipG.append("g");
 
   // Zoom — with translate bounds to prevent infinite panning
   const zoom = d3.zoom()
@@ -463,7 +472,7 @@ export function drawChoroplethMap(containerSelector, { mapData, worldTopoJSON })
     const observer = new ResizeObserver(() => {
       const newWidth = Math.max(340, svgContainer.node()?.getBoundingClientRect().width || 640);
       svg.attr("viewBox", `0 0 ${newWidth} ${mapHeight}`);
-      svg.select("rect").attr("width", newWidth).attr("height", mapHeight);
+      svg.selectAll("rect").attr("width", newWidth).attr("height", mapHeight);
       projection.scale(newWidth / 6.2).translate([newWidth / 2, mapHeight / 2]);
       render();
     });
