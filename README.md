@@ -1,24 +1,50 @@
-# A Coffee Bean's Journey Around the World
+# Chapter 2 Trade module
 
-A polished D3.js scrollytelling site template for a coffee data visualization project.
+This folder contains the D3 implementation for:
 
-## Run locally
+- Global coffee route map
+- Sankey-style exporter → importer ribbons
+- Force-directed trade network
+- Recent-period trend chart
+- Top exporter/importer rankings
 
-```bash
-npm install
-npm run dev
+## How to use
+
+1. Copy the `src/` and `public/` folders from this package into your project root.
+2. Put the real UN Comtrade CSV here:
+
+```txt
+public/data/chapter2_trade/raw/comtrade_coffee_recent_raw.csv
 ```
 
-> Note: Do not open `index.html` directly from the filesystem. This project requires Vite to resolve imports like `d3`.
+3. Run:
 
-## Structure
+```bash
+python src/chapters/chapter2_trade/process_trade_data.py
+```
 
-Each chapter has its own code and data folder:
+4. In your page/router/main file, render the chapter:
 
-- Chapter 1 Origin: `src/chapters/chapter1_origin/`
-- Chapter 2 Trade: `src/chapters/chapter2_trade/`
-- Chapter 3 Market: `src/chapters/chapter3_market/`
-- Chapter 4 Consumption: `src/chapters/chapter4_consumption/`
-- Chapter 5 Climate: `src/chapters/chapter5_climate/`
+```js
+import renderChapter2Trade from "./chapters/chapter2_trade";
 
-The current version contains polished placeholder visualization slots. Replace the placeholders with final D3 charts as datasets are cleaned.
+renderChapter2Trade("#chapter2-trade");
+```
+
+5. Make sure your HTML has:
+
+```html
+<section id="chapter2-trade"></section>
+```
+
+## Important
+
+For the full visual experience, the raw UN Comtrade download must use:
+
+```txt
+Partners: All
+2nd Partner: World
+Aggregate By: None
+```
+
+If your raw file only has `partnerDesc = World`, the top exporter chart works, but Sankey/map/network will not have real bilateral flows.
