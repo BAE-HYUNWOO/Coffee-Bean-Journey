@@ -1,3 +1,4 @@
+import * as d3 from "d3";
 import { getQuartileAssignments } from "./data.js";
 
 const PROFILE_METRICS = {

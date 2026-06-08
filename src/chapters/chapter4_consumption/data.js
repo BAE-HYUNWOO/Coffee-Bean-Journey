@@ -1,9 +1,21 @@
-const PROFILE_DATA_URL = `${import.meta.env.BASE_URL}data/chapter4_consumption/processed/synthetic_coffee_health_10000.csv`;
-const FOCUS_DATA_URL = `${import.meta.env.BASE_URL}data/chapter4_consumption/processed/caffeine_intake_tracker.csv`;
-const CONSUMPTION_DATA_URL = `${import.meta.env.BASE_URL}data/chapter4_consumption/processed/final.csv`;
-const CQI_ARABICA_URL = `${import.meta.env.BASE_URL}data/chapter4_consumption/processed/ Coffee Quality Institute Database Mirror/arabica_data_cleaned.csv`;
-const CQI_ROBUSTA_URL = `${import.meta.env.BASE_URL}data/chapter4_consumption/processed/ Coffee Quality Institute Database Mirror/robusta_data_cleaned.csv`;
-const STARBUCKS_URL = `${import.meta.env.BASE_URL}data/chapter4_consumption/processed/starbucks/starbucks.csv`;
+import * as d3 from "d3";
+const CHAPTER4_PROCESSED_BASE = `${import.meta.env.BASE_URL}data/chapter4_consumption/processed/`;
+const PROFILE_DATA_URL = `${CHAPTER4_PROCESSED_BASE}synthetic_coffee_health_10000.csv`;
+const FOCUS_DATA_URL = `${CHAPTER4_PROCESSED_BASE}caffeine_intake_tracker.csv`;
+const CONSUMPTION_DATA_URL = `${CHAPTER4_PROCESSED_BASE}final.csv`;
+const CQI_ARABICA_URLS = [
+  `${CHAPTER4_PROCESSED_BASE}Coffee%20Quality%20Institute%20Database%20Mirror/arabica_data_cleaned.csv`,
+  `${CHAPTER4_PROCESSED_BASE}%20Coffee%20Quality%20Institute%20Database%20Mirror/arabica_data_cleaned.csv`,
+  `${CHAPTER4_PROCESSED_BASE}Coffee Quality Institute Database Mirror/arabica_data_cleaned.csv`,
+  `${CHAPTER4_PROCESSED_BASE} Coffee Quality Institute Database Mirror/arabica_data_cleaned.csv`,
+];
+const CQI_ROBUSTA_URLS = [
+  `${CHAPTER4_PROCESSED_BASE}Coffee%20Quality%20Institute%20Database%20Mirror/robusta_data_cleaned.csv`,
+  `${CHAPTER4_PROCESSED_BASE}%20Coffee%20Quality%20Institute%20Database%20Mirror/robusta_data_cleaned.csv`,
+  `${CHAPTER4_PROCESSED_BASE}Coffee Quality Institute Database Mirror/robusta_data_cleaned.csv`,
+  `${CHAPTER4_PROCESSED_BASE} Coffee Quality Institute Database Mirror/robusta_data_cleaned.csv`,
+];
+const STARBUCKS_URL = `${CHAPTER4_PROCESSED_BASE}starbucks/starbucks.csv`;
 const CONSUMPTION_ATTRIBUTES = new Set([
   "Domestic Consumption",
   "Rst,Ground Dom. Consum",
@@ -313,11 +325,30 @@ function parseCqiRow(row, species) {
   };
 }
 
-function loadCqiFresh(url, species) {
-  return fetch(url, { cache: "no-store" }).then((r) => {
-    if (!r.ok) throw new Error(`Failed to load CQI ${species}: ${r.status}`);
-    return r.text().then((text) => d3.csvParse(text, (row) => parseCqiRow(row, species)));
-  });
+async function fetchTextWithFallback(urls, label) {
+  const candidates = Array.isArray(urls) ? urls : [urls];
+  const errors = [];
+
+  for (const url of candidates) {
+    try {
+      const response = await fetch(url, { cache: "no-store" });
+      if (!response.ok) {
+        errors.push(`${url} → ${response.status}`);
+        continue;
+      }
+      return await response.text();
+    } catch (error) {
+      errors.push(`${url} → ${error?.message || error}`);
+    }
+  }
+
+  throw new Error(`Failed to load ${label}. Tried: ${errors.join(" | ")}`);
+}
+
+function loadCqiFresh(urls, species) {
+  return fetchTextWithFallback(urls, `CQI ${species}`).then((text) =>
+    d3.csvParse(text, (row) => parseCqiRow(row, species)),
+  );
 }
 
 function parseStarbucksRow(row) {
@@ -451,8 +482,8 @@ export async function loadChapter4Data() {
     loadCsvFresh(PROFILE_DATA_URL),
     loadCsvFresh(FOCUS_DATA_URL),
     loadConsumptionFresh(CONSUMPTION_DATA_URL),
-    loadCqiFresh(CQI_ARABICA_URL, "Arabica"),
-    loadCqiFresh(CQI_ROBUSTA_URL, "Robusta"),
+    loadCqiFresh(CQI_ARABICA_URLS, "Arabica"),
+    loadCqiFresh(CQI_ROBUSTA_URLS, "Robusta"),
     loadCsvFresh(STARBUCKS_URL).then((rows) => rows.map(parseStarbucksRow)),
   ]);
   const rows = parseRows(rawRows);

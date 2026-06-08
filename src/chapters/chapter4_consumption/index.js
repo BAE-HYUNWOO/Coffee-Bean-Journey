@@ -1,3 +1,4 @@
+import * as d3 from "d3";
 import { loadChapter4Data } from "./data.js";
 import { buildChapter4Answers } from "./insights.js";
 import { story } from "./story.js";
@@ -18,6 +19,7 @@ import {
   renderMilkChoice,
   renderFocusScatter,
 } from "./charts.js";
+import "./style.css";
 
 let renderSequence = 0;
 let activeMotionCleanup = () => {};
@@ -731,7 +733,7 @@ export function renderChapter4(containerSelector) {
   const container = d3.select(containerSelector);
   container.html(`<div class="chapter4-loading">Loading chapter 4 data…</div>`);
 
-  loadChapter4Data()
+  return loadChapter4Data()
     .then((data) => {
       if (currentRender !== renderSequence) return;
 
@@ -811,6 +813,6 @@ export function renderChapter4(containerSelector) {
     .catch((error) => {
       if (currentRender !== renderSequence) return;
       console.error("Failed to load chapter 4 data", error);
-      container.html(`<div class="chapter4-error">Chapter 4 data could not be loaded. Please check the processed CSV file.</div>`);
+      container.html(`<div class="chapter4-error"><strong>Chapter 4 data could not be loaded.</strong><span>${error?.message || "Please check the processed CSV files."}</span></div>`);
     });
 }
