@@ -83,47 +83,13 @@ function renderNavigation() {
 }
 
 function renderOpening(main) {
-  const hero = main.append("section").attr("class", "home-top-hero unified-opening").attr("id", "home");
+  const hero = main.append("section")
+    .attr("class", "home-top-hero unified-opening clean-opening")
+    .attr("id", "home")
+    .attr("aria-label", "Coffee journey opening image");
+
   hero.append("div").attr("class", "home-slideshow");
   hero.append("div").attr("class", "hero-soft-overlay");
-  const heroCopy = hero.append("div").attr("class", "opening-copy reveal-item");
-  heroCopy.append("p").attr("class", "opening-eyebrow").text("A Coffee Bean's Journey Around the World");
-  heroCopy.append("h1").html("One bean.<br/>Five systems.<br/>A global story.");
-  heroCopy.append("p").attr("class", "opening-lead")
-    .text("Follow coffee from tropical farms through trade routes, brand networks, consumer habits, and future climate pressure.");
-  const actions = heroCopy.append("div").attr("class", "opening-actions");
-  actions.append("a").attr("href", "#origin").attr("class", "primary-action").text("Start the journey");
-  actions.append("a").attr("href", "#trade").attr("class", "secondary-action").text("Jump to trade");
-
-  const notice = main.append("section").attr("class", "home-notice-bar story-notice reveal-item");
-  notice.append("a")
-    .attr("href", "#origin")
-    .attr("class", "notice-left")
-    .html(`
-      <strong>Scrollytelling Mode</strong>
-      <span>All chapters are now connected into one continuous data magazine.</span>
-      <em>↓</em>
-    `);
-
-  notice.append("a")
-    .attr("href", "#prosperity")
-    .attr("class", "notice-right")
-    .html(`
-      <span>Farm · Route · Brand · Cup · Future</span>
-      <em>⌄</em>
-    `);
-
-  const quick = main.append("section").attr("class", "home-quick-links unified-quick reveal-item");
-  chapters.forEach((chapter) => {
-    quick.append("a")
-      .attr("href", chapter.path)
-      .attr("class", `quick-card ${chapter.themeClass}`)
-      .html(`
-        <span>${chapter.number}</span>
-        <strong>${chapter.navTitle}</strong>
-        <small>${chapter.dataset}</small>
-      `);
-  });
 }
 
 function renderChapterSection(main, page, index) {
@@ -143,8 +109,6 @@ function renderChapterSection(main, page, index) {
   const meta = intro.append("div").attr("class", "chapter-side-meta");
   if (page.dataset) meta.append("div").html(`<strong>Dataset</strong><span>${page.dataset}</span>`);
   if (page.sourceLabel) meta.append("div").html(`<strong>Main fields</strong><span>${page.sourceLabel}</span>`);
-  meta.append("a").attr("href", index < chapters.length - 1 ? chapters[index + 1].path : "#conclusion").text(index < chapters.length - 1 ? "Next chapter →" : "Conclusion →");
-
   const board = shell.append("div")
     .attr("class", "chapter-visual-board")
     .attr("id", `${page.id}-visual`);

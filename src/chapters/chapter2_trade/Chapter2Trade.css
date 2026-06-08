@@ -391,3 +391,188 @@
   .viz-card-title { flex-direction: column; align-items: flex-start; }
   .viz-help { white-space: normal; }
 }
+
+
+/* Harmonized light theme for the unified coffee journey page */
+.unified-page .chapter2-trade-root,
+.chapter2-trade-root {
+  width: 100%;
+  color: var(--text, #2b1a12);
+  background: transparent;
+}
+
+.unified-page .chapter2-trade,
+.chapter2-trade {
+  min-height: auto;
+  padding: 0;
+  background: transparent;
+  color: var(--text, #2b1a12);
+}
+
+.unified-page .chapter2-trade::before,
+.unified-page .coffee-orbit,
+.unified-page .chapter2-hero {
+  display: none !important;
+}
+
+.unified-page .chapter2-controls {
+  max-width: none;
+  margin: 0 0 18px;
+  grid-template-columns: 1.35fr 220px 1fr;
+}
+
+.unified-page .control-block,
+.unified-page .route-detail-face,
+.unified-page .kpi-face,
+.unified-page .viz-card {
+  border: 1px solid var(--line, rgba(91,58,38,0.16));
+  color: var(--text, #2b1a12);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(99, 141, 158, 0.10), transparent 16rem),
+    rgba(255, 248, 239, 0.74);
+  box-shadow: 0 18px 42px rgba(88, 50, 26, 0.10);
+  backdrop-filter: blur(12px);
+}
+
+.unified-page .control-block label,
+.unified-page .control-block label b,
+.unified-page .detail-kicker,
+.unified-page .viz-help,
+.unified-page .axis-title {
+  color: var(--accent, #638d9e);
+}
+
+.unified-page .hint,
+.unified-page .route-detail-face p,
+.unified-page .kpi-card p,
+.unified-page .viz-card-title small {
+  color: var(--muted, #6d5545);
+}
+
+.unified-page .year-buttons button,
+.unified-page #chapter2-metric {
+  border-color: var(--line, rgba(91,58,38,0.16));
+  background: rgba(255, 255, 255, 0.62);
+  color: var(--coffee-dark, #2b1a12);
+}
+
+.unified-page .year-buttons button:hover {
+  background: rgba(255, 248, 239, 0.95);
+}
+
+.unified-page .year-buttons button.active {
+  background: linear-gradient(135deg, var(--accent, #638d9e), #d9b58a);
+  color: #fffaf1;
+  box-shadow: 0 12px 28px rgba(99, 141, 158, 0.20);
+}
+
+.unified-page .route-detail-face h3,
+.unified-page .viz-card-title span,
+.unified-page .sankey-node-label,
+.unified-page .ranking-label,
+.unified-page .network-label,
+.unified-page .timeline-current,
+.unified-page .empty-note {
+  color: var(--coffee-dark, #2b1a12);
+  fill: var(--coffee-dark, #2b1a12);
+  text-shadow: none;
+}
+
+.unified-page .route-detail-face b,
+.unified-page .kpi-card b,
+.unified-page .ranking-value {
+  color: var(--accent, #638d9e);
+  fill: var(--accent, #638d9e);
+}
+
+.unified-page .kpi-card span,
+.unified-page .kpi-card em,
+.unified-page .sankey-node-value,
+.unified-page .network-legend text,
+.unified-page .timeline-axis text,
+.unified-page .map-caption {
+  color: var(--muted, #6d5545);
+  fill: var(--muted, #6d5545);
+}
+
+.unified-page .map-bg,
+.unified-page .sankey-bg,
+.unified-page .network-bg {
+  fill: rgba(255, 250, 241, 0.64);
+}
+
+.unified-page .map-sphere {
+  fill: rgba(240, 225, 205, 0.82);
+  stroke: rgba(91, 58, 38, 0.18);
+}
+
+.unified-page .map-graticule {
+  stroke: rgba(91, 58, 38, 0.10);
+}
+
+.unified-page .route-line,
+.unified-page .sankey-link,
+.unified-page .network-link,
+.unified-page .timeline-line {
+  stroke: color-mix(in srgb, var(--accent, #638d9e) 78%, var(--coffee) 22%);
+  mix-blend-mode: normal;
+}
+
+.unified-page .route-line.is-hovered,
+.unified-page .route-line.is-selected,
+.unified-page .sankey-link.is-selected,
+.unified-page .network-link.is-hovered {
+  stroke: var(--coffee, #6f432b);
+}
+
+.unified-page .country-node,
+.unified-page .network-exporter,
+.unified-page .network-importer {
+  filter: drop-shadow(0 7px 14px rgba(91, 58, 38, 0.18));
+}
+
+.unified-page .exporter-node,
+.unified-page .network-exporter,
+.unified-page .ranking-bar,
+.unified-page .timeline-dot {
+  fill: var(--accent, #638d9e);
+}
+
+.unified-page .importer-node,
+.unified-page .network-importer {
+  fill: #c98f4f;
+}
+
+.unified-page .sankey-node-bar,
+.unified-page .ranking-bar-bg {
+  fill: rgba(91, 58, 38, 0.08);
+  stroke: rgba(91, 58, 38, 0.14);
+}
+
+.unified-page .timeline-grid line,
+.unified-page .timeline-axis line,
+.unified-page .timeline-axis path {
+  stroke: rgba(91, 58, 38, 0.14);
+}
+
+.unified-page .timeline-area {
+  fill: color-mix(in srgb, var(--accent, #638d9e) 18%, transparent);
+}
+
+.unified-page .chapter2-tooltip {
+  border: 1px solid var(--line, rgba(91,58,38,0.16));
+  color: var(--text, #2b1a12);
+  background: rgba(255, 248, 239, 0.96);
+  box-shadow: 0 18px 48px rgba(88, 50, 26, 0.16);
+}
+
+.unified-page .chapter2-tooltip b,
+.unified-page .chapter2-tooltip span {
+  color: var(--accent, #638d9e);
+}
+
+@media (max-width: 980px) {
+  .unified-page .chapter2-controls {
+    grid-template-columns: 1fr;
+  }
+}

@@ -159,3 +159,39 @@
     min-height: 360px;
   }
 }
+
+
+@media (max-width: 1080px) {
+  .chapter-intro {
+    grid-template-columns: 1fr !important;
+    gap: 14px;
+  }
+
+  .chapter-intro .section-label,
+  .chapter-intro h2,
+  .chapter-intro .page-question,
+  .chapter-intro .page-description,
+  .chapter-side-meta {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+  }
+
+  .chapter-intro h2 {
+    max-width: 100%;
+  }
+
+  .chapter-side-meta {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .clean-opening,
+  .unified-opening.clean-opening {
+    height: 260px;
+  }
+
+  .chapter-intro h2 {
+    font-size: clamp(2.6rem, 14vw, 4.8rem);
+  }
+}
