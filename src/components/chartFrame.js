@@ -1,11 +1,10 @@
-
-
 export function chartFrame(containerSelector, options = {}) {
   const {
     title = "Visualization",
-    tag = "D3 slot",
-    description = "Replace this placeholder with the final visualization.",
+    tag = "D3 panel",
+    description = "",
     wide = false,
+    status = "",
   } = options;
 
   const frame = d3.select(containerSelector)
@@ -14,10 +13,12 @@ export function chartFrame(containerSelector, options = {}) {
 
   const header = frame.append("div").attr("class", "chart-frame-header");
   header.append("div").html(`<span>${tag}</span><h3>${title}</h3>`);
-  header.append("em").text("placeholder");
+  if (status) header.append("em").text(status);
 
   const body = frame.append("div").attr("class", "chart-frame-body");
-  frame.append("p").attr("class", "chart-frame-description").text(description);
+  if (description) {
+    frame.append("p").attr("class", "chart-frame-description").text(description);
+  }
 
   return { frame, body };
 }

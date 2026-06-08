@@ -69,3 +69,45 @@
   border-color: var(--line-strong);
   background: rgba(111, 67, 43, 0.08);
 }
+
+.scroll-progress {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 0%;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--coffee), var(--gold), var(--sage), var(--ocean), var(--copper));
+  transition: width 0.08s linear;
+}
+
+.site-header {
+  box-shadow: 0 14px 34px rgba(88, 50, 26, 0.08);
+}
+
+.site-menu::-webkit-scrollbar {
+  height: 0;
+}
+
+.nav-link {
+  position: relative;
+}
+
+.nav-link.is-active {
+  color: var(--coffee-dark);
+  border-color: color-mix(in srgb, var(--accent, var(--coffee)) 30%, var(--line-strong));
+  background: rgba(255, 248, 239, 0.9);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.32);
+}
+
+.nav-link.is-active::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent, var(--coffee));
+  transform: translateX(-50%);
+}

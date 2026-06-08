@@ -157,3 +157,19 @@
 .scrubber-milestone { fill: #aaaaaa; }
 .scrubber-handle { fill: #ffffff; stroke: #111; stroke-width: 2px; cursor: grab; rx: 4px; }
 .scrubber-handle:active { cursor: grabbing; fill: #006241; }
+/* Unified story integration */
+.unified-page .chapter3-wrapper {
+  width: 100%;
+  height: min(78vh, 760px);
+  min-height: 560px;
+  border-radius: 28px;
+  box-shadow: 0 22px 65px rgba(20, 73, 91, 0.18);
+}
+
+.unified-page #expansion-map .chart-frame {
+  min-height: 650px;
+}
+
+.unified-page #expansion-map .chart-frame-body {
+  padding: 0 12px 16px;
+}

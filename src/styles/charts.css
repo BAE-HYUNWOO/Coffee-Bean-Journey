@@ -142,3 +142,56 @@
   box-shadow: var(--shadow);
   transition: opacity 0.14s ease;
 }
+
+/* Premium chart surfaces for unified story */
+.unified-page .chart-frame {
+  min-height: 430px;
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 20rem),
+    linear-gradient(180deg, rgba(255,255,255,0.72), rgba(255,248,239,0.48));
+  box-shadow: 0 24px 65px rgba(88, 50, 26, 0.11);
+}
+
+.unified-page .chart-wide,
+.unified-page .wide-slot .chart-frame {
+  min-height: 520px;
+}
+
+.unified-page .chart-frame-header {
+  padding: 20px 22px 10px;
+}
+
+.unified-page .chart-frame-header h3 {
+  font-size: 1.22rem;
+}
+
+.unified-page .chart-frame-body {
+  padding: 4px 14px 0;
+}
+
+.unified-page .chart-frame-description {
+  padding: 10px 22px 22px;
+}
+
+.unified-page .chart-frame svg {
+  overflow: visible;
+}
+
+.unified-page .map-point,
+.unified-page .line-point,
+.unified-page .scatter-point,
+.unified-page .network-node {
+  filter: drop-shadow(0 5px 12px rgba(43, 26, 18, 0.16));
+}
+
+.unified-page .flow-shape,
+.unified-page .line-shape,
+.unified-page .trend-shape {
+  filter: drop-shadow(0 8px 16px rgba(43, 26, 18, 0.10));
+}
+
+.tooltip strong {
+  display: block;
+  margin-bottom: 4px;
+}

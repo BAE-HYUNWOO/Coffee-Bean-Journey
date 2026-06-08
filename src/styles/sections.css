@@ -157,3 +157,42 @@
 .wide-slot {
   grid-column: 1 / -1;
 }
+
+/* Harmonized board spacing inside unified chapters */
+.unified-page .chapter-panel-head {
+  margin-bottom: clamp(18px, 2vw, 30px);
+}
+
+.unified-page .chapter-panel-head h3 {
+  font-family: var(--serif);
+  font-size: clamp(1.9rem, 3vw, 3.2rem);
+  line-height: 0.95;
+}
+
+.unified-page .visual-grid {
+  gap: clamp(16px, 1.8vw, 26px);
+}
+
+.unified-page .wide-slot {
+  grid-column: 1 / -1;
+}
+
+.unified-page .chapter-stats {
+  gap: 12px;
+}
+
+.unified-page .chapter-stat {
+  min-width: 118px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255,255,255,0.44);
+}
+
+.unified-page .chapter-stat strong {
+  font-size: 1.12rem;
+}
+
+.unified-page .chapter-stat span {
+  color: var(--muted);
+}

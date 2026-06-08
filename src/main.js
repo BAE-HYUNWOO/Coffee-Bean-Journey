@@ -1,32 +1,18 @@
+import * as d3 from "d3";
 import { pages, chapters } from "./chapterRegistry.js";
+import { initScrollProgress } from "./shared/scrollProgress.js";
 
-const HERO_SLIDE_ROOTS = [
-  "/images/hero-slides"
-];
-
+const HERO_SLIDE_ROOTS = ["/images/hero-slides"];
 const HERO_SLIDE_CANDIDATES = [
   "coffee-1.jpg",
   "coffee-2.jpg",
   "coffee-3.jpg",
   "coffee-4.jpg",
   "coffee-5.jpg",
-].flatMap((fileName) => HERO_SLIDE_ROOTS.map((root) => `${root}/${fileName}`));
+].flatMap((fileName) => HERO_SLIDE_ROOTS.map((root) => `${import.meta.env.BASE_URL}${root.replace(/^\//, "")}/${fileName}`));
 
 const app = d3.select("#app");
-
 let heroSlideTimer = null;
-
-function getCurrentPageId() {
-  const hash = window.location.hash.replace("#", "");
-  if (!hash) return "home";
-  return pages.some((page) => page.id === hash) ? hash : "home";
-}
-
-function setActiveNav(pageId) {
-  d3.selectAll(".nav-link").classed("is-active", function () {
-    return d3.select(this).attr("href") === `#${pageId}`;
-  });
-}
 
 function imageExists(src) {
   return new Promise((resolve) => {
@@ -66,21 +52,29 @@ async function initHeroSlideshow() {
   }, 4500);
 }
 
-function renderNavigation() {
-  const nav = app.append("header").attr("class", "site-header");
+function setActiveNav(pageId) {
+  d3.selectAll(".nav-link").classed("is-active", function () {
+    return d3.select(this).attr("href") === `#${pageId}`;
+  });
+}
 
-  nav.append("a")
+function renderNavigation() {
+  const header = app.append("header").attr("class", "site-header");
+
+  header.append("div").attr("id", "scroll-progress").attr("class", "scroll-progress");
+
+  header.append("a")
     .attr("href", "#home")
     .attr("class", "site-logo")
-    .attr("aria-label", "Go to home")
+    .attr("aria-label", "Go to opening")
     .html(`
       <span class="logo-bean"></span>
       <span class="logo-text">Coffee Journey</span>
     `);
 
-  const menu = nav.append("nav").attr("class", "site-menu").attr("aria-label", "Primary navigation");
+  const menu = header.append("nav").attr("class", "site-menu").attr("aria-label", "Primary navigation");
 
-  chapters.forEach((page) => {
+  [{ id: "home", path: "#home", navTitle: "Home" }, ...chapters].forEach((page) => {
     menu.append("a")
       .attr("href", page.path)
       .attr("class", "nav-link")
@@ -88,65 +82,38 @@ function renderNavigation() {
   });
 }
 
-function renderHome() {
-  const main = app.append("main").attr("id", "page-root").attr("class", "page-root home-page");
-
-  const hero = main.append("section").attr("class", "home-top-hero");
+function renderOpening(main) {
+  const hero = main.append("section").attr("class", "home-top-hero unified-opening").attr("id", "home");
   hero.append("div").attr("class", "home-slideshow");
   hero.append("div").attr("class", "hero-soft-overlay");
+  const heroCopy = hero.append("div").attr("class", "opening-copy reveal-item");
+  heroCopy.append("p").attr("class", "opening-eyebrow").text("A Coffee Bean's Journey Around the World");
+  heroCopy.append("h1").html("One bean.<br/>Five systems.<br/>A global story.");
+  heroCopy.append("p").attr("class", "opening-lead")
+    .text("Follow coffee from tropical farms through trade routes, brand networks, consumer habits, and future climate pressure.");
+  const actions = heroCopy.append("div").attr("class", "opening-actions");
+  actions.append("a").attr("href", "#origin").attr("class", "primary-action").text("Start the journey");
+  actions.append("a").attr("href", "#trade").attr("class", "secondary-action").text("Jump to trade");
 
-  const notice = main.append("section").attr("class", "home-notice-bar");
+  const notice = main.append("section").attr("class", "home-notice-bar story-notice reveal-item");
   notice.append("a")
     .attr("href", "#origin")
     .attr("class", "notice-left")
     .html(`
-      <strong>Journey Notice</strong>
-      <span>Follow one coffee bean across agriculture, trade, market, consumption and future prosperity.</span>
-      <em>+</em>
+      <strong>Scrollytelling Mode</strong>
+      <span>All chapters are now connected into one continuous data magazine.</span>
+      <em>↓</em>
     `);
 
   notice.append("a")
-    .attr("href", "#trade")
+    .attr("href", "#prosperity")
     .attr("class", "notice-right")
     .html(`
-      <span>Coffee Journey Project</span>
+      <span>Farm · Route · Brand · Cup · Future</span>
       <em>⌄</em>
     `);
 
-  const feature = main.append("section").attr("class", "home-feature-panel");
-  feature.append("div")
-    .attr("class", "feature-brand")
-    .html(`
-      <div class="feature-emblem">CJ</div>
-      <strong>COFFEE<br/>JOURNEY</strong>
-    `);
-
-  const featureText = feature.append("div").attr("class", "feature-copy");
-  featureText.append("h1").text("A Coffee Bean's Journey Around the World");
-  featureText.append("p")
-    .text("From tropical farms to urban cafés, coffee connects global production, cross-border trade, brand power, everyday consumption and climate uncertainty.");
-  const featureActions = featureText.append("div").attr("class", "feature-actions");
-  featureActions.append("a").attr("href", "#origin").text("Explore origin");
-  featureActions.append("a").attr("href", "#prosperity").text("Future prosperity");
-
-  const originPromo = main.append("section").attr("class", "home-origin-promo");
-  originPromo.append("div").attr("class", "origin-mark").html(`<span>★</span><i></i>`);
-  const originText = originPromo.append("div").attr("class", "origin-promo-copy");
-  originText.append("p").text("ORIGIN");
-  originText.append("h2").text("COLOMBIA");
-  originText.append("strong").text("GRANDS OF ESPERANZA");
-  originText.append("a").attr("href", "#origin").text("Details");
-
-  const magazine = main.append("section").attr("class", "home-magazine");
-  const magazineCopy = magazine.append("div").attr("class", "magazine-copy");
-  magazineCopy.append("span").text("R");
-  magazineCopy.append("h2").text("JOURNEY MAGAZINE");
-  magazineCopy.append("p").text("Read the story of coffee through data: trade routes, market networks, consumption cultures, and future risks.");
-  magazineCopy.append("a").attr("href", "#market").text("Read more");
-
-  magazine.append("div").attr("class", "magazine-line");
-
-  const quick = main.append("section").attr("class", "home-quick-links");
+  const quick = main.append("section").attr("class", "home-quick-links unified-quick reveal-item");
   chapters.forEach((chapter) => {
     quick.append("a")
       .attr("href", chapter.path)
@@ -157,89 +124,108 @@ function renderHome() {
         <small>${chapter.dataset}</small>
       `);
   });
-
-  const footer = main.append("footer").attr("class", "home-footer");
-  const footerGrid = footer.append("div").attr("class", "home-footer-grid");
-
-  [
-    ["PROJECT", ["Origin", "Trade", "Market", "Consumption", "Prosperity"]],
-    ["DATA", ["FAOSTAT", "UN Comtrade", "Starbucks Dataset", "OWID / ICO"]],
-    ["VISUALIZATION", ["Map", "Sankey", "Network", "Timeline"]],
-    ["STORY", ["Farm", "Route", "Brand", "Cup", "Future"]],
-  ].forEach(([title, items]) => {
-    const col = footerGrid.append("div");
-    col.append("h3").text(title);
-    items.forEach((item) => col.append("p").text(item));
-  });
-
-  footer.append("p").attr("class", "footer-note").text("© Coffee Journey Data Visualization Project");
-
-  initHeroSlideshow();
 }
 
-function renderPageShell(page) {
-  const main = app.append("main")
-    .attr("id", "page-root")
-    .attr("class", `page-root single-page ${page.themeClass}`);
+function renderChapterSection(main, page, index) {
+  const section = main.append("section")
+    .attr("id", page.id)
+    .attr("class", `story-chapter ${page.themeClass}`)
+    .attr("data-chapter", page.number);
 
-  const intro = main.append("section").attr("class", "page-intro");
+  const shell = section.append("div").attr("class", "chapter-shell reveal-item");
 
-  const copy = intro.append("div").attr("class", "page-intro-copy");
-  copy.append("p").attr("class", "section-label").text(`Chapter ${page.number}`);
-  if (page.title) {
-    copy.append("h1").text(page.title);
-  }
-  if (page.question) {
-    copy.append("p").attr("class", "page-question").text(page.question);
-  }
-  if (page.description) {
-    copy.append("p").attr("class", "page-description").text(page.description);
-  }
+  const intro = shell.append("aside").attr("class", "chapter-intro");
+  intro.append("p").attr("class", "section-label").text(`Chapter ${page.number}`);
+  intro.append("h2").text(page.title);
+  if (page.question) intro.append("p").attr("class", "page-question").text(page.question);
+  if (page.description) intro.append("p").attr("class", "page-description").text(page.description);
 
-  if (page.dataset || page.sourceLabel) {
-    const meta = intro.append("div").attr("class", "page-meta");
-    if (page.dataset) {
-      meta.append("div").html(`<strong>Dataset</strong><span>${page.dataset}</span>`);
-    }
-    if (page.sourceLabel) {
-      meta.append("div").html(`<strong>Main fields</strong><span>${page.sourceLabel}</span>`);
-    }
-  }
+  const meta = intro.append("div").attr("class", "chapter-side-meta");
+  if (page.dataset) meta.append("div").html(`<strong>Dataset</strong><span>${page.dataset}</span>`);
+  if (page.sourceLabel) meta.append("div").html(`<strong>Main fields</strong><span>${page.sourceLabel}</span>`);
+  meta.append("a").attr("href", index < chapters.length - 1 ? chapters[index + 1].path : "#conclusion").text(index < chapters.length - 1 ? "Next chapter →" : "Conclusion →");
 
-  const board = main.append("section")
-    .attr("class", "page-board")
+  const board = shell.append("div")
+    .attr("class", "chapter-visual-board")
     .attr("id", `${page.id}-visual`);
 
-  page.render(`#${page.id}-visual`);
+  try {
+    page.render(`#${page.id}-visual`);
+  } catch (error) {
+    console.error(`Failed to render ${page.id}`, error);
+    board.html(`
+      <div class="chapter-error-card">
+        <strong>Visualization failed to render</strong>
+        <span>${error?.message || "Unknown error"}</span>
+      </div>
+    `);
+  }
 }
 
-function renderCurrentPage() {
+function renderConclusion(main) {
+  const conclusion = main.append("section").attr("id", "conclusion").attr("class", "story-conclusion reveal-item");
+  conclusion.append("p").attr("class", "section-label").text("Conclusion");
+  conclusion.append("h2").html("From tropical farms to city cafés,<br/>coffee is a global system.");
+  conclusion.append("p")
+    .text("A single cup connects land, labor, transport, brands, consumption cultures, and climate uncertainty. The journey is not linear; it is a network of places, people, markets, and environmental pressures.");
+
+  const grid = conclusion.append("div").attr("class", "conclusion-grid");
+  [
+    ["Origin", "Production is concentrated in tropical regions, but its geography keeps changing."],
+    ["Trade", "Coffee crosses borders through dense exporter-to-importer corridors."],
+    ["Market", "Brand expansion turns agricultural supply into a global business landscape."],
+    ["Consumption", "Coffee habits differ across countries, lifestyles, and product forms."],
+    ["Future", "Climate pressure could redraw the map of coffee suitability."],
+  ].forEach(([title, body]) => {
+    grid.append("article").html(`<strong>${title}</strong><span>${body}</span>`);
+  });
+}
+
+function setupReveal() {
+  const items = [...document.querySelectorAll(".reveal-item, .story-chapter")];
+  if (!items.length) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-revealed");
+      }
+    });
+  }, { threshold: 0.12, rootMargin: "0px 0px -12% 0px" });
+
+  items.forEach((item) => observer.observe(item));
+}
+
+function renderUnifiedStory() {
   if (heroSlideTimer) {
     window.clearInterval(heroSlideTimer);
     heroSlideTimer = null;
   }
 
   d3.select("#page-root").remove();
+  const main = app.append("main").attr("id", "page-root").attr("class", "page-root unified-page");
 
-  const pageId = getCurrentPageId();
-  const page = pages.find((item) => item.id === pageId) || pages[0];
+  renderOpening(main);
+  chapters.forEach((page, index) => renderChapterSection(main, page, index));
+  renderConclusion(main);
 
-  setActiveNav(page.id);
+  initHeroSlideshow();
+  setupReveal();
+  initScrollProgress();
 
-  if (page.id === "home") {
-    renderHome();
-  } else {
-    renderPageShell(page);
-  }
-
-  window.scrollTo({ top: 0, behavior: "instant" });
+  const initialId = window.location.hash?.replace("#", "") || "home";
+  setActiveNav(initialId);
 }
 
 function renderApp() {
+  document.body.classList.add("is-story-scrolling");
   renderNavigation();
-  renderCurrentPage();
+  renderUnifiedStory();
 
-  window.addEventListener("hashchange", renderCurrentPage);
+  window.addEventListener("hashchange", () => {
+    const id = window.location.hash.replace("#", "") || "home";
+    setActiveNav(id);
+  });
 }
 
 renderApp();
