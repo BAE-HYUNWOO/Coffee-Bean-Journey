@@ -1,0 +1,261 @@
+/* Final layout polish for the unified Coffee Journey story. */
+
+.clean-opening.compact-opening {
+  height: clamp(210px, 24vw, 360px) !important;
+  min-height: 210px !important;
+  border-bottom: 1px solid rgba(91, 58, 38, 0.18);
+  background: #efe2ce;
+}
+
+.compact-opening .home-slideshow {
+  filter: saturate(0.86) contrast(0.96) brightness(1.12);
+  opacity: 0.42;
+  transform: scale(1.015);
+}
+
+.compact-opening .hero-slide {
+  opacity: 0;
+  filter: grayscale(0.04) saturate(0.82) contrast(0.95) brightness(1.18);
+}
+
+.compact-opening .hero-slide.is-active {
+  opacity: 0.72;
+}
+
+.compact-opening .hero-soft-overlay {
+  background:
+    linear-gradient(90deg, rgba(250, 242, 229, 0.88) 0%, rgba(250, 242, 229, 0.42) 22%, rgba(250, 242, 229, 0.20) 50%, rgba(250, 242, 229, 0.58) 78%, rgba(250, 242, 229, 0.90) 100%),
+    radial-gradient(circle at 50% 46%, rgba(255, 251, 244, 0.16), rgba(111, 67, 43, 0.10) 62%, rgba(43, 26, 18, 0.12));
+}
+
+.compact-opening .opening-title-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: min(96vw, 1900px);
+  margin: 0 auto;
+  text-align: center;
+  pointer-events: none;
+}
+
+.compact-opening .opening-title-layer h1 {
+  margin: 0;
+  width: 100%;
+  color: #24140d;
+  font-family: "Cormorant Garamond", "Playfair Display", Georgia, serif;
+  font-size: clamp(3rem, 6.1vw, 7.8rem);
+  font-weight: 700;
+  line-height: 0.88;
+  letter-spacing: -0.075em;
+  white-space: nowrap;
+  text-wrap: nowrap;
+  text-shadow: 0 20px 56px rgba(91, 58, 38, 0.18);
+}
+
+.opening-kicker,
+.opening-eyebrow,
+.opening-lead,
+.opening-actions,
+.story-notice,
+.unified-quick,
+.chapter-intro .section-label,
+.chapter-intro .page-question,
+.chapter-intro .page-description,
+.chapter-side-meta {
+  display: none !important;
+}
+
+.story-chapter {
+  position: relative;
+  padding: clamp(46px, 6vw, 92px) var(--page-pad) clamp(34px, 5vw, 70px) !important;
+  border-bottom: 1px solid rgba(91, 58, 38, 0.14);
+}
+
+.story-chapter::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 9% 18%, color-mix(in srgb, var(--accent, #8b6a4d) 9%, transparent), transparent 24rem),
+    linear-gradient(180deg, rgba(255, 250, 241, 0.18), rgba(255, 250, 241, 0));
+}
+
+.chapter-shell {
+  position: relative;
+  z-index: 1;
+  display: block !important;
+  width: min(100%, 1660px) !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.compact-chapter-intro {
+  position: relative;
+  display: block !important;
+  min-height: clamp(108px, 12vw, 190px) !important;
+  margin: 0 auto clamp(18px, 2.4vw, 34px) !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  overflow: visible;
+}
+
+.chapter-watermark-title {
+  display: grid;
+  gap: 0;
+  align-content: center;
+  width: min(100%, 1120px);
+  min-height: clamp(108px, 12vw, 190px);
+  color: color-mix(in srgb, var(--accent, #7f9e70) 58%, rgba(43, 26, 18, 0.32));
+  opacity: 0.40;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  line-height: 0.86;
+  letter-spacing: -0.06em;
+  text-transform: none;
+}
+
+.chapter-watermark-title span {
+  display: block;
+  margin-bottom: 0.08em;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: clamp(1.2rem, 2.2vw, 2.6rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.chapter-watermark-title strong {
+  display: block;
+  color: inherit;
+  font-size: clamp(5.3rem, 12.5vw, 15rem);
+  font-weight: 700;
+  letter-spacing: -0.085em;
+}
+
+.chapter-visual-board {
+  width: min(100%, 1540px) !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.chapter-panel-head {
+  border-top: 1px solid rgba(91, 58, 38, 0.20);
+  border-bottom: 1px solid rgba(91, 58, 38, 0.14);
+  padding: 16px 0 18px !important;
+  margin-bottom: clamp(16px, 2vw, 28px) !important;
+}
+
+.chapter-panel-head span {
+  font-family: "Inter", system-ui, sans-serif !important;
+  font-size: 0.66rem !important;
+  letter-spacing: 0.22em !important;
+  font-weight: 900 !important;
+}
+
+.chapter-panel-head h3 {
+  font-family: "Inter", system-ui, sans-serif !important;
+  font-size: clamp(1.05rem, 1.45vw, 1.55rem) !important;
+  font-weight: 880 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.12 !important;
+}
+
+.chart-frame,
+.chapter4-panel,
+#chapter2-detail,
+.kpi-card,
+.route-detail-card {
+  background: rgba(255, 250, 241, 0.74) !important;
+  border-color: rgba(91, 58, 38, 0.14) !important;
+  box-shadow: 0 14px 38px rgba(91, 58, 38, 0.07) !important;
+}
+
+.chapter2-trade-root,
+.chapter2-trade {
+  color: var(--coffee-dark, #2b1a12) !important;
+  background: transparent !important;
+}
+
+.chapter2-trade::before,
+.chapter2-trade::after,
+.chapter2-hero,
+.coffee-orbit {
+  display: none !important;
+}
+
+.chapter2-controls,
+.kpi-grid,
+#chapter2-detail,
+#chapter2-timeline,
+#chapter2-map,
+#chapter2-rankings,
+.chapter2-feature-stack > div {
+  background: rgba(255, 250, 241, 0.72) !important;
+  border: 1px solid rgba(91, 58, 38, 0.14) !important;
+  box-shadow: 0 14px 38px rgba(91, 58, 38, 0.065) !important;
+}
+
+.chapter2-feature-stack {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  align-items: stretch !important;
+  gap: clamp(14px, 1.6vw, 24px) !important;
+}
+
+#chapter2-sankey,
+#chapter2-network {
+  min-height: clamp(470px, 42vw, 660px) !important;
+}
+
+#chapter2-sankey svg,
+#chapter2-network svg {
+  min-height: 430px;
+}
+
+#chapter2-rankings,
+#chapter2-timeline {
+  min-height: 240px !important;
+}
+
+@media (max-width: 1180px) {
+  .compact-opening .opening-title-layer h1 {
+    font-size: clamp(2.1rem, 5.8vw, 4.8rem);
+  }
+
+  .chapter2-feature-stack {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .clean-opening.compact-opening {
+    height: 220px !important;
+  }
+
+  .compact-opening .opening-title-layer h1 {
+    white-space: normal;
+    text-wrap: balance;
+    line-height: 0.98;
+    letter-spacing: -0.055em;
+  }
+
+  .chapter-watermark-title strong {
+    font-size: clamp(4rem, 22vw, 7rem);
+  }
+
+  .story-chapter {
+    padding-top: 36px !important;
+  }
+}

@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import { pages, chapters } from "./chapterRegistry.js";
 import { initScrollProgress } from "./shared/scrollProgress.js";
+import "./styles/finalPolish.css";
 
 const HERO_SLIDE_ROOTS = ["/images/hero-slides"];
 const HERO_SLIDE_CANDIDATES = [
@@ -84,7 +85,7 @@ function renderNavigation() {
 
 function renderOpening(main) {
   const hero = main.append("section")
-    .attr("class", "home-top-hero unified-opening clean-opening")
+    .attr("class", "home-top-hero unified-opening clean-opening compact-opening")
     .attr("id", "home")
     .attr("aria-label", "Coffee journey opening image");
 
@@ -92,7 +93,6 @@ function renderOpening(main) {
   hero.append("div").attr("class", "hero-soft-overlay");
 
   const titleLayer = hero.append("div").attr("class", "opening-title-layer reveal-item");
-  titleLayer.append("p").attr("class", "opening-kicker").text("Data Visualization Project");
   titleLayer.append("h1").text("A Coffee Bean's Journey Around the World");
 }
 
@@ -104,11 +104,10 @@ function renderChapterSection(main, page, index) {
 
   const shell = section.append("div").attr("class", "chapter-shell reveal-item");
 
-  const intro = shell.append("aside").attr("class", "chapter-intro");
-  intro.append("p").attr("class", "section-label").text(`Chapter ${page.number}`);
-  intro.append("h2").text(page.title);
-  if (page.question) intro.append("p").attr("class", "page-question").text(page.question);
-  if (page.description) intro.append("p").attr("class", "page-description").text(page.description);
+  const intro = shell.append("aside").attr("class", "chapter-intro compact-chapter-intro");
+  intro.append("div")
+    .attr("class", "chapter-watermark-title")
+    .html(`<span>Chapter ${page.number}</span><strong>${page.navTitle}</strong>`);
 
   const board = shell.append("div")
     .attr("class", "chapter-visual-board")
