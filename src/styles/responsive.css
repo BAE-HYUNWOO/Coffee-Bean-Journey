@@ -195,3 +195,48 @@
     font-size: clamp(2.6rem, 14vw, 4.8rem);
   }
 }
+
+/* Final responsive cleanup for compact chapter headers */
+@media (max-width: 1080px) {
+  .chapter-intro {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+
+  .chapter-intro h2,
+  .chapter-intro .page-question,
+  .chapter-intro .page-description {
+    grid-column: 1 !important;
+  }
+
+  .chapter-intro h2 {
+    white-space: normal;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 760px) {
+  .clean-opening,
+  .unified-opening.clean-opening {
+    height: 300px;
+  }
+
+  .opening-title-layer h1 {
+    font-size: clamp(1.18rem, 6.2vw, 2.15rem);
+    letter-spacing: -0.055em;
+    white-space: nowrap;
+  }
+
+  .opening-kicker {
+    margin-bottom: 9px;
+    font-size: 0.62rem;
+  }
+
+  .story-chapter {
+    padding-top: 42px;
+  }
+
+  .chapter-intro h2 {
+    font-size: clamp(2.25rem, 11vw, 4rem);
+  }
+}

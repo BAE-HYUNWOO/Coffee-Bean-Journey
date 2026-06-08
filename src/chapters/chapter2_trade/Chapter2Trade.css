@@ -576,3 +576,75 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Final light-theme harmonization for Chapter 2 inside the unified story */
+.unified-page .chapter2-trade-root,
+.unified-page .chapter2-trade {
+  color: var(--text, #2b1a12) !important;
+  background: transparent !important;
+}
+
+.unified-page .chapter2-trade {
+  padding: 0 !important;
+  min-height: 0 !important;
+  overflow: visible;
+}
+
+.unified-page .chapter2-trade::before,
+.unified-page .coffee-orbit,
+.unified-page .chapter2-hero {
+  display: none !important;
+}
+
+.unified-page .chapter2-controls,
+.unified-page .kpi-grid,
+.unified-page .ranking-grid,
+.unified-page .chapter2-feature-stack,
+.unified-page #chapter2-detail {
+  max-width: none !important;
+}
+
+.unified-page .viz-card,
+.unified-page .control-block,
+.unified-page .route-detail-face,
+.unified-page .kpi-face {
+  border-color: var(--line, rgba(91, 58, 38, 0.16)) !important;
+  color: var(--text, #2b1a12) !important;
+  background:
+    radial-gradient(circle at 6% 0%, rgba(99, 141, 158, 0.13), transparent 18rem),
+    linear-gradient(180deg, rgba(255, 252, 247, 0.92), rgba(248, 238, 225, 0.80)) !important;
+  box-shadow: 0 18px 46px rgba(88, 50, 26, 0.10) !important;
+}
+
+.unified-page .viz-card-title span,
+.unified-page .route-detail-face h3,
+.unified-page .kpi-card b,
+.unified-page .ranking-value,
+.unified-page .timeline-current,
+.unified-page .sankey-node-label,
+.unified-page .network-label,
+.unified-page .empty-note {
+  color: var(--coffee-dark, #2b1a12) !important;
+  fill: var(--coffee-dark, #2b1a12) !important;
+  text-shadow: none !important;
+}
+
+.unified-page .hint,
+.unified-page .viz-help,
+.unified-page .route-detail-face p,
+.unified-page .kpi-card p,
+.unified-page .viz-card-title small,
+.unified-page .map-caption,
+.unified-page .axis-title,
+.unified-page .control-block label {
+  color: var(--muted, #6d5545) !important;
+  fill: var(--muted, #6d5545) !important;
+}
+
+.unified-page .route-line,
+.unified-page .sankey-link,
+.unified-page .network-link,
+.unified-page .timeline-line {
+  stroke: color-mix(in srgb, var(--accent, #638d9e) 78%, var(--coffee) 22%) !important;
+  mix-blend-mode: normal !important;
+}

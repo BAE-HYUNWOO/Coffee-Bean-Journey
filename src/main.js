@@ -90,6 +90,10 @@ function renderOpening(main) {
 
   hero.append("div").attr("class", "home-slideshow");
   hero.append("div").attr("class", "hero-soft-overlay");
+
+  const titleLayer = hero.append("div").attr("class", "opening-title-layer reveal-item");
+  titleLayer.append("p").attr("class", "opening-kicker").text("Data Visualization Project");
+  titleLayer.append("h1").text("A Coffee Bean's Journey Around the World");
 }
 
 function renderChapterSection(main, page, index) {
@@ -106,9 +110,6 @@ function renderChapterSection(main, page, index) {
   if (page.question) intro.append("p").attr("class", "page-question").text(page.question);
   if (page.description) intro.append("p").attr("class", "page-description").text(page.description);
 
-  const meta = intro.append("div").attr("class", "chapter-side-meta");
-  if (page.dataset) meta.append("div").html(`<strong>Dataset</strong><span>${page.dataset}</span>`);
-  if (page.sourceLabel) meta.append("div").html(`<strong>Main fields</strong><span>${page.sourceLabel}</span>`);
   const board = shell.append("div")
     .attr("class", "chapter-visual-board")
     .attr("id", `${page.id}-visual`);
