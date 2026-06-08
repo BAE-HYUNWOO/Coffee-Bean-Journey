@@ -108,6 +108,7 @@ export function drawTimelineChart(containerSelector, { timelineData }) {
       .style("font-family", "Inter, sans-serif")
       .style("font-size", "0.7rem")
       .style("font-weight", "600")
+      .style("opacity", showGlobal ? "1" : "0.5")
       .style("transition", "all 0.2s");
     globalBtn.append("span")
       .style("display", "inline-block")
