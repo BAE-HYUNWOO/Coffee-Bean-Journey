@@ -37,6 +37,7 @@ export function drawTimelineChart(containerSelector, { timelineData }) {
 
   // State
   const visibleCountries = new Set(countryKeys);
+  let showGlobal = true;
   let xDomain = [1990, 2024]; // mutable for zoom
   const allSelected = () => visibleCountries.size === countryKeys.length;
 
@@ -45,14 +46,14 @@ export function drawTimelineChart(containerSelector, { timelineData }) {
     .attr("class", "timeline-legend-bar")
     .style("display", "flex")
     .style("flex-wrap", "wrap")
-    .style("gap", "8px")
-    .style("padding", "0 8px 10px")
+    .style("gap", "5px")
+    .style("padding", "0 4px 10px")
     .style("align-items", "center");
 
   function buildLegend() {
     legendBar.html("");
     const allBtn = legendBar.append("button")
-      .text(allSelected() ? "Deselect All" : "Select All")
+      .text((allSelected() && showGlobal) ? "Deselect All" : "Select All")
       .style("background", "transparent")
       .style("border", "1px solid var(--line)")
       .style("color", "var(--muted)")
@@ -64,10 +65,12 @@ export function drawTimelineChart(containerSelector, { timelineData }) {
       .style("font-weight", "600")
       .style("transition", "all 0.2s");
     allBtn.on("click", () => {
-      if (allSelected()) {
+      if (allSelected() && showGlobal) {
         visibleCountries.clear();
+        showGlobal = false;
       } else {
         countryKeys.forEach(k => visibleCountries.add(k));
+        showGlobal = true;
       }
       buildLegend();
       render();
@@ -75,7 +78,7 @@ export function drawTimelineChart(containerSelector, { timelineData }) {
 
     // Zoom reset button
     const zoomReset = legendBar.append("button")
-      .text("Reset Zoom")
+      .text("↺ Reset")
       .style("background", "transparent")
       .style("border", "1px solid var(--line)")
       .style("color", "var(--muted)")
@@ -91,6 +94,35 @@ export function drawTimelineChart(containerSelector, { timelineData }) {
       render();
     });
 
+    // Global total toggle
+    const globalBtn = legendBar.append("button")
+      .style("display", "inline-flex")
+      .style("align-items", "center")
+      .style("gap", "6px")
+      .style("padding", "4px 12px")
+      .style("border-radius", "999px")
+      .style("border", `1px solid ${showGlobal ? "#d4842a" : "var(--line)"}`)
+      .style("background", showGlobal ? "#d4842a18" : "transparent")
+      .style("color", showGlobal ? "var(--text)" : "var(--muted)")
+      .style("cursor", "pointer")
+      .style("font-family", "Inter, sans-serif")
+      .style("font-size", "0.7rem")
+      .style("font-weight", "600")
+      .style("transition", "all 0.2s");
+    globalBtn.append("span")
+      .style("display", "inline-block")
+      .style("width", "8px")
+      .style("height", "8px")
+      .style("border-radius", "50%")
+      .style("background", "#d4842a");
+    globalBtn.append("span").text("Global");
+    globalBtn.on("click", () => {
+      showGlobal = !showGlobal;
+      buildLegend();
+      render();
+    });
+
+
     countryKeys.forEach((cn) => {
       const en = countryNamesEN[cn];
       const color = countryColors[en] || "#999";
@@ -99,7 +131,7 @@ export function drawTimelineChart(containerSelector, { timelineData }) {
         .style("display", "inline-flex")
         .style("align-items", "center")
         .style("gap", "6px")
-        .style("padding", "4px 12px")
+        .style("padding", "3px 9px")
         .style("border-radius", "999px")
         .style("border", `1px solid ${active ? color : "var(--line)"}`)
         .style("background", active ? color + "18" : "transparent")
@@ -399,16 +431,15 @@ export function drawTimelineChart(containerSelector, { timelineData }) {
   miniG.call(miniDrag);
 
   function updateYDomain() {
-    const visible = timelineData.map(d => {
-      let max = 0;
+    const maxVal = d3.max(timelineData, d => {
+      let max = showGlobal ? (d.Global_Production_tonnes || 0) : 0;
       visibleCountries.forEach(cn => {
         const key = cn + "_tonnes";
         if (d[key] != null && d[key] > max) max = d[key];
       });
       return max;
-    });
-    const maxVal = d3.max(visible) || 1000000;
-    yScale.domain([0, maxVal * 1.08]);
+    }) || 1000000;
+    yScale.domain([0, maxVal * 1.05]);
   }
 
   function updateAxes() {
@@ -432,38 +463,38 @@ export function drawTimelineChart(containerSelector, { timelineData }) {
       .curve(d3.curveMonotoneX)
       .defined(d => d.value != null);
 
-    // Global area — gradient fill
+    // Global area — gradient fill (only if toggled on)
     clipG.selectAll(".global-area").remove();
-    const gradId = "timeline-global-grad";
-    svg.select("defs").selectAll(`#${gradId}`).remove();
-    const grad = svg.select("defs").append("linearGradient").attr("id", gradId)
-      .attr("x1", "0").attr("y1", "0").attr("x2", "0").attr("y2", "1");
-    grad.append("stop").attr("offset", "0%").attr("stop-color", "#c98f4f").attr("stop-opacity", "0.25");
-    grad.append("stop").attr("offset", "100%").attr("stop-color", "#c98f4f").attr("stop-opacity", "0.02");
-    clipG.append("path")
-      .datum(timelineData)
-      .attr("class", "global-area")
-      .attr("d", d3.area()
-        .x(d => xScale(d.Year))
-        .y0(innerMainH)
-        .y1(d => yScale(d.Global_Production_tonnes))
-        .curve(d3.curveMonotoneX))
-      .attr("fill", `url(#${gradId})`);
-
-    // Global line
     clipG.selectAll(".global-line").remove();
-    clipG.append("path")
-      .datum(timelineData)
-      .attr("class", "global-line")
-      .attr("d", d3.line()
-        .x(d => xScale(d.Year))
-        .y(d => yScale(d.Global_Production_tonnes))
-        .curve(d3.curveMonotoneX))
-      .attr("fill", "none")
-      .attr("stroke", "#c98f4f")
-      .attr("stroke-width", "2.5")
-      .attr("stroke-dasharray", "6,4")
-      .attr("opacity", "0.8");
+    if (showGlobal) {
+      const gradId = "timeline-global-grad";
+      svg.select("defs").selectAll(`#${gradId}`).remove();
+      const grad = svg.select("defs").append("linearGradient").attr("id", gradId)
+        .attr("x1", "0").attr("y1", "0").attr("x2", "0").attr("y2", "1");
+      grad.append("stop").attr("offset", "0%").attr("stop-color", "#d4842a").attr("stop-opacity", "0.3");
+      grad.append("stop").attr("offset", "100%").attr("stop-color", "#d4842a").attr("stop-opacity", "0.03");
+      clipG.append("path")
+        .datum(timelineData)
+        .attr("class", "global-area")
+        .attr("d", d3.area()
+          .x(d => xScale(d.Year))
+          .y0(innerMainH)
+          .y1(d => yScale(d.Global_Production_tonnes))
+          .curve(d3.curveMonotoneX))
+        .attr("fill", `url(#${gradId})`);
+
+      clipG.append("path")
+        .datum(timelineData)
+        .attr("class", "global-line")
+        .attr("d", d3.line()
+          .x(d => xScale(d.Year))
+          .y(d => yScale(d.Global_Production_tonnes))
+          .curve(d3.curveMonotoneX))
+        .attr("fill", "none")
+        .attr("stroke", "#d4842a")
+        .attr("stroke-width", "3")
+        .attr("opacity", "0.9");
+    }
 
     // Country lines
     const countryData = countryKeys.filter(k => visibleCountries.has(k)).map(cn => ({
