@@ -586,3 +586,152 @@
     grid-template-columns: 1fr !important;
   }
 }
+
+/* ===== Follow-up polish: 3-column consumption, fuller cards, wider origin board ===== */
+.theme-origin .chapter-shell,
+.theme-origin .chapter-visual-board {
+  width: 100vw !important;
+  max-width: none !important;
+  margin-left: calc(50% - 50vw) !important;
+  margin-right: calc(50% - 50vw) !important;
+}
+
+.theme-origin .compact-chapter-intro {
+  width: min(100%, 1780px) !important;
+  padding-inline: clamp(18px, 2.2vw, 42px) !important;
+}
+
+.theme-origin .chapter-watermark-title {
+  margin-left: clamp(12px, 2.2vw, 42px) !important;
+}
+
+.theme-origin .chapter-visual-board > * {
+  width: min(100%, calc(100vw - clamp(28px, 3vw, 58px))) !important;
+  max-width: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.theme-origin .visual-grid {
+  grid-template-columns: minmax(0, 1.06fr) minmax(0, 1fr) !important;
+  gap: clamp(16px, 1.4vw, 24px) !important;
+}
+
+.theme-origin .visual-grid > div,
+.theme-origin .chart-frame {
+  min-width: 0 !important;
+}
+
+.theme-origin #origin-map .chart-frame,
+.theme-origin #origin-bar .chart-frame {
+  min-height: clamp(520px, 33vw, 690px) !important;
+}
+
+.theme-origin #origin-line .chart-frame {
+  min-height: clamp(400px, 25vw, 560px) !important;
+}
+
+.theme-origin .chart-frame-body {
+  padding-inline: clamp(8px, 0.8vw, 14px) !important;
+}
+
+.theme-origin .chart-frame svg {
+  width: 100% !important;
+}
+
+.chapter4-board.is-card-grid {
+  grid-template-columns: repeat(3, minmax(360px, 1fr)) !important;
+  width: min(100%, calc(100vw - clamp(32px, 4vw, 76px))) !important;
+  gap: clamp(18px, 1.5vw, 28px) !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section {
+  min-height: clamp(520px, 33vw, 680px) !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-panel {
+  padding: 42px 8px 8px !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-panel::before {
+  top: 12px !important;
+  left: 18px !important;
+  right: 74px !important;
+  font-size: clamp(0.98rem, 1vw, 1.18rem) !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-card-flip-button {
+  top: 10px !important;
+  right: 12px !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-panel > div[id^="chapter4-"],
+.chapter4-board.is-card-grid .chapter4-profile-shell,
+.chapter4-board.is-card-grid .chapter4-profile-main,
+.chapter4-board.is-card-grid .chapter4-profile-stage,
+.chapter4-board.is-card-grid .chapter4-flip-card,
+.chapter4-board.is-card-grid .chapter4-flip-inner,
+.chapter4-board.is-card-grid .chapter4-flip-face,
+.chapter4-board.is-card-grid .chapter4-flip-face > div {
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+.chapter4-board.is-card-grid .chart-frame {
+  height: 100% !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.chapter4-board.is-card-grid .chart-frame-body {
+  flex: 1 1 auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0 4px 2px !important;
+}
+
+.chapter4-board.is-card-grid .chart-frame svg {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-panel-toolbar {
+  margin: -4px 0 4px !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-controls {
+  gap: 5px !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-chip {
+  padding: 5px 8px !important;
+  font-size: 0.62rem !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-profile-rail {
+  gap: 6px !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-profile-label {
+  font-size: 0.62rem !important;
+}
+
+@media (max-width: 1280px) {
+  .chapter4-board.is-card-grid {
+    grid-template-columns: repeat(2, minmax(320px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .theme-origin .visual-grid,
+  .chapter4-board.is-card-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .chapter4-board.is-card-grid,
+  .theme-origin .chapter-visual-board > * {
+    width: calc(100vw - 28px) !important;
+  }
+}

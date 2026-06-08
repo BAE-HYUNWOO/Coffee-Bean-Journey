@@ -10,7 +10,16 @@ export function renderSankeyChart(container, flows, state) {
   const tooltip = createTooltip(container);
   const selectedKey = routeKey(state.selectedItem);
 
-  const data = topN(flows.filter(d => +d.year === +state.year && d.importer && d.exporter), metric, state.flowLimit || 110);
+  const allYearData = flows.filter(d =>
+    +d.year === +state.year &&
+    d.importer &&
+    d.exporter &&
+    d.importer !== "World" &&
+    d.exporter !== "World" &&
+    Number.isFinite(+d[metric])
+  );
+  const displayData = topN(allYearData, metric, state.flowLimit || 110);
+
   const card = container.append("div").attr("class", "viz-card sankey-card");
   card.append("div").attr("class", "viz-card-title interactive-title").html(`
     <div><span>Exporters → importers</span><small>${state.year} · Sankey-style trade ribbons</small></div>
@@ -20,17 +29,27 @@ export function renderSankeyChart(container, flows, state) {
   const svg = card.append("svg").attr("viewBox", `0 0 ${width} ${height}`).attr("class", "sankey-svg");
   svg.append("rect").attr("width", width).attr("height", height).attr("rx", 24).attr("class", "sankey-bg");
 
-  if (!data.length) {
+  if (!allYearData.length) {
     svg.append("text").attr("x", width/2).attr("y", height/2).attr("text-anchor", "middle").attr("class", "empty-note")
       .text("Sankey needs partner-level rows. In UN Comtrade, set Partners = All.");
     return;
   }
 
-  const exporterTotals = d3.rollups(data, v => d3.sum(v, d => d[metric]), d => d.exporter).sort((a,b)=>b[1]-a[1]).slice(0, 10);
-  const importerTotals = d3.rollups(data, v => d3.sum(v, d => d[metric]), d => d.importer).sort((a,b)=>b[1]-a[1]).slice(0, 10);
+  // Keep the node labels consistent with the ranking cards: totals are calculated
+  // from the full selected-year dataset, while ribbons are still density-limited.
+  const exporterTotals = d3.rollups(allYearData, v => d3.sum(v, d => d[metric]), d => d.exporter)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0, 10);
+  const importerTotals = d3.rollups(allYearData, v => d3.sum(v, d => d[metric]), d => d.importer)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0, 10);
   const exporters = new Set(exporterTotals.map(d => d[0]));
   const importers = new Set(importerTotals.map(d => d[0]));
-  const links = topN(data.filter(d => exporters.has(d.exporter) && importers.has(d.importer)), metric, state.flowLimit || 80);
+  const links = topN(
+    displayData.filter(d => exporters.has(d.exporter) && importers.has(d.importer)),
+    metric,
+    state.flowLimit || 80
+  );
 
   const yLeft = d3.scalePoint().domain([...exporters]).range([margin.top + 10, height - margin.bottom]).padding(0.55);
   const yRight = d3.scalePoint().domain([...importers]).range([margin.top + 10, height - margin.bottom]).padding(0.55);
