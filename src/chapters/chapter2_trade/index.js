@@ -6,10 +6,83 @@ import { renderSankeyChart } from "./SankeyChart.js";
 import { renderNetworkGraph } from "./NetworkGraph.js";
 import { renderRankingCharts } from "./RankingCharts.js";
 import { renderTimelineChart } from "./TimelineChart.js";
-import { formatKg, formatMoney, metricLabel } from "./utils.js";
+import { formatKg, formatMoney, metricLabel, routeDetailHTML } from "./utils.js";
 
 function sumBy(data, key) {
   return d3.sum(data, d => +d[key] || 0);
+}
+
+function renderDetailPanel(container, state) {
+  container.selectAll("*").remove();
+  const selected = state.selectedItem;
+  const card = container.append("div")
+    .attr("class", `route-detail-card ${state.detailFlipped ? "is-flipped" : ""}`)
+    .attr("role", "button")
+    .attr("tabindex", 0)
+    .on("click", () => {
+      state.detailFlipped = !state.detailFlipped;
+      renderDetailPanel(container, state);
+    })
+    .on("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        state.detailFlipped = !state.detailFlipped;
+        renderDetailPanel(container, state);
+      }
+    });
+
+  card.append("div").attr("class", "route-detail-inner").html(`
+    <div class="route-detail-face route-detail-front">
+      <span class="detail-kicker">Pinned interaction</span>
+      <h3>${selected?.type === "country" ? selected.country : selected ? `${selected.exporter} → ${selected.importer}` : "Explore the coffee route network"}</h3>
+      <p>${routeDetailHTML(selected, state.metric)}</p>
+      <em>Click this card to flip it.</em>
+    </div>
+    <div class="route-detail-face route-detail-back">
+      <span class="detail-kicker">How to use this chapter</span>
+      <h3>Hover · Click · Drag · Zoom</h3>
+      <p>
+        Hover routes and bars for exact values. Click any route, node, or ranking bar to pin it here.
+        Drag network nodes to rearrange the graph, and use the mouse wheel on the map/network to zoom.
+        Use the route-limit slider to make the visualization denser or cleaner.
+      </p>
+      <em>Click again to return.</em>
+    </div>
+  `);
+}
+
+function renderKPIs(container, cards) {
+  container.selectAll("*").remove();
+  const node = container.selectAll("div")
+    .data(cards)
+    .join("div")
+    .attr("class", "kpi-card")
+    .attr("role", "button")
+    .attr("tabindex", 0);
+
+  node.html(d => `
+    <div class="kpi-inner">
+      <div class="kpi-face kpi-front">
+        <span>${d.label}</span>
+        <b>${d.value}</b>
+        <em>${d.sub}</em>
+      </div>
+      <div class="kpi-face kpi-back">
+        <span>Reading tip</span>
+        <p>${d.tip}</p>
+      </div>
+    </div>
+  `);
+
+  node.on("click", function () {
+      d3.select(this).classed("is-flipped", !d3.select(this).classed("is-flipped"));
+    })
+    .on("keydown", function (event) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        d3.select(this).classed("is-flipped", !d3.select(this).classed("is-flipped"));
+      }
+    });
 }
 
 export async function renderChapter2Trade(containerSelector = "#chapter2-trade") {
@@ -25,7 +98,10 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
   const state = {
     year: data.latestYear,
     metric: "trade_value_usd",
-    flowLimit: 90,
+    flowLimit: 110,
+    selectedItem: null,
+    detailFlipped: false,
+    onSelectItem: null,
   };
 
   const shell = root.append("section").attr("class", "chapter2-trade");
@@ -34,7 +110,7 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
   const hero = shell.append("header").attr("class", "chapter2-hero");
   hero.append("p").attr("class", "eyebrow").text("Chapter 2 · Trade Routes");
   hero.append("h2").html(`咖啡如何环游世界？<br/><strong>How coffee travels around the world</strong>`);
-  hero.append("p").attr("class", "hero-copy").text("Using UN Comtrade HS0901 exports, this chapter turns country-to-country coffee trade into animated routes, Sankey ribbons, network structure, and recent-period trends.");
+  hero.append("p").attr("class", "hero-copy").text("Using UN Comtrade HS0901 exports, this chapter turns country-to-country coffee trade into animated routes, Sankey ribbons, draggable network structure, and recent-period trends.");
 
   if (data.stats?.data_mode === "demo_placeholder") {
     hero.append("div").attr("class", "demo-warning").html("⚠ Demo placeholder data is showing. Replace the raw CSV and run <code>process_trade_data.py</code> before submission.");
@@ -49,18 +125,26 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
       <option value="net_weight_kg">Net weight (kg)</option>
     </select>
   `);
-  controls.append("div").attr("class", "control-block wide").html(`
-    <label>Story hint</label>
-    <div class="hint">Annual + Recent periods lets you show long-run changes without the noise of monthly missing values.</div>
+  controls.append("div").attr("class", "control-block slider-block").html(`
+    <label>Route density <b id="chapter2-flow-count">${state.flowLimit}</b></label>
+    <input id="chapter2-flow-limit" type="range" min="30" max="180" step="10" value="${state.flowLimit}" />
+    <div class="hint">Drag to show fewer or more routes in the map, Sankey, and network.</div>
   `);
 
+  const detail = shell.append("div").attr("id", "chapter2-detail");
   const kpis = shell.append("div").attr("class", "kpi-grid");
-  const timeline = shell.append("div").attr("id", "chapter2-timeline");
+  const timeline = shell.append("div").attr("id", "chapter2-timeline").attr("class", "chapter2-compact-chart");
   const map = shell.append("div").attr("id", "chapter2-map");
-  const mid = shell.append("div").attr("class", "chapter2-two-column");
-  const sankey = mid.append("div").attr("id", "chapter2-sankey");
-  const network = mid.append("div").attr("id", "chapter2-network");
-  const rankings = shell.append("div").attr("id", "chapter2-rankings");
+  const features = shell.append("div").attr("class", "chapter2-feature-stack");
+  const sankey = features.append("div").attr("id", "chapter2-sankey");
+  const network = features.append("div").attr("id", "chapter2-network");
+  const rankings = shell.append("div").attr("id", "chapter2-rankings").attr("class", "chapter2-compact-chart");
+
+  state.onSelectItem = (item) => {
+    state.selectedItem = item;
+    state.detailFlipped = false;
+    renderDetailPanel(detail, state);
+  };
 
   const yearButtons = controls.select("#chapter2-year-buttons");
   const years = data.years.length ? data.years : [state.year];
@@ -71,11 +155,18 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
     .text(d => d)
     .on("click", (_, y) => {
       state.year = +y;
+      state.selectedItem = null;
       update();
     });
 
   controls.select("#chapter2-metric").on("change", function () {
     state.metric = this.value;
+    update();
+  });
+
+  controls.select("#chapter2-flow-limit").on("input", function () {
+    state.flowLimit = +this.value;
+    controls.select("#chapter2-flow-count").text(state.flowLimit);
     update();
   });
 
@@ -86,16 +177,17 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
     const formatter = state.metric === "net_weight_kg" ? formatKg : formatMoney;
 
     controls.selectAll(".year-buttons button").attr("class", d => +d === +state.year ? "active" : null);
-    kpis.selectAll("*").remove();
-    const cards = [
-      { label: "Selected period", value: state.year, sub: "Recent annual periods" },
-      { label: metricLabel(state.metric), value: formatter(sumBy(yearFlows, state.metric)), sub: "Bilateral export flows" },
-      { label: "Exporters", value: exporters.size || "—", sub: "Reporter countries" },
-      { label: "Import markets", value: importers.size || "—", sub: "Partner countries" },
-    ];
-    kpis.selectAll("div").data(cards).join("div").attr("class", "kpi-card").html(d => `<span>${d.label}</span><b>${d.value}</b><em>${d.sub}</em>`);
+    renderDetailPanel(detail, state);
 
-    renderTimelineChart(timeline, data.flows, state, y => { state.year = y; update(); });
+    const cards = [
+      { label: "Selected period", value: state.year, sub: "Recent annual periods", tip: "Use year buttons or click timeline dots to compare how coffee routes change over time." },
+      { label: metricLabel(state.metric), value: formatter(sumBy(yearFlows, state.metric)), sub: "Bilateral export flows", tip: "This total uses exporter-to-importer rows. Partner=World aggregate rows are excluded from the flow visualizations." },
+      { label: "Exporters", value: exporters.size || "—", sub: "Reporter countries", tip: "Reporter countries are the origin side of each export row in the UN Comtrade data." },
+      { label: "Import markets", value: importers.size || "—", sub: "Partner countries", tip: "Partner countries are the destination side of each coffee export route." },
+    ];
+    renderKPIs(kpis, cards);
+
+    renderTimelineChart(timeline, data.flows, state, y => { state.year = y; state.selectedItem = null; update(); });
     renderTradeFlowMap(map, data.flows, state);
     renderSankeyChart(sankey, data.flows, state);
     renderNetworkGraph(network, data.flows, state);
@@ -106,5 +198,4 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
 }
 
 export default renderChapter2Trade;
-
 export { renderChapter2Trade as renderChapter2 };

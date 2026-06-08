@@ -1,19 +1,21 @@
 import * as d3 from "d3";
-import { arcPath, createTooltip, formatKg, formatMoney, metricFormatter, topN } from "./utils.js";
+import { arcPath, createTooltip, formatKg, formatMoney, metricFormatter, routeKey, topN } from "./utils.js";
 
 export function renderTradeFlowMap(container, flows, state) {
   container.selectAll("*").remove();
-  const width = 980;
-  const height = 560;
+  const width = 1260;
+  const height = 650;
   const metric = state.metric;
   const tooltip = createTooltip(container);
 
-  const data = topN(flows.filter(d => +d.year === +state.year && d.exporter_lat && d.importer_lat), metric, state.flowLimit || 90);
+  const data = topN(flows.filter(d => +d.year === +state.year && d.exporter_lat && d.importer_lat), metric, state.flowLimit || 110);
+  const selectedKey = routeKey(state.selectedItem);
 
-  const card = container.append("div").attr("class", "viz-card trade-map-card");
-  card.append("div").attr("class", "viz-card-title").html(`
-    <span>Global coffee routes</span>
-    <small>${state.year} · top ${data.length} bilateral export flows</small>
+  const card = container.append("div").attr("class", "viz-card trade-map-card feature-resizable");
+  const title = card.append("div").attr("class", "viz-card-title interactive-title");
+  title.html(`
+    <div><span>Global coffee routes</span><small>${state.year} · top ${data.length} bilateral export flows</small></div>
+    <div class="viz-help">Hover for values · click route to pin · wheel to zoom</div>
   `);
 
   const svg = card.append("svg")
@@ -29,35 +31,56 @@ export function renderTradeFlowMap(container, flows, state) {
   merge.append("feMergeNode").attr("in", "colorBlur");
   merge.append("feMergeNode").attr("in", "SourceGraphic");
 
-  const projection = d3.geoNaturalEarth1().scale(178).translate([width / 2, height / 2 + 18]);
+  const projection = d3.geoNaturalEarth1().scale(214).translate([width / 2, height / 2 + 24]);
   const path = d3.geoPath(projection);
 
   svg.append("rect").attr("width", width).attr("height", height).attr("rx", 24).attr("class", "map-bg");
+  const layer = svg.append("g").attr("class", "map-zoom-layer");
 
   const graticule = d3.geoGraticule10();
-  svg.append("path").datum({ type: "Sphere" }).attr("d", path).attr("class", "map-sphere");
-  svg.append("path").datum(graticule).attr("d", path).attr("class", "map-graticule");
+  layer.append("path").datum({ type: "Sphere" }).attr("d", path).attr("class", "map-sphere");
+  layer.append("path").datum(graticule).attr("d", path).attr("class", "map-graticule");
+
+  svg.call(
+    d3.zoom()
+      .scaleExtent([1, 4.5])
+      .translateExtent([[-120, -120], [width + 120, height + 120]])
+      .on("zoom", (event) => layer.attr("transform", event.transform))
+  );
 
   const valueExtent = d3.extent(data, d => d[metric]);
-  const stroke = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([0.8, 8]);
-  const opacity = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([0.18, 0.78]);
+  const stroke = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([0.9, 9.5]);
+  const opacity = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([0.16, 0.82]);
 
-  const routes = svg.append("g").attr("class", "trade-routes");
+  const routes = layer.append("g").attr("class", "trade-routes");
   routes.selectAll("path")
     .data(data)
     .join("path")
     .attr("d", d => arcPath(projection, [+d.exporter_lon, +d.exporter_lat], [+d.importer_lon, +d.importer_lat]))
-    .attr("class", "route-line")
+    .attr("class", d => `route-line ${routeKey(d) === selectedKey ? "is-selected" : ""}`)
     .attr("stroke-width", d => stroke(d[metric]))
-    .attr("opacity", d => opacity(d[metric]))
+    .attr("opacity", d => routeKey(d) === selectedKey ? 0.95 : opacity(d[metric]))
     .attr("filter", "url(#coffee-route-glow)")
+    .on("mouseenter", function () {
+      routes.selectAll("path").classed("is-muted", true);
+      d3.select(this).classed("is-muted", false).classed("is-hovered", true).raise();
+    })
     .on("mousemove", (event, d) => tooltip.show(event, `
       <b>${d.exporter} → ${d.importer}</b><br/>
       ${state.year}<br/>
+      ${metricFormatter(metric)(d[metric])}<br/>
       Trade value: ${formatMoney(d.trade_value_usd)}<br/>
-      Net weight: ${formatKg(d.net_weight_kg)}
+      Net weight: ${formatKg(d.net_weight_kg)}<br/>
+      <span>Click to pin this route.</span>
     `))
-    .on("mouseleave", tooltip.hide);
+    .on("mouseleave", function () {
+      routes.selectAll("path").classed("is-muted", false).classed("is-hovered", false);
+      tooltip.hide();
+    })
+    .on("click", (event, d) => {
+      event.stopPropagation();
+      state.onSelectItem?.(d);
+    });
 
   const countryTotals = new Map();
   data.forEach(d => {
@@ -70,9 +93,9 @@ export function renderTradeFlowMap(container, flows, state) {
   });
   const countries = [...countryTotals.values()];
   const maxTotal = d3.max(countries, d => d.exportValue + d.importValue) || 1;
-  const r = d3.scaleSqrt().domain([0, maxTotal]).range([2.5, 14]);
+  const r = d3.scaleSqrt().domain([0, maxTotal]).range([3, 18]);
 
-  svg.append("g").selectAll("circle")
+  const countryNodes = layer.append("g").attr("class", "country-node-layer").selectAll("circle")
     .data(countries)
     .join("circle")
     .attr("class", d => d.exportValue >= d.importValue ? "country-node exporter-node" : "country-node importer-node")
@@ -82,12 +105,17 @@ export function renderTradeFlowMap(container, flows, state) {
     .on("mousemove", (event, d) => tooltip.show(event, `
       <b>${d.country}</b><br/>
       Export side: ${metricFormatter(metric)(d.exportValue)}<br/>
-      Import side: ${metricFormatter(metric)(d.importValue)}
+      Import side: ${metricFormatter(metric)(d.importValue)}<br/>
+      <span>Click to pin this country.</span>
     `))
-    .on("mouseleave", tooltip.hide);
+    .on("mouseleave", tooltip.hide)
+    .on("click", (event, d) => {
+      event.stopPropagation();
+      state.onSelectItem?.({ type: "country", country: d.country, value: d.exportValue + d.importValue, role: d.exportValue >= d.importValue ? "exporter" : "importer", roleLabel: d.exportValue >= d.importValue ? "mainly exporter" : "mainly importer" });
+    });
 
-  svg.append("text").attr("x", 28).attr("y", 44).attr("class", "map-label").text("Coffee moves from tropical producers to high-consumption markets");
-  svg.append("text").attr("x", width - 28).attr("y", height - 28).attr("text-anchor", "end").attr("class", "map-caption").text("HS0901 · UN Comtrade · exports · recent annual periods");
+  svg.append("text").attr("x", 30).attr("y", 46).attr("class", "map-label").text("Coffee moves from tropical producers to high-consumption markets");
+  svg.append("text").attr("x", width - 30).attr("y", height - 30).attr("text-anchor", "end").attr("class", "map-caption").text("Scroll wheel zooms · drag the map to pan · click routes/countries to pin details");
 
   if (!data.length) {
     svg.append("text")

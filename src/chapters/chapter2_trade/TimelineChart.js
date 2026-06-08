@@ -1,12 +1,13 @@
 import * as d3 from "d3";
-import { formatKg, formatMoney, metricFormatter } from "./utils.js";
+import { createTooltip, formatKg, formatMoney, metricFormatter } from "./utils.js";
 
 export function renderTimelineChart(container, flows, state, onYearChange) {
   container.selectAll("*").remove();
   const width = 980;
-  const height = 320;
-  const margin = { top: 56, right: 30, bottom: 48, left: 86 };
+  const height = 280;
+  const margin = { top: 52, right: 30, bottom: 44, left: 86 };
   const metric = state.metric;
+  const tooltip = createTooltip(container);
 
   const data = d3.rollups(flows, v => ({
     year: +v[0].year,
@@ -15,8 +16,8 @@ export function renderTimelineChart(container, flows, state, onYearChange) {
     flows: v.length,
   }), d => +d.year).map(d => d[1]).sort((a,b)=>a.year-b.year);
 
-  const card = container.append("div").attr("class", "viz-card timeline-card");
-  card.append("div").attr("class", "viz-card-title").html(`<span>Recent-period trajectory</span><small>Click a point to update the whole chapter</small>`);
+  const card = container.append("div").attr("class", "viz-card timeline-card compact-card");
+  card.append("div").attr("class", "viz-card-title").html(`<span>Recent-period trajectory</span><small>Hover for values · click a point to update the whole chapter</small>`);
   const svg = card.append("svg").attr("viewBox", `0 0 ${width} ${height}`).attr("class", "timeline-svg");
 
   if (!data.length) {
@@ -38,7 +39,6 @@ export function renderTimelineChart(container, flows, state, onYearChange) {
     .curve(d3.curveCatmullRom.alpha(0.5));
 
   svg.append("g").attr("class", "timeline-grid")
-    .attr("transform", `translate(0,0)`)
     .call(d3.axisLeft(y).ticks(4).tickSize(-(width - margin.left - margin.right)).tickFormat(""))
     .call(g => g.select(".domain").remove());
   svg.append("path").datum(data).attr("class", "timeline-area").attr("d", area);
@@ -53,6 +53,13 @@ export function renderTimelineChart(container, flows, state, onYearChange) {
     .attr("cx", d => x(d.year))
     .attr("cy", d => y(d[metric]))
     .attr("r", d => +d.year === +state.year ? 8 : 5)
+    .on("mousemove", (event, d) => tooltip.show(event, `
+      <b>${d.year}</b><br/>
+      ${metricFormatter(metric)(d[metric])}<br/>
+      Bilateral flows: ${d.flows.toLocaleString()}<br/>
+      <span>Click to switch year.</span>
+    `))
+    .on("mouseleave", tooltip.hide)
     .on("click", (event, d) => onYearChange(d.year));
 
   const active = data.find(d => +d.year === +state.year) || data.at(-1);
