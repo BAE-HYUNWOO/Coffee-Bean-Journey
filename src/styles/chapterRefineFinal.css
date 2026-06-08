@@ -588,56 +588,7 @@
 }
 
 /* ===== Follow-up polish: 3-column consumption, fuller cards, wider origin board ===== */
-.theme-origin .chapter-shell,
-.theme-origin .chapter-visual-board {
-  width: 100vw !important;
-  max-width: none !important;
-  margin-left: calc(50% - 50vw) !important;
-  margin-right: calc(50% - 50vw) !important;
-}
 
-.theme-origin .compact-chapter-intro {
-  width: min(100%, 1780px) !important;
-  padding-inline: clamp(18px, 2.2vw, 42px) !important;
-}
-
-.theme-origin .chapter-watermark-title {
-  margin-left: clamp(12px, 2.2vw, 42px) !important;
-}
-
-.theme-origin .chapter-visual-board > * {
-  width: min(100%, calc(100vw - clamp(28px, 3vw, 58px))) !important;
-  max-width: none !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-}
-
-.theme-origin .visual-grid {
-  grid-template-columns: minmax(0, 1.06fr) minmax(0, 1fr) !important;
-  gap: clamp(16px, 1.4vw, 24px) !important;
-}
-
-.theme-origin .visual-grid > div,
-.theme-origin .chart-frame {
-  min-width: 0 !important;
-}
-
-.theme-origin #origin-map .chart-frame,
-.theme-origin #origin-bar .chart-frame {
-  min-height: clamp(520px, 33vw, 690px) !important;
-}
-
-.theme-origin #origin-line .chart-frame {
-  min-height: clamp(400px, 25vw, 560px) !important;
-}
-
-.theme-origin .chart-frame-body {
-  padding-inline: clamp(8px, 0.8vw, 14px) !important;
-}
-
-.theme-origin .chart-frame svg {
-  width: 100% !important;
-}
 
 .chapter4-board.is-card-grid {
   grid-template-columns: repeat(3, minmax(360px, 1fr)) !important;
@@ -749,32 +700,6 @@
   width: min(100%, 1360px) !important;
 }
 
-/* Origin: make the board feel full-bleed and set map/race ratio to 3:2. */
-.theme-origin .chapter-visual-board > * {
-  width: min(100%, calc(100vw - clamp(16px, 1.8vw, 34px))) !important;
-  max-width: none !important;
-}
-
-.theme-origin .visual-grid {
-  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr) !important;
-  gap: clamp(16px, 1.15vw, 22px) !important;
-}
-
-.theme-origin #origin-map .chart-frame {
-  min-height: clamp(540px, 36vw, 760px) !important;
-}
-
-.theme-origin #origin-bar .chart-frame {
-  min-height: clamp(540px, 36vw, 760px) !important;
-}
-
-.theme-origin #origin-line .chart-frame {
-  min-height: clamp(430px, 27vw, 590px) !important;
-}
-
-.theme-origin .chart-frame-body {
-  padding-inline: clamp(4px, 0.5vw, 10px) !important;
-}
 
 /* Chapter 2: the separate ranking section is now folded into the Sankey card. */
 #chapter2-rankings {

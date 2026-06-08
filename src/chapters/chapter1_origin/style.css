@@ -82,17 +82,6 @@
   50% { opacity: 0.4; }
 }
 
-/* Override global refine styles to restore chapter1 original proportions */
-.theme-origin .visual-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap: clamp(12px, 1.4vw, 18px) !important;
-}
-
-.theme-origin #origin-map .chart-frame,
-.theme-origin #origin-bar .chart-frame {
-  min-height: 350px !important;
-}
-
 /* Responsive adjustments for chart controls */
 @media (max-width: 720px) {
   .map-controls,
