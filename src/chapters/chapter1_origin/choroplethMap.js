@@ -196,15 +196,16 @@ export function drawChoroplethMap(containerSelector, { mapData, worldTopoJSON })
     .translateExtent([[0, 0], [width, mapHeight]])
     .on("zoom", (event) => { g.attr("transform", event.transform); });
   svg.call(zoom);
-  svg.on("dblclick.zoom", () => {
-    svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
-  });
-
   // Initial zoom — focus on the coffee belt (tropics) for a more impactful first view
   const initialScale = 1.35;
   const initialTx = width / 2 - (width / 2) * initialScale;
   const initialTy = mapHeight / 2 - (mapHeight / 2) * initialScale + 40;
-  svg.call(zoom.transform, d3.zoomIdentity.translate(initialTx, initialTy).scale(initialScale));
+  const initialTransform = d3.zoomIdentity.translate(initialTx, initialTy).scale(initialScale);
+  svg.call(zoom.transform, initialTransform);
+
+  svg.on("dblclick.zoom", () => {
+    svg.transition().duration(500).call(zoom.transform, initialTransform);
+  });
 
   // Color scales — warm coffee tones: cream → gold → orange → deep brown
   // Uses log scale so small producers are visible, large ones dominate visually
@@ -460,7 +461,7 @@ export function drawChoroplethMap(containerSelector, { mapData, worldTopoJSON })
   });
 
   controls.select("button").on("click", () => {
-    svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
+    svg.transition().duration(500).call(zoom.transform, initialTransform);
   });
 
   // Initial render
