@@ -121,6 +121,20 @@ export function drawTimelineChart(containerSelector, { timelineData }) {
       buildLegend();
       render();
     });
+    globalBtn.on("dblclick", () => {
+      // If already soloed (only global showing), restore all
+      if (visibleCountries.size === 0 && showGlobal) {
+        countryKeys.forEach(k => visibleCountries.add(k));
+        showGlobal = true;
+      } else {
+        // Solo global: hide all countries, show only global
+        visibleCountries.clear();
+        showGlobal = true;
+      }
+      buildLegend();
+      render();
+      render();
+    });
 
 
     countryKeys.forEach((cn) => {
