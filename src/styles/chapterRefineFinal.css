@@ -395,3 +395,194 @@
     width: calc(100vw - 28px) !important;
   }
 }
+
+
+/* ===== Final pass requested: clean card flipping, bigger timeline, softer trade map ===== */
+.chapter2-dashboard {
+  grid-template-columns: minmax(245px, 300px) minmax(0, 1fr) !important;
+  width: min(100%, calc(100vw - clamp(28px, 3.2vw, 62px))) !important;
+  gap: clamp(18px, 1.7vw, 30px) !important;
+}
+
+.chapter2-controls {
+  width: 100% !important;
+  grid-template-columns: minmax(520px, 1.55fr) minmax(180px, 230px) minmax(250px, 340px) !important;
+}
+
+.chapter2-stage,
+.chapter2-stage-chart,
+#chapter2-timeline {
+  width: 100% !important;
+  max-width: none !important;
+  justify-self: stretch !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+#chapter2-timeline {
+  min-height: clamp(430px, 29vw, 560px) !important;
+}
+
+#chapter2-timeline .timeline-card,
+#chapter2-timeline .viz-card {
+  width: 100% !important;
+  max-width: none !important;
+  min-height: clamp(420px, 28vw, 540px) !important;
+  margin: 0 !important;
+}
+
+#chapter2-timeline .timeline-svg,
+#chapter2-timeline svg {
+  width: 100% !important;
+  min-height: clamp(375px, 25vw, 500px) !important;
+  height: auto !important;
+}
+
+#chapter2-map,
+.chapter2-feature-stack,
+#chapter2-rankings {
+  width: min(100%, calc(100vw - clamp(28px, 3.2vw, 62px))) !important;
+}
+
+#chapter2-map .trade-map-card {
+  min-height: clamp(590px, 42vw, 760px) !important;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.86), transparent 28%),
+    radial-gradient(circle at 82% 16%, rgba(124, 166, 177, 0.20), transparent 30%),
+    linear-gradient(180deg, rgba(255, 249, 239, 0.96), rgba(239, 222, 198, 0.93)) !important;
+  border-color: rgba(91, 58, 38, 0.16) !important;
+  box-shadow: 0 18px 54px rgba(91, 58, 38, 0.10) !important;
+}
+
+#chapter2-map .trade-map-svg {
+  min-height: clamp(540px, 39vw, 720px) !important;
+}
+
+.trade-map-card .viz-card-title span,
+.trade-map-card .viz-card-title small,
+.trade-map-card .viz-help {
+  color: #2d1b12 !important;
+}
+
+.trade-map-card .viz-help {
+  color: rgba(111, 76, 51, 0.78) !important;
+}
+
+.map-bg {
+  fill: transparent !important;
+}
+
+.map-sphere {
+  fill: rgba(248, 233, 210, 0.84) !important;
+  stroke: rgba(107, 139, 141, 0.42) !important;
+  stroke-width: 1.25 !important;
+}
+
+.map-graticule {
+  stroke: rgba(91, 58, 38, 0.13) !important;
+  stroke-width: 0.75 !important;
+}
+
+.map-land {
+  fill: rgba(112, 137, 105, 0.28) !important;
+  stroke: rgba(91, 58, 38, 0.20) !important;
+  stroke-width: 0.65 !important;
+}
+
+.route-line {
+  stroke: rgba(93, 133, 143, 0.64) !important;
+  mix-blend-mode: multiply !important;
+  filter: drop-shadow(0 0 4px rgba(105, 142, 151, 0.22));
+}
+
+.route-line.is-hovered,
+.route-line.is-selected {
+  stroke: #9a642f !important;
+  filter: drop-shadow(0 0 8px rgba(154, 100, 47, 0.25));
+}
+
+.exporter-node {
+  fill: #c98c3f !important;
+  stroke: rgba(255, 250, 241, 0.95) !important;
+}
+
+.importer-node {
+  fill: #7ca8b5 !important;
+  stroke: rgba(255, 250, 241, 0.95) !important;
+}
+
+.map-caption {
+  fill: rgba(69, 49, 37, 0.68) !important;
+  font-weight: 800 !important;
+}
+
+/* Make the card flip behave as two real faces, not a transparent overlay. */
+.chapter4-board.is-card-grid .chapter4-section {
+  min-height: clamp(390px, 28vw, 530px) !important;
+  transform-style: preserve-3d !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-panel,
+.chapter4-board.is-card-grid .chapter4-section-copy {
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+  transform-style: preserve-3d !important;
+  transition:
+    transform 680ms cubic-bezier(0.2, 0.72, 0.2, 1),
+    opacity 280ms ease,
+    visibility 0s linear 0ms !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section:not(.is-card-flipped) .chapter4-panel {
+  z-index: 3 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: rotateY(0deg) !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section:not(.is-card-flipped) .chapter4-section-copy {
+  z-index: 1 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: rotateY(180deg) !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section.is-card-flipped .chapter4-panel {
+  z-index: 1 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: rotateY(-180deg) !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section.is-card-flipped .chapter4-section-copy {
+  z-index: 4 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: rotateY(0deg) !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section-copy {
+  background:
+    radial-gradient(circle at 16% 10%, rgba(255, 255, 255, 0.18), transparent 30%),
+    linear-gradient(145deg, rgba(61, 39, 27, 0.98), rgba(117, 80, 55, 0.95)) !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section-copy h3,
+.chapter4-board.is-card-grid .chapter4-section-copy p,
+.chapter4-card-back-hint {
+  transform: translateZ(1px);
+}
+
+@media (max-width: 1240px) {
+  .chapter2-controls {
+    grid-template-columns: 1fr !important;
+  }
+}

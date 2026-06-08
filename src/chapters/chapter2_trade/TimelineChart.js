@@ -3,9 +3,9 @@ import { createTooltip, formatKg, formatMoney, metricFormatter } from "./utils.j
 
 export function renderTimelineChart(container, flows, state, onYearChange) {
   container.selectAll("*").remove();
-  const width = 1280;
-  const height = 360;
-  const margin = { top: 66, right: 42, bottom: 52, left: 96 };
+  const width = 1520;
+  const height = 470;
+  const margin = { top: 78, right: 54, bottom: 64, left: 106 };
   const metric = state.metric;
   const tooltip = createTooltip(container);
 
