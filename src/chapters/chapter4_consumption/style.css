@@ -4,7 +4,7 @@
   width: min(100%, 1460px);
   margin: 0 auto;
   padding: 12px 18px 28px;
-  overflow-x: clip;
+  overflow-x: visible;
 }
 
 .chapter4-prologue {
@@ -149,6 +149,12 @@
   opacity: 0.86;
 }
 
+.chapter4-answer a {
+  color: #8c5a38;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .chapter4-note {
   padding-left: 12px;
   border-left: 3px solid rgba(140, 90, 56, 0.35);
@@ -179,10 +185,17 @@
 .chapter4-panel .chart-frame {
   position: relative;
   min-height: 0;
+  overflow: visible;
 }
 
 .chapter4-panel .chart-frame-body {
   position: relative;
+}
+
+.chapter4-panel .chart-frame svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 #chapter4-outcomes .chapter4-outcomes-grid,
@@ -226,7 +239,6 @@
   border-radius: 18px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(247, 238, 225, 0.92));
   box-shadow: 0 10px 24px rgba(102, 72, 40, 0.05);
-  overflow: hidden;
   min-height: 0;
   aspect-ratio: 310 / 194;
 }
@@ -527,6 +539,72 @@
   font-weight: 700;
 }
 
+.chapter4-help-btn {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid rgba(91, 58, 38, 0.35);
+  background: rgba(255, 251, 245, 0.92);
+  color: var(--coffee-dark);
+  font-size: 0.7rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  z-index: 50;
+}
+
+.chapter4-help-tooltip {
+  display: none;
+  position: absolute;
+  top: 28px;
+  right: 0;
+  max-width: 480px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(39, 23, 15, 0.92);
+  color: #fff8ef;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  pointer-events: none;
+  white-space: normal;
+  z-index: 20;
+}
+
+.chapter4-help-tooltip-portal {
+  position: fixed !important;
+  display: none;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.chapter4-help-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.68rem;
+}
+
+.chapter4-help-table th,
+.chapter4-help-table td {
+  padding: 3px 5px;
+  border-bottom: 1px solid rgba(255, 248, 239, 0.15);
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.4;
+}
+
+.chapter4-help-table th {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  opacity: 0.7;
+  white-space: nowrap;
+}
+
 .chapter4-axis-label {
   fill: var(--soft);
 }
@@ -564,6 +642,33 @@
   color: var(--soft);
   font-size: 0.86rem;
   line-height: 1.68;
+}
+
+.chapter4-sources {
+  padding: 28px 4px 8px;
+  margin-top: 20px;
+  border-top: 1px solid rgba(91, 58, 38, 0.10);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 16px;
+  color: var(--soft);
+  font-size: 0.78rem;
+}
+
+.chapter4-sources span {
+  font-weight: 700;
+}
+
+.chapter4-sources a {
+  color: #8c5a38;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(140, 90, 56, 0.35);
+}
+
+.chapter4-sources a:hover {
+  color: #5b3a26;
+  border-bottom-color: #5b3a26;
 }
 
 .chapter4-tooltip strong {

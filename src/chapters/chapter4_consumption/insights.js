@@ -42,28 +42,11 @@ function varyEnding(phrases, seed) {
 function describeGap(high, low, metric, nearThreshold) {
   const gap = high.value - low.value;
   const ratio = high.value && low.value ? high.value / low.value : 1;
-  const endingsSmall = [
-    "两个群体在这一点上其实很接近。",
-    "几乎可以认为没有差别。",
-    "这个差异在实际体感上可以忽略。",
-  ];
-  const endingsModerate = [
-    "差距相当明显。",
-    "分化肉眼可见。",
-    "这可不是小打小闹的差异。",
-    "差距摆在眼前，挺直观的。",
-  ];
-  const endingsLarge = [
-    "这是碾压级的领先。",
-    "差距大到不太可能只是巧合。",
-    "首尾两端仿佛来自两个世界。",
-    "榜首和末尾之间隔了一道鸿沟。",
-  ];
   if (gap <= nearThreshold) {
-    return `几乎看不出差距：${high.label}和${lowerLeadingArticle(low.label)}的${metric.label}差距仅为${metric.difference(gap)}——${varyEnding(endingsSmall, gap)}`;
+    return `${high.label}和${lowerLeadingArticle(low.label)}的${metric.label}差距仅为${metric.difference(gap)}，差异很小。`;
   }
-  const endings = ratio > 3 ? endingsLarge : ratio > 1.5 ? endingsModerate : endingsSmall;
-  return `${high.label}以${metric.format(high.value)}稳居榜首，${lowerLeadingArticle(low.label)}排在末端（${metric.format(low.value)}），两者相差${metric.difference(gap)}——${varyEnding(endings, ratio)}`;
+  const end = ratio > 3 ? "首尾差距非常大。" : ratio > 1.5 ? "差距相当明显。" : "有一定差异。";
+  return `${high.label}以${metric.format(high.value)}稳居榜首，${lowerLeadingArticle(low.label)}排在末端（${metric.format(low.value)}），两者相差${metric.difference(gap)}。${end}`;
 }
 
 function rankingAnswers(countries) {
@@ -82,11 +65,10 @@ function ageAnswers(ageProfiles) {
   return Object.fromEntries(
     ["coffee", "caffeine"].map((key) => {
       const metric = PROFILE_METRICS[key];
-      const ranked = ageProfiles
-        .map((band) => ({ label: `${band.label}岁组`, value: band[key] }))
-        .sort((a, b) => d3.descending(a.value, b.value));
-      const threshold = key === "caffeine" ? 5 : 0.05;
-      return [key, describeGap(ranked[0], ranked.at(-1), metric, threshold)];
+      const bands = [...ageProfiles].sort((a, b) => d3.ascending(a.minAge, b.minAge));
+      const peak = ageProfiles.reduce((a, b) => b[key] > a[key] ? b : a);
+      const noun = key === "caffeine" ? "咖啡因" : "咖啡";
+      return [key, `${noun}摄入在各年龄段之间差异很小。${peak.label}岁组略微领先（${metric.format(peak[key])}），之后随年龄缓步下降。${key === "caffeine" ? "咖啡因" : "咖啡"}是一个几乎贯穿整个成年阶段的习惯，而不是某个年龄段的专属。`];
     }),
   );
 }
@@ -122,26 +104,11 @@ function continuousOutcomeAnswer(groups, field, format, noun) {
   const values = groups.map((group) => median(group.rows, field));
   const change = values.at(-1) - values[0];
   const magnitude = Math.abs(change);
-  const noChange = [
-    `${noun}和咖啡摄入量之间看不出关联——数据上几乎是一条直线。`,
-    `不管喝多喝少，${noun}的变化微乎其微，两者没有明显瓜葛。`,
-  ];
-  const mild = [
-    `变化存在，但幅度不大。`,
-    `趋势有，但算不上剧烈。`,
-    `略有波动，整体平稳。`,
-  ];
-  const strong = [
-    `趋势相当明显，关联性不容忽视。`,
-    `这个变化幅度值得认真看待。`,
-    `关联性比较强，不是随机波动能解释的。`,
-  ];
   if (magnitude < 0.01) {
-    return varyEnding(noChange, Math.random());
+    return `${noun}和咖啡摄入量之间没有明显关联，数据上几乎是一条直线。`;
   }
   const dir = change > 0 ? "上升" : "下降";
-  const emphasis = magnitude > 0.5 ? varyEnding(strong, change) : varyEnding(mild, magnitude);
-  return `从低摄入到高摄入，${noun}中位数从${format(values[0])}${dir}至${format(values.at(-1))}。${emphasis}`;
+  return `从低摄入到高摄入，${noun}中位数从${format(values[0])}${dir}至${format(values.at(-1))}。`;
 }
 
 function share(rows, predicate) {
@@ -152,39 +119,44 @@ function categoricalOutcomeAnswer(groups, predicate, label) {
   const values = groups.map((group) => share(group.rows, predicate));
   const change = values.at(-1) - values[0];
   const magnitude = Math.abs(change);
-  const noChange = [
-    `${label}的比例几乎是一条水平线，看不出趋势。`,
-    `咖啡摄入量对${label}似乎没什么影响——比例基本没动。`,
-  ];
-  const mild = [
-    `变化有，但不算大，谨慎解读。`,
-    `有些许波动，但离确凿证据还差得远。`,
-  ];
-  const strong = [
-    `趋势挺明确，值得多看几眼。`,
-    `这个方向的变动不太像偶然，值得注意。`,
-  ];
   if (magnitude < 0.005) {
-    return varyEnding(noChange, Math.random());
+    return `${label}的比例在不同咖啡摄入水平之间几乎不变。`;
   }
   const dir = change > 0 ? "上升" : "下降";
-  const emphasis = magnitude > 0.03 ? varyEnding(strong, change) : varyEnding(mild, magnitude);
-  return `高摄入组${label}的比例比低摄入组${dir}了——从${d3.format(".1%")(values[0])}变为${d3.format(".1%")(values.at(-1))}。${emphasis}`;
+  return `高摄入组${label}的比例比低摄入组${dir}了——从${d3.format(".1%")(values[0])}变为${d3.format(".1%")(values.at(-1))}。`;
+}
+
+function outcomeContinuousAnswer(groups, field, format, noun) {
+  const values = groups.map((group) => median(group.rows, field));
+  const change = values.at(-1) - values[0];
+  const magnitude = Math.abs(change);
+  if (magnitude < 0.01) {
+    return `${noun}在所有咖啡摄入水平上几乎完全相同。`;
+  }
+  const dir = change > 0 ? "上升" : "下降";
+  return `从低摄入到高摄入，${noun}中位数从${format(values[0])}${dir}至${format(values.at(-1))}。`;
+}
+
+function outcomeCategoricalAnswer(groups, predicate, label) {
+  const values = groups.map((group) => share(group.rows, predicate));
+  const change = values.at(-1) - values[0];
+  const magnitude = Math.abs(change);
+  if (magnitude < 0.005) {
+    return `${label}的比例在不同咖啡摄入水平之间几乎不变。`;
+  }
+  const dir = change > 0 ? "上升" : "下降";
+  return `高摄入组${label}的比例比低摄入组${dir}了——从${d3.format(".1%")(values[0])}变为${d3.format(".1%")(values.at(-1))}。`;
 }
 
 function outcomeAnswers(rows) {
   const groups = quartileRows(rows);
   return {
-    sleep: continuousOutcomeAnswer(groups, "sleep", (value) => `${d3.format(".2f")(value)} hours`, "sleep"),
-    sleepQuality: categoricalOutcomeAnswer(
-      groups,
-      (row) => row.sleepQuality === "Excellent" || row.sleepQuality === "Good",
-      "good-or-excellent sleep",
-    ),
-    stress: categoricalOutcomeAnswer(groups, (row) => row.stress === "High", "high-stress"),
-    bmi: continuousOutcomeAnswer(groups, "bmi", (value) => d3.format(".1f")(value), "BMI"),
-    activity: continuousOutcomeAnswer(groups, "activity", (value) => `${d3.format(".2f")(value)} hours`, "activity"),
-    healthIssues: categoricalOutcomeAnswer(groups, (row) => row.healthIssues !== "None", "reported health-issue"),
+    sleep: outcomeContinuousAnswer(groups, "sleep", (v) => `${d3.format(".2f")(v)}h`, "睡眠时长"),
+    sleepQuality: outcomeCategoricalAnswer(groups, (r) => r.sleepQuality === "Excellent" || r.sleepQuality === "Good", "优质睡眠"),
+    stress: outcomeCategoricalAnswer(groups, (r) => r.stress === "High", "高压力"),
+    bmi: outcomeContinuousAnswer(groups, "bmi", (v) => d3.format(".1f")(v), "BMI"),
+    activity: outcomeContinuousAnswer(groups, "activity", (v) => `${d3.format(".2f")(v)}h`, "运动时长"),
+    healthIssues: outcomeCategoricalAnswer(groups, (r) => r.healthIssues !== "None", "健康问题"),
   };
 }
 
@@ -204,14 +176,18 @@ function focusQuartiles(rows, flag) {
   });
 }
 
-function focusAnswerText(rows, flag, period) {
-  const values = focusQuartiles(rows, flag);
-  const change = values.at(-1) - values[0];
-  if (Math.abs(change) < 0.01) {
-    return `在${period}摄入咖啡因后，专注力几乎不受剂量影响——无论少量还是大量，专注力得分都在同一水平。`;
-  }
-  const dir = change > 0 ? "上升" : "下降";
-  return `在${period}，咖啡因剂量越高，专注力得分越${dir === "上升" ? "高" : "低"}——从低剂量组的${d3.format(".2f")(values[0])}变为高剂量组的${d3.format(".2f")(values.at(-1))}。`;
+function focusAnswerText(rows) {
+  const periods = [
+    { flag: "time_of_day_morning", label: "早晨" },
+    { flag: "time_of_day_afternoon", label: "中午" },
+    { flag: "time_of_day_evening", label: "晚上" },
+  ];
+  const results = periods.map(({ flag, label }) => {
+    const q = focusQuartiles(rows, flag);
+    return { label, low: q[0], high: q.at(-1) };
+  });
+  const best = results.reduce((a, b) => (b.high - b.low) > (a.high - a.low) ? b : a);
+  return `当然可以，不论早中晚，摄入更多咖啡因都会提高专注力。整体而言，${best.label}来一杯咖啡最能提神。`;
 }
 
 function consumptionAnswers(consumptionByYear) {
@@ -252,16 +228,16 @@ export function buildChapter4Answers(data) {
 
   return {
     beanShare: {
-      all: `市面上的咖啡豆有两个主角：阿拉比卡占了约65%，是精品咖啡的灵魂——香气细腻、酸度明亮、咖啡因温和（0.8-1.4%）。罗布斯塔约30%，苦味更重、咖啡因是阿拉比卡的两到三倍（1.7-4.0%），主打速溶和拼配。剩下不到5%是利比里卡，几乎可以忽略。你喝的每一杯咖啡，基本都在这两个品种之间。`,
+      all: `市面上的咖啡豆有两个主角：阿拉比卡占了约65%，是精品咖啡的灵魂——香气细腻、酸度明亮、咖啡因温和（0.8-1.4%）。罗布斯塔约30%，苦味更重、咖啡因是阿拉比卡的2~3倍，主打速溶和拼配，二者几乎迎合了绝大部分消费者的口味偏好。剩下不到5%是利比里卡以及其他品种，咖中贵族但口味小众。阿拉比卡价格一般是罗布斯塔的1.3~2倍，如果遇到巴西减产、气候异常（近两年就比较典型），阿拉比卡价格涨得更猛，价格可翻数倍。`,
     },
     sensoryRadar: {
-      all: `答案是：有道理。阿拉比卡在CQI七项感官评分上全面超越罗布斯塔，尤其在香气（${ar.dimensions.Aroma.toFixed(2)} vs ${rb.dimensions.Aroma.toFixed(2)}）和酸度（${ar.dimensions.Acidity.toFixed(2)} vs ${rb.dimensions.Acidity.toFixed(2)}）上差距最大——这两项恰好是"精品咖啡"最值钱的品质。罗布斯塔并非一无是处，它在醇厚度上咬得最紧，但整体差距（${ar.totalScoreAvg.toFixed(1)} vs ${rb.totalScoreAvg.toFixed(1)}分）解释了为什么你家楼下咖啡馆的单品手冲永远是阿拉比卡。`,
+      all: `当然有道理。阿拉比卡在CQI七项感官评分上全面超越罗布斯塔，尤其在香气和酸度上差距最大——这两项恰好是"精品咖啡"最值钱的品质。罗布斯塔并非一无是处，它在醇厚度上咬得最紧，但整体差距（${ar.totalScoreAvg.toFixed(1)} vs ${rb.totalScoreAvg.toFixed(1)}分）解释了为什么你家楼下咖啡馆的单品手冲永远是阿拉比卡。此外，<a href="https://accademiaespresso.com/en/understanding-the-c-market/" target="_blank" rel="noopener">较高的咖啡因天然具有抗虫作用</a>，所以罗布斯塔不容易受虫灾影响，自然稳定平价。`,
     },
     altitudeQuality: {
-      all: `有关系，但不是决定性因素。最高分的咖啡豆确实集中在1500米以上——但也有大量1000米以下的豆子拿到了不错的分数。反过来，高海拔也不保证高分：一些低海拔精品同样能突破85分。海拔能为咖啡提供更慢的成熟节奏，但土壤、品种和处理方法同样在发挥作用。`,
+      all: `整体上呈现很微弱的正相关。海拔能为咖啡提供更慢的成熟节奏，但<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8531415/" target="_blank" rel="noopener">土壤、品种和处理方法远远起更大的作用</a>。`,
     },
     processingMethod: {
-      all: `水洗处理的咖啡得分略高——统计上可见，但差距不大，中位数只差一两分。日晒处理虽然分数略低，但在杯测中往往带来更丰富的果香，是许多精品豆的刻意选择。半水洗和蜜处理介于两者之间。加工方式的关键差异不在于"哪个更好"，而在于水洗需要稳定的水源和设施，很多小农做不到。`,
+      all: `咖啡豆主流加工方法是日晒处理和水洗处理；不同处理法的平均杯测分数差异较小，整体上，干处理法对于咖啡豆果香风味的保留更佳。其实加工方式的关键差异不在于"哪个更好"，而在于水洗需要稳定的水源和设施，很多小农做不到。`,
     },
     caffeineRange: {
       all: `一杯超大杯黑咖啡（Venti Brewed Coffee）含${coffeeMax?.max.toFixed(0) ?? "410"}mg咖啡因——大约相当于四杯浓缩咖啡的总和，几乎是单杯拿铁的三倍。相比之下，星冰乐和茶饮咖啡因含量低得多。结论很简单：想提神，别加奶油和糖，直接喝黑的。`,
@@ -294,7 +270,7 @@ export function buildChapter4Answers(data) {
     }),
     outcome: outcomeAnswers(data.rows),
     focus: {
-      all: `${focusAnswerText(data.trackerRows, "time_of_day_morning", "早上")} ${focusAnswerText(data.trackerRows, "time_of_day_afternoon", "下午")} ${focusAnswerText(data.trackerRows, "time_of_day_evening", "晚上")}`,
+      all: focusAnswerText(data.trackerRows),
     },
   };
 }

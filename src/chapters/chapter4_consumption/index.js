@@ -25,7 +25,7 @@ let renderSequence = 0;
 let activeMotionCleanup = () => {};
 
 const QUESTION_MAP = {
-  beanShare: { all: "不止一种豆——阿拉比卡和罗布斯塔到底差在哪？" },
+  beanShare: { all: "阿拉比卡 vs 罗布斯塔——决战紫禁之巅" },
   sensoryRadar: { all: "阿拉比卡更贵，贵得有道理吗？" },
   altitudeQuality: { all: "高海拔的咖啡豆真的更好喝？" },
   processingMethod: { all: "水洗还是日晒——加工手法能改变什么？" },
@@ -36,37 +36,37 @@ const QUESTION_MAP = {
     all: "全球咖啡消费在涨还是在跌？",
   },
   ranking: {
-    coffee: "哪些国家的人喝咖啡最多？",
-    sleep: "这些国家的睡眠时长呢？",
-    caffeine: "换成咖啡因摄入量，排名会变吗？",
+    coffee: "哪些国家的人喝咖啡最多？换个维度看呢？",
+    sleep: "哪些国家的人喝咖啡最多？换个维度看呢？",
+    caffeine: "哪些国家的人喝咖啡最多？换个维度看呢？",
   },
   age: {
-    coffee: "咖啡是年轻人的饮料，还是中年人的习惯？",
-    caffeine: "不同年龄段，咖啡因摄入有什么变化？",
+    coffee: "咖啡消费者的人口画像有差异吗？",
+    caffeine: "咖啡消费者的人口画像有差异吗？",
   },
   gender: {
     coffee: "男性和女性，谁喝咖啡更多？",
-    caffeine: "性别差异在咖啡因摄入上也存在吗？",
+    caffeine: "男性和女性，谁喝咖啡更多？",
   },
   occupation: {
     coffee: "职业和咖啡摄入有关吗？",
-    caffeine: "换个角度，咖啡因摄入量的职业差异呢？",
+    caffeine: "职业和咖啡摄入有关吗？",
   },
   alcohol: {
     coffee: "喝酒的人和不喝酒的人，谁喝咖啡更多？",
-    caffeine: "酒精和咖啡因——这两个习惯有交集吗？",
+    caffeine: "喝酒的人和不喝酒的人，谁喝咖啡更多？",
   },
   smoking: {
     coffee: "吸烟者和非吸烟者，咖啡习惯有差别吗？",
-    caffeine: "吸烟的咖啡因摄入者有什么不同？",
+    caffeine: "吸烟者和非吸烟者，咖啡习惯有差别吗？",
   },
   outcome: {
-    sleep: "咖啡喝越多，睡得越少？",
-    sleepQuality: "咖啡喝越多，睡眠质量越差？",
-    stress: "咖啡喝越多，压力更大吗？",
-    bmi: "咖啡摄入量升高，BMI 会跟着涨吗？",
-    activity: "咖啡喝得多的人，运动量会变化吗？",
-    healthIssues: "咖啡喝多了，健康问题会增多吗？",
+    sleep: "长期：咖啡喝越多，睡得越少？",
+    sleepQuality: "长期：咖啡喝越多，睡得越少？",
+    stress: "长期：咖啡喝越多，睡得越少？",
+    bmi: "长期：咖啡喝越多，睡得越少？",
+    activity: "长期：咖啡喝越多，睡得越少？",
+    healthIssues: "长期：咖啡喝越多，睡得越少？",
   },
   focus: {
     all: "咖啡因能提升专注力吗？什么时候喝效果最好？",
@@ -88,24 +88,24 @@ const PROFILE_METRICS = [
 
 const PROFILE_QUESTION_MAP = {
   age: {
-    coffee: "Does coffee intake change across age bands?",
-    caffeine: "Does caffeine intake change across age bands?",
+    coffee: "咖啡消费者的人口画像有差异吗？",
+    caffeine: "咖啡消费者的人口画像有差异吗？",
   },
   gender: {
-    coffee: "Does coffee intake differ by gender?",
-    caffeine: "Does caffeine intake differ by gender?",
+    coffee: "男性和女性，谁喝咖啡更多？",
+    caffeine: "男性和女性，谁喝咖啡更多？",
   },
   occupation: {
-    coffee: "Does coffee intake vary by occupation?",
-    caffeine: "Does caffeine intake vary by occupation?",
+    coffee: "职业和咖啡摄入有关吗？",
+    caffeine: "职业和咖啡摄入有关吗？",
   },
   alcohol: {
-    coffee: "Does coffee intake vary with alcohol use?",
-    caffeine: "Does caffeine intake vary with alcohol use?",
+    coffee: "喝酒的人和不喝酒的人，谁喝咖啡更多？",
+    caffeine: "喝酒的人和不喝酒的人，谁喝咖啡更多？",
   },
   smoking: {
-    coffee: "Does coffee intake vary with smoking?",
-    caffeine: "Does caffeine intake vary with smoking?",
+    coffee: "吸烟者和非吸烟者，咖啡习惯有差别吗？",
+    caffeine: "吸烟者和非吸烟者，咖啡习惯有差别吗？",
   },
 };
 
@@ -380,6 +380,15 @@ function renderShell() {
         controls: [],
         chartSlot: "chapter4-focus",
       })}
+
+      <footer class="chapter4-sources">
+        <span>数据来源：</span>
+        <a href="https://apps.fas.usda.gov/psdonline/app/index.html" target="_blank" rel="noopener">USDA PSD</a>
+        <a href="https://github.com/jldbc/coffee-quality-database" target="_blank" rel="noopener">CQI Coffee Quality Database</a>
+        <a href="https://www.kaggle.com/datasets/henryshan/starbucks" target="_blank" rel="noopener">Starbucks Nutrition</a>
+        <a href="https://www.kaggle.com/datasets/uom190346a/global-coffee-health-dataset" target="_blank" rel="noopener">Coffee Health Dataset</a>
+        <a href="https://www.kaggle.com/datasets/prekshad2166/caffeine-intake-tracker-csv" target="_blank" rel="noopener">Caffeine Tracker</a>
+      </footer>
     </div>
   `;
 }
@@ -519,7 +528,7 @@ function setupCopyController(container, answers) {
     const answer = container.querySelector(`[data-answer-for="${groupName}"]`);
     if (!question || !answer) return null;
     question.textContent = getQuestion(groupName, value, question.textContent);
-    answer.textContent = answers[groupName]?.[value] ?? "";
+    answer.innerHTML = answers[groupName]?.[value] ?? "";
     answer.classList.add("is-visible");
     return question.closest(".chapter4-section-copy");
   };

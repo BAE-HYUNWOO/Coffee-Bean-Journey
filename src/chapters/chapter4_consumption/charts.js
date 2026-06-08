@@ -56,12 +56,12 @@ const MEASURE_CONFIGS = {
 const AGE_CONFIG = {
   coffee: {
     label: "Life stage",
-    title: "Does coffee intake change across life stages?",
+    title: "咖啡消费者的人口画像有差异吗？",
     description: "Averages are grouped into age bands to see whether the habit tilts younger or older.",
   },
   caffeine: {
     label: "Life stage",
-    title: "Does caffeine intake change across life stages?",
+    title: "不同年龄段，咖啡因摄入有什么变化？",
     description: "Averages are grouped into age bands to compare caffeine intensity across adulthood.",
   },
 };
@@ -462,9 +462,8 @@ export function renderAgeProfile(containerSelector, ageProfiles, metric = "coffe
     description: config.description,
   });
 
-  const width = Math.max(520, body.node()?.getBoundingClientRect().width || 640);
   const height = 250;
-  const { svg } = getSvg(body, height);
+  const { svg, width } = getSvg(body, height);
   const values = ageProfiles.map((d) => d[metric]).filter((value) => Number.isFinite(value));
   const extent = d3.extent(values);
   const range = (extent[1] ?? 0) - (extent[0] ?? 0);
@@ -619,10 +618,8 @@ function renderViolinComparison(containerSelector, rows, { field, metric, title,
 
   const stats = buildViolinStats(rows, field, metric, categories, labelMap)
     .sort((a, b) => d3.descending(a.median, b.median) || d3.ascending(a.label, b.label));
-  const width = Math.max(horizontal ? 620 : 920, body.node()?.getBoundingClientRect().width || 920);
   const height = horizontal ? Math.max(240, stats.length * 44 + 52) : 282;
-  const { svg } = getSvg(body, height);
-  svg.attr("viewBox", `0 0 ${width} ${height}`);
+  const { svg, width } = getSvg(body, height);
   const allValues = stats.flatMap((d) => d.values);
   const sortedValues = [...allValues].sort(d3.ascending);
   const extent = [
@@ -2144,11 +2141,24 @@ export function renderFocusScatter(containerSelector, rows) {
     item.append("span").html(`<strong>${config.tag}</strong> median β=${d3.format("+.4f")(fit.slope)}`);
   });
 
+  const fHelp = frame.append("div").attr("class", "chapter4-help-btn").html("?");
+  const fTip = d3.select(document.body).append("div")
+    .attr("class", "chapter4-help-tooltip chapter4-help-tooltip-portal")
+    .style("position", "fixed")
+    .text("控制所有组极限特征相同（比如初始专注度、饮食等），仅比较咖啡因摄入时段与剂量的差异。");
+  fHelp.on("mouseenter", () => {
+    const rect = fHelp.node().getBoundingClientRect();
+    fTip.style("display", "block")
+      .style("right", `${window.innerWidth - rect.right}px`)
+      .style("top", `${rect.bottom + 6}px`);
+  });
+  fHelp.on("mouseleave", () => fTip.style("display", "none"));
+
   return { frame, body };
 }
 
 export function renderFocusTiming(containerSelector, rows, time = "morning") {
-  return renderFocusScatter(containerSelector, rows, time);
+  return renderFocusScatter(containerSelector, rows);
 }
 
 export function renderOutcomeComparisonGrid(containerSelector, rows) {
@@ -2759,6 +2769,28 @@ export function renderProcessingMethod(containerSelector, stats) {
     .attr("text-anchor", "middle")
     .attr("class", "chapter4-axis-label")
     .text("Total Cup Points");
+
+  const procHelp = frame.append("div").attr("class", "chapter4-help-btn").html("?");
+  const procTable = d3.select(document.body).append("div")
+    .attr("class", "chapter4-help-tooltip chapter4-help-tooltip-portal")
+    .style("position", "fixed")
+    .html(`
+    <table class="chapter4-help-table">
+      <tr><th>英文</th><th>中文</th><th>简单理解</th><th>典型风味</th></tr>
+      <tr><td>Natural / Dry</td><td>日晒处理</td><td>整颗咖啡果直接晒干，再脱壳</td><td>果香浓郁、甜感高、酒香、层次丰富</td></tr>
+      <tr><td>Pulped Natural / Honey</td><td>蜜处理</td><td>去掉果皮，保留部分果胶晒干</td><td>甜感强，酸甜平衡</td></tr>
+      <tr><td>Semi-washed / Semi-pulped</td><td>半水洗</td><td>去皮后部分洗去果胶，再干燥</td><td>干净度较高，保留一定甜感</td></tr>
+      <tr><td>Washed / Wet</td><td>水洗处理</td><td>去皮、发酵、彻底洗净果胶后再晒干</td><td>风味干净、酸质明亮、层次清晰</td></tr>
+      <tr><td>Other</td><td>其他处理法</td><td>厌氧发酵、碳浸渍等新兴工艺</td><td>风味变化大，常有特殊发酵香气</td></tr>
+    </table>
+  `);
+  procHelp.on("mouseenter", () => {
+    const rect = procHelp.node().getBoundingClientRect();
+    procTable.style("display", "block")
+      .style("right", `${window.innerWidth - rect.right}px`)
+      .style("top", `${rect.bottom + 6}px`);
+  });
+  procHelp.on("mouseleave", () => procTable.style("display", "none"));
 
   return { frame, body };
 }
