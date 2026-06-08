@@ -1,0 +1,745 @@
+{
+  "nodes": [
+    {
+      "id": "Brazil",
+      "role": "exporter",
+      "value": 13385824169.0,
+      "lat": -14.235,
+      "lon": -51.9253
+    },
+    {
+      "id": "Germany",
+      "role": "importer",
+      "value": 8628964084.811,
+      "lat": 51.1657,
+      "lon": 10.4515
+    },
+    {
+      "id": "USA",
+      "role": "importer",
+      "value": 6309726701.446,
+      "lat": NaN,
+      "lon": NaN
+    },
+    {
+      "id": "Italy",
+      "role": "importer",
+      "value": 3832156095.5140004,
+      "lat": 41.8719,
+      "lon": 12.5674
+    },
+    {
+      "id": "Switzerland",
+      "role": "exporter",
+      "value": 3426305310.197,
+      "lat": 46.8182,
+      "lon": 8.2275
+    },
+    {
+      "id": "Poland",
+      "role": "importer",
+      "value": 1563856804.593,
+      "lat": 51.9194,
+      "lon": 19.1451
+    },
+    {
+      "id": "Japan",
+      "role": "importer",
+      "value": 1034308869.0,
+      "lat": 36.2048,
+      "lon": 138.2529
+    },
+    {
+      "id": "Belgium",
+      "role": "importer",
+      "value": 2418867688.773,
+      "lat": 50.5039,
+      "lon": 4.4699
+    },
+    {
+      "id": "Canada",
+      "role": "exporter",
+      "value": 1991076508.599,
+      "lat": 56.1304,
+      "lon": -106.3468
+    },
+    {
+      "id": "Mexico",
+      "role": "exporter",
+      "value": 1032559339.0,
+      "lat": 23.6345,
+      "lon": -102.5528
+    },
+    {
+      "id": "T�rkiye",
+      "role": "importer",
+      "value": 589106368.0,
+      "lat": NaN,
+      "lon": NaN
+    },
+    {
+      "id": "Netherlands",
+      "role": "importer",
+      "value": 2431097490.803,
+      "lat": 52.1326,
+      "lon": 5.2913
+    },
+    {
+      "id": "France",
+      "role": "importer",
+      "value": 2496060286.961,
+      "lat": 46.2276,
+      "lon": 2.2137
+    },
+    {
+      "id": "Spain",
+      "role": "importer",
+      "value": 1409535778.344,
+      "lat": 40.4637,
+      "lon": -3.7492
+    },
+    {
+      "id": "China",
+      "role": "importer",
+      "value": 459416108.0,
+      "lat": 35.8617,
+      "lon": 104.1954
+    },
+    {
+      "id": "Russian Federation",
+      "role": "importer",
+      "value": 459333341.0,
+      "lat": 61.524,
+      "lon": 105.3188
+    },
+    {
+      "id": "Rep. of Korea",
+      "role": "importer",
+      "value": 513025537.0,
+      "lat": NaN,
+      "lon": NaN
+    },
+    {
+      "id": "United Kingdom",
+      "role": "importer",
+      "value": 973659784.185,
+      "lat": 55.3781,
+      "lon": -3.436
+    },
+    {
+      "id": "Indonesia",
+      "role": "exporter",
+      "value": 1478612284.2319999,
+      "lat": -0.7893,
+      "lon": 113.9213
+    },
+    {
+      "id": "Austria",
+      "role": "importer",
+      "value": 483767859.633,
+      "lat": 47.5162,
+      "lon": 14.5501
+    },
+    {
+      "id": "Czechia",
+      "role": "importer",
+      "value": 410282254.907,
+      "lat": 49.8175,
+      "lon": 15.473
+    },
+    {
+      "id": "Sweden",
+      "role": "importer",
+      "value": 514034310.886,
+      "lat": 60.1282,
+      "lon": 18.6435
+    },
+    {
+      "id": "Greece",
+      "role": "importer",
+      "value": 414757978.004,
+      "lat": 39.0742,
+      "lon": 21.8243
+    },
+    {
+      "id": "Colombia",
+      "role": "importer",
+      "value": 214127711.0,
+      "lat": 4.5709,
+      "lon": -74.2973
+    },
+    {
+      "id": "Egypt",
+      "role": "importer",
+      "value": 188832338.574,
+      "lat": 26.8206,
+      "lon": 30.8025
+    },
+    {
+      "id": "Australia",
+      "role": "importer",
+      "value": 310035029.802,
+      "lat": -25.2744,
+      "lon": 133.7751
+    },
+    {
+      "id": "Argentina",
+      "role": "importer",
+      "value": 172771727.0,
+      "lat": -38.4161,
+      "lon": -63.6167
+    },
+    {
+      "id": "Algeria",
+      "role": "importer",
+      "value": 171764775.183,
+      "lat": 28.0339,
+      "lon": 1.6596
+    },
+    {
+      "id": "Finland",
+      "role": "importer",
+      "value": 140490516.0,
+      "lat": 61.9241,
+      "lon": 25.7482
+    },
+    {
+      "id": "Romania",
+      "role": "importer",
+      "value": 274456654.718,
+      "lat": NaN,
+      "lon": NaN
+    },
+    {
+      "id": "Slovakia",
+      "role": "importer",
+      "value": 140003944.956,
+      "lat": NaN,
+      "lon": NaN
+    },
+    {
+      "id": "Portugal",
+      "role": "importer",
+      "value": 135003450.57,
+      "lat": 39.3999,
+      "lon": -8.2245
+    },
+    {
+      "id": "Slovenia",
+      "role": "importer",
+      "value": 122958929.0,
+      "lat": NaN,
+      "lon": NaN
+    },
+    {
+      "id": "Malaysia",
+      "role": "importer",
+      "value": 233760982.141,
+      "lat": 4.2105,
+      "lon": 101.9758
+    },
+    {
+      "id": "Denmark",
+      "role": "importer",
+      "value": 221794082.834,
+      "lat": 56.2639,
+      "lon": 9.5018
+    },
+    {
+      "id": "Viet Nam",
+      "role": "importer",
+      "value": 111632061.564,
+      "lat": 14.0583,
+      "lon": 108.2772
+    },
+    {
+      "id": "Norway",
+      "role": "importer",
+      "value": 104050234.0,
+      "lat": 60.472,
+      "lon": 8.4689
+    }
+  ],
+  "links": [
+    {
+      "source": "Brazil",
+      "target": "Germany",
+      "value": 2298963145.0,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "USA",
+      "value": 1916781332.0,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "Italy",
+      "value": 1332050537.0,
+      "year": 2025
+    },
+    {
+      "source": "Switzerland",
+      "target": "USA",
+      "value": 1264596308.922,
+      "year": 2025
+    },
+    {
+      "source": "Germany",
+      "target": "Poland",
+      "value": 1087921679.264,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "Japan",
+      "value": 1034308869.0,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "Belgium",
+      "value": 987371893.0,
+      "year": 2025
+    },
+    {
+      "source": "Canada",
+      "target": "USA",
+      "value": 688161863.986,
+      "year": 2025
+    },
+    {
+      "source": "USA",
+      "target": "Canada",
+      "value": 686184131.0,
+      "year": 2025
+    },
+    {
+      "source": "Mexico",
+      "target": "USA",
+      "value": 606403728.0,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "T�rkiye",
+      "value": 589106368.0,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "Netherlands",
+      "value": 575405942.0,
+      "year": 2025
+    },
+    {
+      "source": "Germany",
+      "target": "France",
+      "value": 528623837.771,
+      "year": 2025
+    },
+    {
+      "source": "Italy",
+      "target": "Germany",
+      "value": 517861558.597,
+      "year": 2025
+    },
+    {
+      "source": "Switzerland",
+      "target": "France",
+      "value": 516927669.699,
+      "year": 2025
+    },
+    {
+      "source": "Germany",
+      "target": "Netherlands",
+      "value": 478012535.442,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "Spain",
+      "value": 476741694.0,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "China",
+      "value": 459416108.0,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "Russian Federation",
+      "value": 459333341.0,
+      "year": 2025
+    },
+    {
+      "source": "Netherlands",
+      "target": "Germany",
+      "value": 452293019.581,
+      "year": 2025
+    },
+    {
+      "source": "Germany",
+      "target": "USA",
+      "value": 441203708.489,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "France",
+      "value": 366327532.0,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "Rep. of Korea",
+      "value": 358033484.0,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "United Kingdom",
+      "value": 349950058.0,
+      "year": 2025
+    },
+    {
+      "source": "Belgium",
+      "target": "France",
+      "value": 347955955.044,
+      "year": 2025
+    },
+    {
+      "source": "Indonesia",
+      "target": "USA",
+      "value": 342365549.697,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "Canada",
+      "value": 336737513.0,
+      "year": 2025
+    },
+    {
+      "source": "Germany",
+      "target": "Austria",
+      "value": 325918488.747,
+      "year": 2025
+    },
+    {
+      "source": "Netherlands",
+      "target": "France",
+      "value": 309158086.407,
+      "year": 2025
+    },
+    {
+      "source": "Germany",
+      "target": "Spain",
+      "value": 305281151.483,
+      "year": 2025
+    },
+    {
+      "source": "Indonesia",
+      "target": "Belgium",
+      "value": 302324226.817,
+      "year": 2025
+    },
+    {
+      "source": "Italy",
+      "target": "France",
+      "value": 299897291.449,
+      "year": 2025
+    },
+    {
+      "source": "Germany",
+      "target": "Czechia",
+      "value": 292191543.907,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "Sweden",
+      "value": 288697194.0,
+      "year": 2025
+    },
+    {
+      "source": "Switzerland",
+      "target": "Canada",
+      "value": 279993000.613,
+      "year": 2025
+    },
+    {
+      "source": "Switzerland",
+      "target": "Spain",
+      "value": 255434599.495,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "Greece",
+      "value": 254406525.0,
+      "year": 2025
+    },
+    {
+      "source": "Italy",
+      "target": "Poland",
+      "value": 246151442.329,
+      "year": 2025
+    },
+    {
+      "source": "Switzerland",
+      "target": "United Kingdom",
+      "value": 245881531.387,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "Mexico",
+      "value": 244317412.0,
+      "year": 2025
+    },
+    {
+      "source": "Indonesia",
+      "target": "Germany",
+      "value": 242950129.256,
+      "year": 2025
+    },
+    {
+      "source": "Switzerland",
+      "target": "Germany",
+      "value": 225719292.5,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "Colombia",
+      "value": 214127711.0,
+      "year": 2025
+    },
+    {
+      "source": "Netherlands",
+      "target": "Belgium",
+      "value": 209615627.373,
+      "year": 2025
+    },
+    {
+      "source": "Italy",
+      "target": "USA",
+      "value": 209038026.352,
+      "year": 2025
+    },
+    {
+      "source": "Germany",
+      "target": "Switzerland",
+      "value": 208606472.466,
+      "year": 2025
+    },
+    {
+      "source": "Germany",
+      "target": "United Kingdom",
+      "value": 206828505.002,
+      "year": 2025
+    },
+    {
+      "source": "Germany",
+      "target": "Belgium",
+      "value": 205006306.248,
+      "year": 2025
+    },
+    {
+      "source": "Switzerland",
+      "target": "Italy",
+      "value": 199921892.604,
+      "year": 2025
+    },
+    {
+      "source": "Indonesia",
+      "target": "Egypt",
+      "value": 188832338.574,
+      "year": 2025
+    },
+    {
+      "source": "Germany",
+      "target": "Italy",
+      "value": 188686729.461,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "Australia",
+      "value": 188458326.0,
+      "year": 2025
+    },
+    {
+      "source": "Belgium",
+      "target": "Netherlands",
+      "value": 184755481.291,
+      "year": 2025
+    },
+    {
+      "source": "Mexico",
+      "target": "Belgium",
+      "value": 181838199.0,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "Argentina",
+      "value": 172771727.0,
+      "year": 2025
+    },
+    {
+      "source": "Indonesia",
+      "target": "Algeria",
+      "value": 171764775.183,
+      "year": 2025
+    },
+    {
+      "source": "Italy",
+      "target": "United Kingdom",
+      "value": 170999689.796,
+      "year": 2025
+    },
+    {
+      "source": "Italy",
+      "target": "Greece",
+      "value": 160351453.004,
+      "year": 2025
+    },
+    {
+      "source": "Italy",
+      "target": "Austria",
+      "value": 157849370.886,
+      "year": 2025
+    },
+    {
+      "source": "USA",
+      "target": "Rep. of Korea",
+      "value": 154992053.0,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "Finland",
+      "value": 140490516.0,
+      "year": 2025
+    },
+    {
+      "source": "Germany",
+      "target": "Romania",
+      "value": 140348543.738,
+      "year": 2025
+    },
+    {
+      "source": "Germany",
+      "target": "Slovakia",
+      "value": 140003944.956,
+      "year": 2025
+    },
+    {
+      "source": "Spain",
+      "target": "Portugal",
+      "value": 135003450.57,
+      "year": 2025
+    },
+    {
+      "source": "Italy",
+      "target": "Romania",
+      "value": 134108110.98,
+      "year": 2025
+    },
+    {
+      "source": "Spain",
+      "target": "France",
+      "value": 127169914.591,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "Slovenia",
+      "value": 122958929.0,
+      "year": 2025
+    },
+    {
+      "source": "Switzerland",
+      "target": "Australia",
+      "value": 121576703.802,
+      "year": 2025
+    },
+    {
+      "source": "Indonesia",
+      "target": "Malaysia",
+      "value": 118743203.141,
+      "year": 2025
+    },
+    {
+      "source": "Czechia",
+      "target": "Germany",
+      "value": 118090711.0,
+      "year": 2025
+    },
+    {
+      "source": "Sweden",
+      "target": "Denmark",
+      "value": 116459057.983,
+      "year": 2025
+    },
+    {
+      "source": "Poland",
+      "target": "Germany",
+      "value": 115574723.0,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "Malaysia",
+      "value": 115017779.0,
+      "year": 2025
+    },
+    {
+      "source": "Poland",
+      "target": "Netherlands",
+      "value": 114208960.0,
+      "year": 2025
+    },
+    {
+      "source": "Indonesia",
+      "target": "Viet Nam",
+      "value": 111632061.564,
+      "year": 2025
+    },
+    {
+      "source": "Italy",
+      "target": "Spain",
+      "value": 109904968.205,
+      "year": 2025
+    },
+    {
+      "source": "Germany",
+      "target": "Sweden",
+      "value": 108878058.903,
+      "year": 2025
+    },
+    {
+      "source": "Switzerland",
+      "target": "Netherlands",
+      "value": 107647838.709,
+      "year": 2025
+    },
+    {
+      "source": "Italy",
+      "target": "Denmark",
+      "value": 105335024.851,
+      "year": 2025
+    },
+    {
+      "source": "Brazil",
+      "target": "Norway",
+      "value": 104050234.0,
+      "year": 2025
+    }
+  ]
+}
