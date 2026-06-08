@@ -1,11 +1,90 @@
 import * as d3 from "d3";
 import { createTooltip, formatKg, formatMoney, metricFormatter, routeKey, topN } from "./utils.js";
 
+function renderMiniRanking(svg, items, opt) {
+  const { x, y, width, title, metric, role, state, tooltip } = opt;
+  const height = 190;
+  const labelW = 118;
+  const valueW = 74;
+  const barH = 15;
+  const rowGap = 7;
+  const max = d3.max(items, d => d[1]) || 1;
+  const xScale = d3.scaleLinear().domain([0, max]).range([0, width - labelW - valueW - 18]);
+
+  const g = svg.append("g").attr("class", "sankey-mini-ranking").attr("transform", `translate(${x},${y})`);
+  g.append("text")
+    .attr("class", "sankey-ranking-title")
+    .attr("x", 0)
+    .attr("y", 0)
+    .text(title);
+  g.append("text")
+    .attr("class", "sankey-ranking-note")
+    .attr("x", width)
+    .attr("y", 0)
+    .attr("text-anchor", "end")
+    .text("same totals as ranking cards");
+
+  const rows = g.selectAll("g.sankey-mini-row")
+    .data(items)
+    .join("g")
+    .attr("class", "sankey-mini-row")
+    .attr("transform", (_, i) => `translate(0,${26 + i * (barH + rowGap)})`)
+    .on("mousemove", (event, d) => tooltip.show(event, `
+      <b>${d[0]}</b><br/>
+      ${metricFormatter(metric)(d[1])}<br/>
+      <span>Click to pin this country.</span>
+    `))
+    .on("mouseleave", tooltip.hide)
+    .on("click", (event, d) => {
+      event.stopPropagation();
+      state.onSelectItem?.({
+        type: "country",
+        country: d[0],
+        value: d[1],
+        role,
+        roleLabel: role === "exporter" ? "top exporter" : "top import market",
+      });
+    });
+
+  rows.append("text")
+    .attr("class", "sankey-mini-label")
+    .attr("x", labelW - 8)
+    .attr("y", barH / 2)
+    .attr("dy", "0.34em")
+    .attr("text-anchor", "end")
+    .text(d => d[0]);
+
+  rows.append("rect")
+    .attr("class", "sankey-mini-bar-bg")
+    .attr("x", labelW)
+    .attr("y", 0)
+    .attr("width", width - labelW - valueW)
+    .attr("height", barH)
+    .attr("rx", 8);
+
+  rows.append("rect")
+    .attr("class", "sankey-mini-bar")
+    .attr("x", labelW)
+    .attr("y", 0)
+    .attr("width", d => Math.max(5, xScale(d[1])))
+    .attr("height", barH)
+    .attr("rx", 8);
+
+  rows.append("text")
+    .attr("class", "sankey-mini-value")
+    .attr("x", d => Math.min(labelW + xScale(d[1]) + 8, width - valueW + 4))
+    .attr("y", barH / 2)
+    .attr("dy", "0.34em")
+    .text(d => metricFormatter(metric)(d[1]));
+
+  return height;
+}
+
 export function renderSankeyChart(container, flows, state) {
   container.selectAll("*").remove();
-  const width = 760;
-  const height = 470;
-  const margin = { top: 76, right: 160, bottom: 34, left: 160 };
+  const width = 960;
+  const height = 720;
+  const margin = { top: 78, right: 172, bottom: 250, left: 172 };
   const metric = state.metric;
   const tooltip = createTooltip(container);
   const selectedKey = routeKey(state.selectedItem);
@@ -22,8 +101,8 @@ export function renderSankeyChart(container, flows, state) {
 
   const card = container.append("div").attr("class", "viz-card sankey-card");
   card.append("div").attr("class", "viz-card-title interactive-title").html(`
-    <div><span>Exporters → importers</span><small>${state.year} · Sankey-style trade ribbons</small></div>
-    <div class="viz-help">Hover to isolate · click a ribbon to pin</div>
+    <div><span>Exporters → importers</span><small>${state.year} · Sankey ribbons + top exporter/importer totals</small></div>
+    <div class="viz-help">Hover to isolate · click a ribbon or bar to pin</div>
   `);
 
   const svg = card.append("svg").attr("viewBox", `0 0 ${width} ${height}`).attr("class", "sankey-svg");
@@ -35,32 +114,31 @@ export function renderSankeyChart(container, flows, state) {
     return;
   }
 
-  // Keep the node labels consistent with the ranking cards: totals are calculated
-  // from the full selected-year dataset, while ribbons are still density-limited.
   const exporterTotals = d3.rollups(allYearData, v => d3.sum(v, d => d[metric]), d => d.exporter)
-    .sort((a,b)=>b[1]-a[1])
-    .slice(0, 10);
+    .sort((a,b)=>b[1]-a[1]);
   const importerTotals = d3.rollups(allYearData, v => d3.sum(v, d => d[metric]), d => d.importer)
-    .sort((a,b)=>b[1]-a[1])
-    .slice(0, 10);
-  const exporters = new Set(exporterTotals.map(d => d[0]));
-  const importers = new Set(importerTotals.map(d => d[0]));
+    .sort((a,b)=>b[1]-a[1]);
+  const topExporters = exporterTotals.slice(0, 10);
+  const topImporters = importerTotals.slice(0, 10);
+  const exporters = new Set(topExporters.map(d => d[0]));
+  const importers = new Set(topImporters.map(d => d[0]));
   const links = topN(
     displayData.filter(d => exporters.has(d.exporter) && importers.has(d.importer)),
     metric,
     state.flowLimit || 80
   );
 
-  const yLeft = d3.scalePoint().domain([...exporters]).range([margin.top + 10, height - margin.bottom]).padding(0.55);
-  const yRight = d3.scalePoint().domain([...importers]).range([margin.top + 10, height - margin.bottom]).padding(0.55);
+  const sankeyBottom = height - margin.bottom;
+  const yLeft = d3.scalePoint().domain([...exporters]).range([margin.top + 10, sankeyBottom]).padding(0.55);
+  const yRight = d3.scalePoint().domain([...importers]).range([margin.top + 10, sankeyBottom]).padding(0.55);
   const xLeft = margin.left;
   const xRight = width - margin.right;
 
-  const totalsLeft = new Map(exporterTotals);
-  const totalsRight = new Map(importerTotals);
+  const totalsLeft = new Map(topExporters);
+  const totalsRight = new Map(topImporters);
   const totalMax = d3.max([...totalsLeft.values(), ...totalsRight.values()]) || 1;
-  const barWidth = d3.scaleLinear().domain([0, totalMax]).range([18, 86]);
-  const stroke = d3.scaleSqrt().domain([0, d3.max(links, d => d[metric]) || 1]).range([1.5, 12]);
+  const barWidth = d3.scaleLinear().domain([0, totalMax]).range([18, 88]);
+  const stroke = d3.scaleSqrt().domain([0, d3.max(links, d => d[metric]) || 1]).range([1.4, 11.5]);
 
   const leftLayer = svg.append("g");
   const rightLayer = svg.append("g");
@@ -75,8 +153,8 @@ export function renderSankeyChart(container, flows, state) {
     .attr("d", d => {
       const y1 = yLeft(d.exporter);
       const y2 = yRight(d.importer);
-      const c1 = xLeft + 150;
-      const c2 = xRight - 150;
+      const c1 = xLeft + 190;
+      const c2 = xRight - 190;
       return `M ${xLeft} ${y1} C ${c1} ${y1}, ${c2} ${y2}, ${xRight} ${y2}`;
     })
     .on("mouseenter", function (event, d) {
@@ -155,4 +233,26 @@ export function renderSankeyChart(container, flows, state) {
 
   svg.append("text").attr("class", "axis-title").attr("x", xLeft - 64).attr("y", 54).attr("text-anchor", "middle").text("Exporting countries");
   svg.append("text").attr("class", "axis-title").attr("x", xRight + 64).attr("y", 54).attr("text-anchor", "middle").text("Import markets");
+
+  const rankY = height - 210;
+  renderMiniRanking(svg, exporterTotals.slice(0, 8), {
+    x: 34,
+    y: rankY,
+    width: 420,
+    title: "Top coffee exporters",
+    metric,
+    role: "exporter",
+    state,
+    tooltip,
+  });
+  renderMiniRanking(svg, importerTotals.slice(0, 8), {
+    x: width - 454,
+    y: rankY,
+    width: 420,
+    title: "Top coffee import markets",
+    metric,
+    role: "importer",
+    state,
+    tooltip,
+  });
 }

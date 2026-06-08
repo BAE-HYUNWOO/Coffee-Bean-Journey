@@ -735,3 +735,208 @@
     width: calc(100vw - 28px) !important;
   }
 }
+
+
+/* ===== Final requested micro-polish: compact consumption cards, wider chapter headings, Sankey+rankings merge ===== */
+/* Move the giant chapter watermark closer to the left edge across chapters. */
+.story-chapter .chapter-watermark-title,
+.theme-origin .chapter-watermark-title,
+.theme-trade .chapter-watermark-title,
+.theme-market .chapter-watermark-title,
+.theme-consumption .chapter-watermark-title,
+.theme-future .chapter-watermark-title {
+  margin-left: clamp(0px, 0.7vw, 14px) !important;
+  width: min(100%, 1360px) !important;
+}
+
+/* Origin: make the board feel full-bleed and set map/race ratio to 3:2. */
+.theme-origin .chapter-visual-board > * {
+  width: min(100%, calc(100vw - clamp(16px, 1.8vw, 34px))) !important;
+  max-width: none !important;
+}
+
+.theme-origin .visual-grid {
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr) !important;
+  gap: clamp(16px, 1.15vw, 22px) !important;
+}
+
+.theme-origin #origin-map .chart-frame {
+  min-height: clamp(540px, 36vw, 760px) !important;
+}
+
+.theme-origin #origin-bar .chart-frame {
+  min-height: clamp(540px, 36vw, 760px) !important;
+}
+
+.theme-origin #origin-line .chart-frame {
+  min-height: clamp(430px, 27vw, 590px) !important;
+}
+
+.theme-origin .chart-frame-body {
+  padding-inline: clamp(4px, 0.5vw, 10px) !important;
+}
+
+/* Chapter 2: the separate ranking section is now folded into the Sankey card. */
+#chapter2-rankings {
+  display: none !important;
+}
+
+.chapter2-feature-stack .sankey-card {
+  min-height: clamp(640px, 43vw, 820px) !important;
+}
+
+.chapter2-feature-stack .sankey-card svg.sankey-svg {
+  min-height: clamp(600px, 40vw, 780px) !important;
+}
+
+.sankey-ranking-title {
+  fill: #3b261a;
+  font-size: 15px;
+  font-weight: 950;
+  letter-spacing: -0.03em;
+}
+
+.sankey-ranking-note {
+  fill: rgba(93, 68, 50, 0.68);
+  font-size: 11px;
+  font-weight: 760;
+}
+
+.sankey-mini-label {
+  fill: rgba(65, 45, 32, 0.88);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.sankey-mini-value {
+  fill: #8d6033;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.sankey-mini-bar-bg {
+  fill: rgba(91, 58, 38, 0.075);
+}
+
+.sankey-mini-bar {
+  fill: #d8a566;
+  opacity: 0.95;
+}
+
+.sankey-mini-row {
+  cursor: pointer;
+}
+
+.sankey-mini-row:hover .sankey-mini-bar {
+  fill: #7aa0ad;
+}
+
+/* Trade map: keep the light style, but make continents easier to read. */
+#chapter2-map .trade-map-card {
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.92), transparent 28%),
+    radial-gradient(circle at 82% 16%, rgba(139, 174, 175, 0.18), transparent 30%),
+    linear-gradient(180deg, rgba(255, 249, 239, 0.98), rgba(242, 226, 203, 0.96)) !important;
+}
+
+.map-sphere {
+  fill: rgba(250, 239, 221, 0.54) !important;
+  stroke: rgba(101, 129, 128, 0.50) !important;
+  stroke-width: 1.35 !important;
+}
+
+.map-graticule {
+  stroke: rgba(91, 58, 38, 0.18) !important;
+  stroke-width: 0.85 !important;
+}
+
+.map-land {
+  fill: rgba(120, 137, 100, 0.44) !important;
+  stroke: rgba(65, 45, 32, 0.34) !important;
+  stroke-width: 0.75 !important;
+}
+
+/* Consumption: 3 columns, but each card is about two-thirds of the previous height. */
+.chapter4-board.is-card-grid {
+  grid-template-columns: repeat(3, minmax(360px, 1fr)) !important;
+  width: min(100%, calc(100vw - clamp(30px, 3vw, 58px))) !important;
+  gap: clamp(16px, 1.25vw, 24px) !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section {
+  min-height: clamp(340px, 22vw, 455px) !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-panel {
+  padding: 52px 6px 6px !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-panel::before {
+  top: 14px !important;
+  left: 18px !important;
+  right: 82px !important;
+  font-size: clamp(1.22rem, 1.32vw, 1.62rem) !important;
+  line-height: 1.08 !important;
+  letter-spacing: -0.045em !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-card-flip-button {
+  top: 12px !important;
+  right: 12px !important;
+  padding: 7px 11px !important;
+  font-size: 0.72rem !important;
+}
+
+.chapter4-board.is-card-grid .chart-frame-body {
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.chapter4-board.is-card-grid .chart-frame svg {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  transform: scale(1.15) !important;
+  transform-origin: 50% 50% !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-panel-toolbar {
+  margin: -6px 0 2px !important;
+  min-height: 0 !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-controls {
+  gap: 4px !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-chip {
+  padding: 4px 7px !important;
+  font-size: 0.6rem !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section-copy h3 {
+  font-size: clamp(1.35rem, 1.8vw, 2.1rem) !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section-copy p {
+  font-size: clamp(0.92rem, 1vw, 1.06rem) !important;
+}
+
+@media (max-width: 1280px) {
+  .chapter4-board.is-card-grid {
+    grid-template-columns: repeat(2, minmax(320px, 1fr)) !important;
+  }
+
+  .theme-origin .visual-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .chapter4-board.is-card-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
