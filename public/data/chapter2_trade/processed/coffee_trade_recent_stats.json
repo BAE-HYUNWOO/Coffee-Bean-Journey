@@ -1,0 +1,13 @@
+{
+  "data_mode": "bilateral_partner_all",
+  "raw_rows": 58064,
+  "filtered_rows": 58064,
+  "bilateral_rows": 56344,
+  "output_rows": 56344,
+  "latest_year": 2025,
+  "years": [
+    2014,
+    2025
+  ],
+  "warning": "OK"
+}
