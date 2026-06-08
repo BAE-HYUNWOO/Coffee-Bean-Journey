@@ -3,9 +3,9 @@ import { createTooltip, formatKg, formatMoney, metricFormatter } from "./utils.j
 
 export function renderTimelineChart(container, flows, state, onYearChange) {
   container.selectAll("*").remove();
-  const width = 980;
-  const height = 280;
-  const margin = { top: 52, right: 30, bottom: 44, left: 86 };
+  const width = 1280;
+  const height = 360;
+  const margin = { top: 66, right: 42, bottom: 52, left: 96 };
   const metric = state.metric;
   const tooltip = createTooltip(container);
 
@@ -17,7 +17,7 @@ export function renderTimelineChart(container, flows, state, onYearChange) {
   }), d => +d.year).map(d => d[1]).sort((a,b)=>a.year-b.year);
 
   const card = container.append("div").attr("class", "viz-card timeline-card compact-card");
-  card.append("div").attr("class", "viz-card-title").html(`<span>Recent-period trajectory</span><small>Hover for values · click a point to update the whole chapter</small>`);
+  card.append("div").attr("class", "viz-card-title").html(`<span>Recent-period trajectory</span><small>Hover values · click a point to update</small>`);
   const svg = card.append("svg").attr("viewBox", `0 0 ${width} ${height}`).attr("class", "timeline-svg");
 
   if (!data.length) {
@@ -25,7 +25,7 @@ export function renderTimelineChart(container, flows, state, onYearChange) {
     return;
   }
 
-  const x = d3.scalePoint().domain(data.map(d => d.year)).range([margin.left, width - margin.right]).padding(0.3);
+  const x = d3.scalePoint().domain(data.map(d => d.year)).range([margin.left, width - margin.right]).padding(0.28);
   const y = d3.scaleLinear().domain([0, d3.max(data, d => d[metric]) || 1]).nice().range([height - margin.bottom, margin.top]);
 
   const area = d3.area()
@@ -39,12 +39,12 @@ export function renderTimelineChart(container, flows, state, onYearChange) {
     .curve(d3.curveCatmullRom.alpha(0.5));
 
   svg.append("g").attr("class", "timeline-grid")
-    .call(d3.axisLeft(y).ticks(4).tickSize(-(width - margin.left - margin.right)).tickFormat(""))
+    .call(d3.axisLeft(y).ticks(5).tickSize(-(width - margin.left - margin.right)).tickFormat(""))
     .call(g => g.select(".domain").remove());
   svg.append("path").datum(data).attr("class", "timeline-area").attr("d", area);
   svg.append("path").datum(data).attr("class", "timeline-line").attr("d", line);
   svg.append("g").attr("transform", `translate(0,${height - margin.bottom})`).attr("class", "timeline-axis").call(d3.axisBottom(x).tickSizeOuter(0));
-  svg.append("g").attr("transform", `translate(${margin.left},0)`).attr("class", "timeline-axis").call(d3.axisLeft(y).ticks(4).tickFormat(d => metric === "net_weight_kg" ? formatKg(d).replace(" kg", "") : formatMoney(d))).call(g => g.select(".domain").remove());
+  svg.append("g").attr("transform", `translate(${margin.left},0)`).attr("class", "timeline-axis").call(d3.axisLeft(y).ticks(5).tickFormat(d => metric === "net_weight_kg" ? formatKg(d).replace(" kg", "") : formatMoney(d))).call(g => g.select(".domain").remove());
 
   svg.append("g").selectAll("circle")
     .data(data)
@@ -52,7 +52,7 @@ export function renderTimelineChart(container, flows, state, onYearChange) {
     .attr("class", d => +d.year === +state.year ? "timeline-dot active" : "timeline-dot")
     .attr("cx", d => x(d.year))
     .attr("cy", d => y(d[metric]))
-    .attr("r", d => +d.year === +state.year ? 8 : 5)
+    .attr("r", d => +d.year === +state.year ? 9 : 5.5)
     .on("mousemove", (event, d) => tooltip.show(event, `
       <b>${d.year}</b><br/>
       ${metricFormatter(metric)(d[metric])}<br/>
@@ -63,6 +63,6 @@ export function renderTimelineChart(container, flows, state, onYearChange) {
     .on("click", (event, d) => onYearChange(d.year));
 
   const active = data.find(d => +d.year === +state.year) || data.at(-1);
-  svg.append("text").attr("x", width - margin.right).attr("y", margin.top - 18).attr("text-anchor", "end").attr("class", "timeline-current")
+  svg.append("text").attr("x", width - margin.right).attr("y", margin.top - 22).attr("text-anchor", "end").attr("class", "timeline-current")
     .text(`${active.year}: ${metricFormatter(metric)(active[metric])}`);
 }

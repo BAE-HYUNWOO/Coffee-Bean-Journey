@@ -11,6 +11,7 @@ async function loadWorldGeoJSON() {
     `${base}data/common/world-countries.geojson`,
     `${base}data/world.geojson`,
     `${base}data/chapter3_market/processed/world.geojson`,
+    "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson",
   ];
 
   worldGeoPromise = (async () => {
@@ -32,8 +33,8 @@ async function loadWorldGeoJSON() {
 
 export function renderTradeFlowMap(container, flows, state) {
   container.selectAll("*").remove();
-  const width = 1260;
-  const height = 560;
+  const width = 1500;
+  const height = 680;
   const metric = state.metric;
   const tooltip = createTooltip(container);
 
@@ -54,15 +55,15 @@ export function renderTradeFlowMap(container, flows, state) {
   const glow = defs.append("filter").attr("id", "coffee-route-glow").attr("x", "-80%").attr("y", "-80%").attr("width", "260%").attr("height", "260%");
   glow.append("feGaussianBlur").attr("stdDeviation", "4").attr("result", "blur");
   glow.append("feColorMatrix").attr("in", "blur").attr("type", "matrix")
-    .attr("values", "1 0 0 0 0.80  0 1 0 0 0.65  0 0 1 0 0.40  0 0 0 0.75 0").attr("result", "colorBlur");
+    .attr("values", "0 0 0 0 0.46  0 0 0 0 0.70  0 0 0 0 0.86  0 0 0 0.72 0").attr("result", "colorBlur");
   const merge = glow.append("feMerge");
   merge.append("feMergeNode").attr("in", "colorBlur");
   merge.append("feMergeNode").attr("in", "SourceGraphic");
 
-  const projection = d3.geoNaturalEarth1().scale(214).translate([width / 2, height / 2 + 22]);
+  const projection = d3.geoNaturalEarth1().scale(255).translate([width / 2, height / 2 + 36]);
   const path = d3.geoPath(projection);
 
-  svg.append("rect").attr("width", width).attr("height", height).attr("rx", 24).attr("class", "map-bg");
+  svg.append("rect").attr("width", width).attr("height", height).attr("rx", 26).attr("class", "map-bg");
   const layer = svg.append("g").attr("class", "map-zoom-layer");
   const landLayer = layer.append("g").attr("class", "map-land-layer");
 
@@ -82,13 +83,13 @@ export function renderTradeFlowMap(container, flows, state) {
   svg.call(
     d3.zoom()
       .scaleExtent([1, 4.5])
-      .translateExtent([[-120, -120], [width + 120, height + 120]])
+      .translateExtent([[-140, -140], [width + 140, height + 140]])
       .on("zoom", (event) => layer.attr("transform", event.transform))
   );
 
   const valueExtent = d3.extent(data, d => d[metric]);
-  const stroke = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([0.9, 8.5]);
-  const opacity = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([0.18, 0.80]);
+  const stroke = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([1.0, 10.5]);
+  const opacity = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([0.18, 0.82]);
 
   const routes = layer.append("g").attr("class", "trade-routes");
   routes.selectAll("path")
@@ -131,7 +132,7 @@ export function renderTradeFlowMap(container, flows, state) {
   });
   const countries = [...countryTotals.values()];
   const maxTotal = d3.max(countries, d => d.exportValue + d.importValue) || 1;
-  const r = d3.scaleSqrt().domain([0, maxTotal]).range([3, 18]);
+  const r = d3.scaleSqrt().domain([0, maxTotal]).range([3.5, 21]);
 
   layer.append("g").attr("class", "country-node-layer").selectAll("circle")
     .data(countries)
@@ -152,7 +153,7 @@ export function renderTradeFlowMap(container, flows, state) {
       state.onSelectItem?.({ type: "country", country: d.country, value: d.exportValue + d.importValue, role: d.exportValue >= d.importValue ? "exporter" : "importer", roleLabel: d.exportValue >= d.importValue ? "mainly exporter" : "mainly importer" });
     });
 
-  svg.append("text").attr("x", width - 30).attr("y", height - 28).attr("text-anchor", "end").attr("class", "map-caption").text("Scroll wheel zooms · drag the map to pan · click routes/countries to pin details");
+  svg.append("text").attr("x", width - 34).attr("y", height - 34).attr("text-anchor", "end").attr("class", "map-caption").text("Scroll wheel zooms · drag the map to pan · click routes/countries to pin details");
 
   if (!data.length) {
     svg.append("text")

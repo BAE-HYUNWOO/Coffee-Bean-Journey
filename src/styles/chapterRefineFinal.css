@@ -1,0 +1,397 @@
+/* Final refinements: tighter Chapter 2 canvas + Chapter 4 card grid. */
+
+/* ===== Chapter 2: fill the viewport instead of sitting in the middle ===== */
+.theme-trade .chapter-shell,
+.theme-trade .chapter-visual-board {
+  width: 100vw !important;
+  max-width: none !important;
+  margin-left: calc(50% - 50vw) !important;
+  margin-right: calc(50% - 50vw) !important;
+}
+
+.theme-trade .compact-chapter-intro {
+  width: min(100%, 1760px) !important;
+  padding-inline: clamp(24px, 3vw, 56px) !important;
+}
+
+.theme-trade .chapter-watermark-title {
+  margin-left: clamp(16px, 3vw, 56px);
+}
+
+.chapter2-trade {
+  padding: 22px clamp(22px, 2.5vw, 46px) 76px !important;
+}
+
+.chapter2-dashboard,
+#chapter2-map,
+#chapter2-rankings,
+.chapter2-feature-stack {
+  width: min(100%, calc(100vw - clamp(44px, 5vw, 92px))) !important;
+  max-width: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.chapter2-dashboard {
+  grid-template-columns: minmax(285px, 340px) minmax(0, 1fr) !important;
+  gap: clamp(16px, 1.6vw, 28px) !important;
+  align-items: stretch !important;
+}
+
+.chapter2-sidebar {
+  align-self: stretch !important;
+  align-content: start !important;
+}
+
+.chapter2-stage {
+  min-width: 0 !important;
+  align-content: start !important;
+}
+
+.chapter2-controls {
+  grid-template-columns: minmax(380px, 1.35fr) minmax(190px, 240px) minmax(260px, 360px) !important;
+  gap: clamp(10px, 1vw, 16px) !important;
+}
+
+#chapter2-timeline {
+  min-height: 360px !important;
+}
+
+#chapter2-timeline .timeline-card,
+#chapter2-timeline .viz-card {
+  width: 100% !important;
+}
+
+#chapter2-timeline svg {
+  min-height: 320px !important;
+}
+
+#chapter2-map {
+  margin-top: clamp(16px, 1.5vw, 26px) !important;
+}
+
+#chapter2-map .trade-map-card {
+  min-height: clamp(560px, 42vw, 760px) !important;
+}
+
+#chapter2-map .trade-map-svg {
+  min-height: clamp(520px, 39vw, 720px) !important;
+}
+
+.chapter2-feature-stack {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: clamp(16px, 1.5vw, 24px) !important;
+}
+
+.chapter2-feature-stack .viz-card {
+  min-height: clamp(500px, 34vw, 660px) !important;
+}
+
+.chapter2-feature-stack svg {
+  min-height: clamp(430px, 28vw, 560px) !important;
+}
+
+.route-detail-card,
+.kpi-card,
+.control-block,
+.viz-card {
+  backdrop-filter: blur(12px);
+}
+
+@media (max-width: 1240px) {
+  .chapter2-dashboard {
+    grid-template-columns: 1fr !important;
+  }
+
+  .sidebar-kpis {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .chapter2-controls,
+  .chapter2-feature-stack {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 780px) {
+  .sidebar-kpis {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .chapter2-dashboard,
+  #chapter2-map,
+  #chapter2-rankings,
+  .chapter2-feature-stack {
+    width: calc(100vw - 28px) !important;
+  }
+}
+
+/* ===== Chapter 4: 13 visualization cards in a four-column card grid ===== */
+.theme-consumption .chapter-shell,
+.theme-consumption .chapter-visual-board {
+  width: 100vw !important;
+  max-width: none !important;
+  margin-left: calc(50% - 50vw) !important;
+  margin-right: calc(50% - 50vw) !important;
+}
+
+.theme-consumption .compact-chapter-intro {
+  width: min(100%, 1760px) !important;
+  padding-inline: clamp(24px, 3vw, 56px) !important;
+}
+
+.theme-consumption .chapter-watermark-title {
+  margin-left: clamp(16px, 3vw, 56px);
+}
+
+.chapter4-board.is-card-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(250px, 1fr)) !important;
+  gap: clamp(14px, 1.35vw, 24px) !important;
+  width: min(100%, calc(100vw - clamp(44px, 5vw, 92px))) !important;
+  max-width: none !important;
+  margin: 0 auto !important;
+  padding: 0 0 32px !important;
+  overflow: visible !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section {
+  position: relative !important;
+  display: block !important;
+  min-height: clamp(380px, 28vw, 520px) !important;
+  perspective: 1600px !important;
+  transform-style: preserve-3d !important;
+  cursor: pointer;
+  isolation: isolate;
+}
+
+.chapter4-board.is-card-grid .chapter4-section.is-reversed .chapter4-section-copy,
+.chapter4-board.is-card-grid .chapter4-section.is-reversed .chapter4-panel {
+  order: initial !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section-copy,
+.chapter4-board.is-card-grid .chapter4-panel {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+  justify-self: auto !important;
+  margin: 0 !important;
+  border-radius: 26px !important;
+  backface-visibility: hidden !important;
+  transform-style: preserve-3d !important;
+  transition:
+    transform 680ms cubic-bezier(0.2, 0.72, 0.2, 1),
+    opacity 360ms ease,
+    box-shadow 260ms ease !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-panel {
+  padding: 44px 12px 12px !important;
+  overflow: hidden !important;
+  background:
+    radial-gradient(circle at 22% 0%, rgba(255, 255, 255, 0.92), rgba(255, 251, 245, 0.86) 52%, rgba(247, 237, 221, 0.92)) !important;
+  border: 1px solid rgba(91, 58, 38, 0.14) !important;
+  box-shadow: 0 18px 52px rgba(91, 58, 38, 0.10) !important;
+  transform: rotateY(0deg);
+}
+
+.chapter4-board.is-card-grid .chapter4-panel::before {
+  content: attr(data-card-title);
+  position: absolute;
+  z-index: 5;
+  top: 14px;
+  left: 18px;
+  right: 78px;
+  color: #2d1b12;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(0.9rem, 0.95vw, 1.08rem);
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chapter4-card-flip-button {
+  position: absolute;
+  z-index: 10;
+  top: 11px;
+  right: 12px;
+  border: 1px solid rgba(91, 58, 38, 0.18);
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: rgba(255, 250, 242, 0.82);
+  color: #6f4d36;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.chapter4-card-flip-button:hover {
+  background: #fff7eb;
+  color: #2d1b12;
+}
+
+.chapter4-board.is-card-grid .chapter4-section-copy {
+  display: grid !important;
+  align-content: center !important;
+  gap: 14px !important;
+  padding: clamp(24px, 2.2vw, 38px) !important;
+  max-width: none !important;
+  background:
+    linear-gradient(145deg, rgba(50, 31, 21, 0.96), rgba(91, 60, 42, 0.92)),
+    radial-gradient(circle at 90% 12%, rgba(217, 161, 91, 0.24), transparent 34%) !important;
+  border: 1px solid rgba(255, 229, 194, 0.16) !important;
+  color: #fff4e7 !important;
+  box-shadow: 0 18px 52px rgba(91, 58, 38, 0.14) !important;
+  transform: rotateY(180deg);
+}
+
+.chapter4-board.is-card-grid .chapter4-section.is-card-flipped .chapter4-panel {
+  transform: rotateY(180deg);
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+.chapter4-board.is-card-grid .chapter4-section.is-card-flipped .chapter4-section-copy {
+  transform: rotateY(360deg);
+  opacity: 1;
+}
+
+.chapter4-board.is-card-grid .chapter4-section-copy h3 {
+  max-width: none !important;
+  color: #fff3e4 !important;
+  font-size: clamp(1.15rem, 1.35vw, 1.55rem) !important;
+  line-height: 1.15 !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section-copy p {
+  color: rgba(255, 243, 228, 0.80) !important;
+  line-height: 1.72 !important;
+  font-size: 0.92rem !important;
+}
+
+.chapter4-card-back-hint {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 4px;
+  padding: 7px 10px;
+  border: 1px solid rgba(255, 236, 208, 0.20);
+  border-radius: 999px;
+  color: rgba(255, 243, 228, 0.72);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.chapter4-board.is-card-grid .chart-frame {
+  height: 100% !important;
+  min-height: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.chapter4-board.is-card-grid .chart-frame-header {
+  display: none !important;
+}
+
+.chapter4-board.is-card-grid .chart-frame-body {
+  height: calc(100% - 4px) !important;
+  min-height: 0 !important;
+}
+
+.chapter4-board.is-card-grid .chart-frame svg {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-panel-toolbar {
+  position: relative;
+  z-index: 6;
+  margin: -2px 0 8px !important;
+  justify-content: flex-start !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-controls {
+  gap: 6px !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-chip {
+  padding: 6px 9px !important;
+  font-size: 0.66rem !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-profile-shell {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 8px !important;
+  height: 100% !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-profile-rail {
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  gap: 8px !important;
+  height: auto !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-profile-dimension-controls {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-profile-main,
+.chapter4-board.is-card-grid .chapter4-profile-stage,
+.chapter4-board.is-card-grid .chapter4-profile-deck {
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-sources {
+  grid-column: 1 / -1 !important;
+  margin-top: 4px !important;
+}
+
+.chapter4-board.is-motion-ready .chapter4-section:not(.is-revealed) .chapter4-section-copy,
+.chapter4-board.is-motion-ready .chapter4-section:not(.is-revealed) .chapter4-panel,
+.chapter4-board.is-motion-ready .chapter4-section.is-revealed .chapter4-panel {
+  opacity: 1 !important;
+  transform: none;
+  transition-delay: 0ms !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section:not(.is-card-flipped) .chapter4-section-copy {
+  transform: rotateY(180deg) !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section:not(.is-card-flipped) .chapter4-panel {
+  transform: rotateY(0deg) !important;
+}
+
+@media (max-width: 1500px) {
+  .chapter4-board.is-card-grid {
+    grid-template-columns: repeat(3, minmax(260px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 1040px) {
+  .chapter4-board.is-card-grid {
+    grid-template-columns: repeat(2, minmax(260px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .chapter4-board.is-card-grid {
+    grid-template-columns: 1fr !important;
+    width: calc(100vw - 28px) !important;
+  }
+}
