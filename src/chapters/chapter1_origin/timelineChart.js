@@ -174,8 +174,16 @@ export function drawTimelineChart(containerSelector, { timelineData }) {
         render();
       });
       pill.on("dblclick", () => {
-        visibleCountries.clear();
-        visibleCountries.add(cn);
+        // If already soloed on this country, restore all incl. Global
+        if (visibleCountries.size === 1 && visibleCountries.has(cn)) {
+          countryKeys.forEach(k => visibleCountries.add(k));
+          showGlobal = true;
+        } else {
+          // Solo this country, hide Global
+          visibleCountries.clear();
+          visibleCountries.add(cn);
+          showGlobal = false;
+        }
         buildLegend();
         render();
       });
