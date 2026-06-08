@@ -15,74 +15,37 @@ function sumBy(data, key) {
 function renderDetailPanel(container, state) {
   container.selectAll("*").remove();
   const selected = state.selectedItem;
-  const card = container.append("div")
-    .attr("class", `route-detail-card ${state.detailFlipped ? "is-flipped" : ""}`)
-    .attr("role", "button")
-    .attr("tabindex", 0)
-    .on("click", () => {
-      state.detailFlipped = !state.detailFlipped;
-      renderDetailPanel(container, state);
-    })
-    .on("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        state.detailFlipped = !state.detailFlipped;
-        renderDetailPanel(container, state);
-      }
-    });
+  const card = container.append("div").attr("class", "route-detail-card compact-detail-card");
 
-  card.append("div").attr("class", "route-detail-inner").html(`
-    <div class="route-detail-face route-detail-front">
-      <span class="detail-kicker">Pinned interaction</span>
-      <h3>${selected?.type === "country" ? selected.country : selected ? `${selected.exporter} → ${selected.importer}` : "Explore the coffee route network"}</h3>
-      <p>${routeDetailHTML(selected, state.metric)}</p>
-      <em>Click this card to flip it.</em>
-    </div>
-    <div class="route-detail-face route-detail-back">
-      <span class="detail-kicker">How to use this chapter</span>
-      <h3>Hover · Click · Drag · Zoom</h3>
-      <p>
-        Hover routes and bars for exact values. Click any route, node, or ranking bar to pin it here.
-        Drag network nodes to rearrange the graph, and use the mouse wheel on the map/network to zoom.
-        Use the route-limit slider to make the visualization denser or cleaner.
-      </p>
-      <em>Click again to return.</em>
-    </div>
+  const kicker = selected?.type === "country" ? "Pinned country" : selected ? "Pinned route" : "Pinned selection";
+  const title = selected?.type === "country"
+    ? selected.country
+    : selected
+      ? `${selected.exporter} → ${selected.importer}`
+      : "Explore the coffee route network";
+  const copy = selected
+    ? routeDetailHTML(selected, state.metric)
+    : "Click any route, ribbon, node, or ranking bar to pin one selection here.";
+
+  card.html(`
+    <span class="detail-kicker">${kicker}</span>
+    <h3>${title}</h3>
+    <p>${copy}</p>
   `);
 }
 
 function renderKPIs(container, cards) {
   container.selectAll("*").remove();
-  const node = container.selectAll("div")
+  const nodes = container.selectAll("div")
     .data(cards)
     .join("div")
-    .attr("class", "kpi-card")
-    .attr("role", "button")
-    .attr("tabindex", 0);
+    .attr("class", "kpi-card compact-kpi-card");
 
-  node.html(d => `
-    <div class="kpi-inner">
-      <div class="kpi-face kpi-front">
-        <span>${d.label}</span>
-        <b>${d.value}</b>
-        <em>${d.sub}</em>
-      </div>
-      <div class="kpi-face kpi-back">
-        <span>Reading tip</span>
-        <p>${d.tip}</p>
-      </div>
-    </div>
+  nodes.html(d => `
+    <span>${d.label}</span>
+    <b>${d.value}</b>
+    ${d.sub ? `<em>${d.sub}</em>` : ""}
   `);
-
-  node.on("click", function () {
-      d3.select(this).classed("is-flipped", !d3.select(this).classed("is-flipped"));
-    })
-    .on("keydown", function (event) {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        d3.select(this).classed("is-flipped", !d3.select(this).classed("is-flipped"));
-      }
-    });
 }
 
 export async function renderChapter2Trade(containerSelector = "#chapter2-trade") {
@@ -100,23 +63,27 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
     metric: "trade_value_usd",
     flowLimit: 110,
     selectedItem: null,
-    detailFlipped: false,
     onSelectItem: null,
   };
 
   const shell = root.append("section").attr("class", "chapter2-trade");
-  shell.append("div").attr("class", "coffee-orbit").html(`<span></span><span></span><span></span>`);
 
-  const hero = shell.append("header").attr("class", "chapter2-hero");
-  hero.append("p").attr("class", "eyebrow").text("Chapter 2 · Trade Routes");
-  hero.append("h2").html(`咖啡如何环游世界？<br/><strong>How coffee travels around the world</strong>`);
-  hero.append("p").attr("class", "hero-copy").text("Using UN Comtrade HS0901 exports, this chapter turns country-to-country coffee trade into animated routes, Sankey ribbons, draggable network structure, and recent-period trends.");
+  const hero = shell.append("header").attr("class", "chapter2-hero compact-hero");
+  hero.append("p").attr("class", "eyebrow").text("Chapter 02 · Trade");
+  hero.append("h2").text("Trade");
 
   if (data.stats?.data_mode === "demo_placeholder") {
     hero.append("div").attr("class", "demo-warning").html("⚠ Demo placeholder data is showing. Replace the raw CSV and run <code>process_trade_data.py</code> before submission.");
   }
 
-  const controls = shell.append("div").attr("class", "chapter2-controls");
+  const dashboard = shell.append("div").attr("class", "chapter2-dashboard");
+  const sidebar = dashboard.append("aside").attr("class", "chapter2-sidebar");
+  const stage = dashboard.append("div").attr("class", "chapter2-stage");
+
+  const detail = sidebar.append("div").attr("id", "chapter2-detail");
+  const kpis = sidebar.append("div").attr("class", "kpi-grid sidebar-kpis");
+
+  const controls = stage.append("div").attr("class", "chapter2-controls compact-controls");
   controls.append("div").attr("class", "control-block").html(`<label>Year</label><div id="chapter2-year-buttons" class="year-buttons"></div>`);
   controls.append("div").attr("class", "control-block").html(`
     <label>Metric</label>
@@ -128,12 +95,9 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
   controls.append("div").attr("class", "control-block slider-block").html(`
     <label>Route density <b id="chapter2-flow-count">${state.flowLimit}</b></label>
     <input id="chapter2-flow-limit" type="range" min="30" max="180" step="10" value="${state.flowLimit}" />
-    <div class="hint">Drag to show fewer or more routes in the map, Sankey, and network.</div>
   `);
 
-  const detail = shell.append("div").attr("id", "chapter2-detail");
-  const kpis = shell.append("div").attr("class", "kpi-grid");
-  const timeline = shell.append("div").attr("id", "chapter2-timeline").attr("class", "chapter2-compact-chart");
+  const timeline = stage.append("div").attr("id", "chapter2-timeline").attr("class", "chapter2-stage-chart");
   const map = shell.append("div").attr("id", "chapter2-map");
   const features = shell.append("div").attr("class", "chapter2-feature-stack");
   const sankey = features.append("div").attr("id", "chapter2-sankey");
@@ -142,7 +106,6 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
 
   state.onSelectItem = (item) => {
     state.selectedItem = item;
-    state.detailFlipped = false;
     renderDetailPanel(detail, state);
   };
 
@@ -180,10 +143,10 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
     renderDetailPanel(detail, state);
 
     const cards = [
-      { label: "Selected period", value: state.year, sub: "Recent annual periods", tip: "Use year buttons or click timeline dots to compare how coffee routes change over time." },
-      { label: metricLabel(state.metric), value: formatter(sumBy(yearFlows, state.metric)), sub: "Bilateral export flows", tip: "This total uses exporter-to-importer rows. Partner=World aggregate rows are excluded from the flow visualizations." },
-      { label: "Exporters", value: exporters.size || "—", sub: "Reporter countries", tip: "Reporter countries are the origin side of each export row in the UN Comtrade data." },
-      { label: "Import markets", value: importers.size || "—", sub: "Partner countries", tip: "Partner countries are the destination side of each coffee export route." },
+      { label: "Selected year", value: state.year, sub: "" },
+      { label: metricLabel(state.metric), value: formatter(sumBy(yearFlows, state.metric)), sub: "Bilateral flows" },
+      { label: "Exporters", value: exporters.size || "—", sub: "Countries" },
+      { label: "Import markets", value: importers.size || "—", sub: "Countries" },
     ];
     renderKPIs(kpis, cards);
 

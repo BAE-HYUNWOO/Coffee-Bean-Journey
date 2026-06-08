@@ -1,19 +1,47 @@
 import * as d3 from "d3";
 import { arcPath, createTooltip, formatKg, formatMoney, metricFormatter, routeKey, topN } from "./utils.js";
 
+let worldGeoPromise = null;
+
+async function loadWorldGeoJSON() {
+  if (worldGeoPromise) return worldGeoPromise;
+  const base = import.meta.env.BASE_URL || "/";
+  const candidates = [
+    `${base}data/common/world.geojson`,
+    `${base}data/common/world-countries.geojson`,
+    `${base}data/world.geojson`,
+    `${base}data/chapter3_market/processed/world.geojson`,
+  ];
+
+  worldGeoPromise = (async () => {
+    for (const url of candidates) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) continue;
+        const json = await res.json();
+        if (json?.features?.length) return json.features;
+      } catch {
+        // ignore and try next
+      }
+    }
+    return null;
+  })();
+
+  return worldGeoPromise;
+}
+
 export function renderTradeFlowMap(container, flows, state) {
   container.selectAll("*").remove();
   const width = 1260;
-  const height = 650;
+  const height = 560;
   const metric = state.metric;
   const tooltip = createTooltip(container);
 
   const data = topN(flows.filter(d => +d.year === +state.year && d.exporter_lat && d.importer_lat), metric, state.flowLimit || 110);
   const selectedKey = routeKey(state.selectedItem);
 
-  const card = container.append("div").attr("class", "viz-card trade-map-card feature-resizable");
-  const title = card.append("div").attr("class", "viz-card-title interactive-title");
-  title.html(`
+  const card = container.append("div").attr("class", "viz-card trade-map-card");
+  card.append("div").attr("class", "viz-card-title interactive-title").html(`
     <div><span>Global coffee routes</span><small>${state.year} · top ${data.length} bilateral export flows</small></div>
     <div class="viz-help">Hover for values · click route to pin · wheel to zoom</div>
   `);
@@ -26,20 +54,30 @@ export function renderTradeFlowMap(container, flows, state) {
   const glow = defs.append("filter").attr("id", "coffee-route-glow").attr("x", "-80%").attr("y", "-80%").attr("width", "260%").attr("height", "260%");
   glow.append("feGaussianBlur").attr("stdDeviation", "4").attr("result", "blur");
   glow.append("feColorMatrix").attr("in", "blur").attr("type", "matrix")
-    .attr("values", "1 0 0 0 0.95  0 1 0 0 0.55  0 0 1 0 0.16  0 0 0 0.85 0").attr("result", "colorBlur");
+    .attr("values", "1 0 0 0 0.80  0 1 0 0 0.65  0 0 1 0 0.40  0 0 0 0.75 0").attr("result", "colorBlur");
   const merge = glow.append("feMerge");
   merge.append("feMergeNode").attr("in", "colorBlur");
   merge.append("feMergeNode").attr("in", "SourceGraphic");
 
-  const projection = d3.geoNaturalEarth1().scale(214).translate([width / 2, height / 2 + 24]);
+  const projection = d3.geoNaturalEarth1().scale(214).translate([width / 2, height / 2 + 22]);
   const path = d3.geoPath(projection);
 
   svg.append("rect").attr("width", width).attr("height", height).attr("rx", 24).attr("class", "map-bg");
   const layer = svg.append("g").attr("class", "map-zoom-layer");
+  const landLayer = layer.append("g").attr("class", "map-land-layer");
 
   const graticule = d3.geoGraticule10();
   layer.append("path").datum({ type: "Sphere" }).attr("d", path).attr("class", "map-sphere");
   layer.append("path").datum(graticule).attr("d", path).attr("class", "map-graticule");
+
+  loadWorldGeoJSON().then((features) => {
+    if (!features) return;
+    landLayer.selectAll("path")
+      .data(features)
+      .join("path")
+      .attr("class", "map-land")
+      .attr("d", path);
+  });
 
   svg.call(
     d3.zoom()
@@ -49,8 +87,8 @@ export function renderTradeFlowMap(container, flows, state) {
   );
 
   const valueExtent = d3.extent(data, d => d[metric]);
-  const stroke = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([0.9, 9.5]);
-  const opacity = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([0.16, 0.82]);
+  const stroke = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([0.9, 8.5]);
+  const opacity = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([0.18, 0.80]);
 
   const routes = layer.append("g").attr("class", "trade-routes");
   routes.selectAll("path")
@@ -95,7 +133,7 @@ export function renderTradeFlowMap(container, flows, state) {
   const maxTotal = d3.max(countries, d => d.exportValue + d.importValue) || 1;
   const r = d3.scaleSqrt().domain([0, maxTotal]).range([3, 18]);
 
-  const countryNodes = layer.append("g").attr("class", "country-node-layer").selectAll("circle")
+  layer.append("g").attr("class", "country-node-layer").selectAll("circle")
     .data(countries)
     .join("circle")
     .attr("class", d => d.exportValue >= d.importValue ? "country-node exporter-node" : "country-node importer-node")
@@ -114,8 +152,7 @@ export function renderTradeFlowMap(container, flows, state) {
       state.onSelectItem?.({ type: "country", country: d.country, value: d.exportValue + d.importValue, role: d.exportValue >= d.importValue ? "exporter" : "importer", roleLabel: d.exportValue >= d.importValue ? "mainly exporter" : "mainly importer" });
     });
 
-  svg.append("text").attr("x", 30).attr("y", 46).attr("class", "map-label").text("Coffee moves from tropical producers to high-consumption markets");
-  svg.append("text").attr("x", width - 30).attr("y", height - 30).attr("text-anchor", "end").attr("class", "map-caption").text("Scroll wheel zooms · drag the map to pan · click routes/countries to pin details");
+  svg.append("text").attr("x", width - 30).attr("y", height - 28).attr("text-anchor", "end").attr("class", "map-caption").text("Scroll wheel zooms · drag the map to pan · click routes/countries to pin details");
 
   if (!data.length) {
     svg.append("text")
