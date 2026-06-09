@@ -1,9 +1,8 @@
-/* Chapter 2 layout fix
-   - Top row: Sankey left, timeline line chart on the right.
-   - Middle row: network + enlarged trade ring.
-   - Matrix gets its own readable row.
-   - Map takes one full row and is no longer clipped.
-   - Remove oversized SVG scaling that caused cards to overlap. */
+/* Chapter 2 priority layout
+   - Row 1 swapped: timeline on the left, Sankey on the right.
+   - Row 2: network + enlarged trade ring.
+   - Row 3: matrix + map in one row, 1:3 width ratio.
+   - No unsafe SVG scale; all charts are sized by grid cells to prevent overlap. */
 
 .theme-trade .chapter2-trade {
   padding-inline: clamp(8px, 0.9vw, 18px) !important;
@@ -21,30 +20,27 @@
 }
 
 /* Final reading order:
-   row 1: Sankey + timeline
+   row 1: Timeline + Sankey
    row 2: Network + large Ring
-   row 3: Matrix full-width
-   row 4: Map full-width */
+   row 3: Matrix + Map, 1:3 width ratio */
 .theme-trade .chapter2-visual-grid {
   display: grid !important;
   grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
   grid-template-rows:
-    clamp(430px, 27vw, 540px)
-    clamp(590px, 38vw, 740px)
-    clamp(500px, 32vw, 650px)
-    clamp(500px, 31vw, 620px) !important;
+    clamp(420px, 26vw, 540px)
+    clamp(610px, 38vw, 760px)
+    clamp(520px, 31vw, 640px) !important;
   grid-template-areas:
-    "sankey sankey sankey sankey sankey sankey sankey timeline timeline timeline timeline timeline"
-    "network network network network network ring     ring     ring     ring     ring     ring     ring"
-    "matrix  matrix  matrix  matrix  matrix  matrix  matrix  matrix  matrix  matrix  matrix  matrix"
-    "map     map     map     map     map     map     map     map     map     map     map     map" !important;
+    "timeline timeline timeline timeline timeline sankey sankey sankey sankey sankey sankey sankey"
+    "network  network  network  network  network ring   ring   ring   ring   ring   ring   ring"
+    "matrix   matrix   matrix   map    map    map    map    map    map    map    map    map" !important;
   gap: clamp(18px, 1.1vw, 24px) !important;
   align-items: stretch !important;
   overflow: visible !important;
 }
 
-.theme-trade #chapter2-sankey { grid-area: sankey !important; }
 .theme-trade #chapter2-timeline { grid-area: timeline !important; }
+.theme-trade #chapter2-sankey { grid-area: sankey !important; }
 .theme-trade #chapter2-network { grid-area: network !important; }
 .theme-trade #chapter2-trade-ring { grid-area: ring !important; }
 .theme-trade #chapter2-trade-matrix { grid-area: matrix !important; }
@@ -100,7 +96,8 @@
 }
 
 .theme-trade .chapter2-cell-timeline .viz-card-title span,
-.theme-trade .chapter2-cell-map .viz-card-title span {
+.theme-trade .chapter2-cell-map .viz-card-title span,
+.theme-trade .chapter2-cell-matrix .viz-card-title span {
   font-size: clamp(15px, 0.92vw, 18px) !important;
 }
 
@@ -114,7 +111,7 @@
   display: block !important;
 }
 
-/* Avoid cross-card overlap: previous scale values made visuals spill outside cards. */
+/* Avoid cross-card overlap: size comes from grid cells, not transform scaling. */
 .theme-trade .chapter2-cell-sankey .sankey-svg,
 .theme-trade .chapter2-cell-network .network-svg,
 .theme-trade .chapter2-cell-ring .trade-ring-svg,
@@ -126,9 +123,9 @@
   overflow: visible !important;
 }
 
-/* Make the ring the visual focus through layout size, not unsafe overflow scaling. */
+/* Ring remains the main visual focus through row height and column span. */
 .theme-trade .chapter2-cell-ring {
-  min-height: clamp(590px, 38vw, 740px) !important;
+  min-height: clamp(610px, 38vw, 760px) !important;
 }
 
 .theme-trade .chapter2-cell-ring .viz-card-title {
@@ -139,29 +136,42 @@
   background: radial-gradient(circle at 50% 48%, rgba(255, 253, 247, .96), rgba(248, 238, 222, .94) 72%, rgba(238, 219, 190, .90)) !important;
 }
 
-.theme-trade .chapter2-cell-timeline .timeline-card {
-  min-height: 0 !important;
-}
-
-.theme-trade .chapter2-cell-timeline .timeline-svg {
-  overflow: hidden !important;
-}
-
-.theme-trade .chapter2-cell-map {
-  min-height: clamp(500px, 31vw, 620px) !important;
-}
-
+.theme-trade .chapter2-cell-timeline .timeline-card,
+.theme-trade .chapter2-cell-matrix .trade-matrix-card,
 .theme-trade .chapter2-cell-map .trade-map-card {
   min-height: 0 !important;
-  background:
-    radial-gradient(circle at 44% 37%, rgba(255, 253, 246, .96), rgba(244, 229, 205, .86) 60%, rgba(226, 203, 169, .92) 100%) !important;
 }
 
+.theme-trade .chapter2-cell-timeline .timeline-svg,
 .theme-trade .chapter2-cell-map .trade-map-svg {
   overflow: hidden !important;
 }
 
-/* Map labels and caption stay inside its single full-width row. */
+.theme-trade .chapter2-cell-matrix {
+  min-height: clamp(520px, 31vw, 640px) !important;
+}
+
+/* Matrix is intentionally narrower than map, so keep its header compact. */
+.theme-trade .chapter2-cell-matrix .viz-card-title {
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  padding: 12px 14px 2px !important;
+}
+
+.theme-trade .chapter2-cell-matrix .viz-help {
+  text-align: left !important;
+}
+
+.theme-trade .chapter2-cell-map {
+  min-height: clamp(520px, 31vw, 640px) !important;
+}
+
+.theme-trade .chapter2-cell-map .trade-map-card {
+  background:
+    radial-gradient(circle at 44% 37%, rgba(255, 253, 246, .96), rgba(244, 229, 205, .86) 60%, rgba(226, 203, 169, .92) 100%) !important;
+}
+
+/* Map title/caption stay inside the same row. */
 .theme-trade .chapter2-cell-map .viz-card-title {
   padding-bottom: 6px !important;
 }
@@ -180,9 +190,9 @@
 @media (max-width: 1320px) {
   .theme-trade .chapter2-visual-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    grid-template-rows: 430px 430px 600px 560px 520px !important;
+    grid-template-rows: 420px 430px 610px 520px 520px !important;
     grid-template-areas:
-      "sankey   timeline"
+      "timeline sankey"
       "network  network"
       "ring     ring"
       "matrix   matrix"
@@ -195,8 +205,8 @@
     grid-template-columns: 1fr !important;
     grid-template-rows: none !important;
     grid-template-areas:
-      "sankey"
       "timeline"
+      "sankey"
       "network"
       "ring"
       "matrix"
@@ -211,7 +221,8 @@
     min-height: 560px !important;
   }
 
-  .theme-trade .chapter2-cell-map {
+  .theme-trade .chapter2-cell-map,
+  .theme-trade .chapter2-cell-matrix {
     min-height: 420px !important;
   }
 }
