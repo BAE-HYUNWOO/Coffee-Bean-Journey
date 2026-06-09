@@ -13,11 +13,12 @@ import "./shared/finalLayoutTune.js";
 
 const HERO_SLIDE_ROOTS = ["/images/hero-slides"];
 const HERO_SLIDE_CANDIDATES = [
-  "coffee-1.jpg",
-  "coffee-2.jpg",
-  "coffee-3.jpg",
-  "coffee-4.jpg",
-  "coffee-5.jpg",
+  "hero-1.png",
+  "hero-2.png",
+  "hero-3.png",
+  "hero-4.png",
+  "hero-5.png",
+  "hero-6.png",
 ].flatMap((fileName) => HERO_SLIDE_ROOTS.map((root) => `${import.meta.env.BASE_URL}${root.replace(/^\//, "")}/${fileName}`));
 
 const app = d3.select("#app");
