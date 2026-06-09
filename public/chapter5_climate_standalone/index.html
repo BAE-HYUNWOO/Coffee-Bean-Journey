@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>未来还能喝到咖啡吗？</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/d3-geo-projection.v4.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>未来还能喝到咖啡吗？</h1>
+        <p>气候变化如何影响全球咖啡带的生死存亡</p>
+
+        <div class="chart-section">
+            <h2>1. 全球升温幅度地图 (现状 vs 2050年)</h2>
+            <p class="section-desc">本图展示了未来20年间全球各地的预期升温幅度。注意：颜色深浅代表的是“升温差值”，而非绝对温度。极地和高纬度地区由于极地放大效应，往往面临比赤道更剧烈的升温（红色更深）。</p>
+            <div id="legend-risk" class="legend-container"></div>
+            <div id="risk-map"></div>
+        </div>
+
+        <div class="text-transition">
+            <h3>为什么我们要关注“适宜区”？</h3>
+            <p>虽然高纬度地区（如格陵兰岛）未来升温显著，但其绝对温度仍远低于咖啡生长的最低阈值。优质咖啡豆对微气候极其挑剔，通常要求年均气温稳定在 <strong>18°C - 24°C</strong> 之间。因此，我们提取了全球范围内满足该温度条件的区域，观察它们在未来的变迁。</p>
+        </div>
+
+        <div class="chart-section">
+            <h2>2. 全球咖啡适宜种植区变迁模拟 (18°C-24°C)</h2>
+            <p class="section-desc">点击按钮查看2050年的预测。绿色的消退代表着传统产区的丧失，而向高纬度或高海拔延伸的绿色代表着潜在的新产区。</p>
+            
+            <div class="legend-container">
+                <span class="legend-item"><span class="color-box" style="background: #27ae60;"></span> 适宜种植区</span>
+                <span class="legend-item"><span class="color-box" style="background: #e1e5ea; border: 1px solid #bdc3c7;"></span> 不适宜/海洋</span>
+            </div>
+
+            <button id="toggle-sim">切换至 2050 年预测</button>
+            <div id="sim-map"></div>
+        </div>
+
+        <div class="chart-section">
+            <h2>3. 气候危机对核心咖啡产国的影响</h2>
+            
+            <div class="dual-chart-container">
+                <div class="sub-chart">
+                    <h3>升温跨度</h3>
+                    <p class="small-desc">展示五大核心产国从现在到未来的预期气温攀升。</p>
+                    <div id="dumbbell-chart"></div>
+                </div>
+
+                <div class="sub-chart">
+                    <h3>产量与升温风险</h3>
+                    <p class="small-desc">气泡大小代表目前的咖啡总产量（吨），颜色越红代表该国未来升温越剧烈。</p>
+                    <div id="bubble-map"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-section final-conclusion">
+            <h2>结语：未来咖啡产业面临哪些挑战？</h2>
+            <div class="conclusion-content">
+                <p>透过上述气象预测与生产模拟，我们可以清晰地看到，一粒咖啡豆的未来正面临三重严峻考验：</p>
+                <ul>
+                    <li><strong>黄金种植带的不可逆萎缩（适宜区模拟）：</strong> 气候变暖迫使咖啡种植不断向高纬度或高海拔“逃亡”。但在现实中，新产区往往缺乏适宜的土壤条件和成熟的农业基础设施。传统的“绿色家园”正在以肉眼可见的速度从地图上消失。</li>
+                    <li><strong>核心大国的系统性减产风险（气泡地图与哑铃图）：</strong> 巴西、越南等撑起全球大半产能的巨头，无一例外地处于未来升温的“重灾区”。一旦这些基石国家因极端气候（霜冻、干旱）遭遇大规模减产，全球咖啡供应链将面临断裂危机。</li>
+                    <li><strong>消费端的价格与品质冲击：</strong> 随着阿拉比卡等优质娇贵豆种的种植面积锐减，未来的精品咖啡可能成为昂贵的奢侈品。气候变化不仅在剥夺咖啡农的生计，也在悄然改变全球消费者的日常杯中物。</li>
+                </ul>
+                <div class="divider"></div>
+                <p class="final-quote">“当我们喝下一杯咖啡时，我们品尝的不仅是风味，更是这颗星球的当下与未来。”</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
