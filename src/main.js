@@ -3,6 +3,7 @@ import { pages, chapters } from "./chapterRegistry.js";
 import { initScrollProgress } from "./shared/scrollProgress.js";
 import "./styles/finalPolish.css";
 import "./styles/chapterRefineFinal.css";
+import "./styles/originWidePatch.css";
 import "./chapters/chapter4_consumption/chapter4Cards.js";
 
 const HERO_SLIDE_ROOTS = ["/images/hero-slides"];
