@@ -160,12 +160,13 @@
 .unified-page .chapter3-wrapper {
   width: 90%;
   height: min(78vh, 760px);
+  min-height: 570px;
   border-radius: 28px;
   box-shadow: 0 22px 65px rgba(20, 73, 91, 0.18);
 }
 
 .unified-page #expansion-map .chart-frame {
-  min-height: 470px;
+  min-height: 500px;
 }
 
 .unified-page #expansion-map .chart-frame-body {
