@@ -1,4 +1,4 @@
-import * as d3 from "d3";
+﻿import * as d3 from "d3";
 import { pages, chapters } from "./chapterRegistry.js";
 import { initScrollProgress } from "./shared/scrollProgress.js";
 import "./styles/finalPolish.css";
@@ -7,6 +7,7 @@ import "./styles/chapter2StickyControlsPatch.css";
 import "./styles/originWidePatch.css";
 import "./styles/sectionPolishPatch.css";
 import "./styles/finalLayoutTuning.css";
+import "./styles/chapter2PriorityLayout.css";
 import "./chapters/chapter4_consumption/chapter4Cards.js";
 import "./shared/finalLayoutTune.js";
 
@@ -28,7 +29,7 @@ const HOME_OVERVIEW_ITEMS = [
     id: "origin",
     number: "01",
     title: "Origin",
-    stat: "81 countries · 11.3M t",
+    stat: "81 countries 쨌 11.3M t",
     meta: "FAOSTAT production geography",
     blurb: "Where coffee grows, who produces the most, and how output changes over time.",
     themeClass: "overview-origin",
@@ -37,7 +38,7 @@ const HOME_OVERVIEW_ITEMS = [
     id: "trade",
     number: "02",
     title: "Trade",
-    stat: "$41.4B · 148 exporters",
+    stat: "$41.4B 쨌 148 exporters",
     meta: "UN Comtrade global flow network",
     blurb: "Major exporter-importer corridors, route intensity, and cross-border coffee circulation.",
     themeClass: "overview-trade",
@@ -55,7 +56,7 @@ const HOME_OVERVIEW_ITEMS = [
     id: "consumption",
     number: "04",
     title: "Consumption",
-    stat: "Habits · caffeine · taste",
+    stat: "Habits 쨌 caffeine 쨌 taste",
     meta: "ICO / CQI / nutrition data",
     blurb: "Daily coffee culture through bean type, beverage choice, and consumption patterns.",
     themeClass: "overview-consumption",
@@ -169,7 +170,7 @@ function renderHomeOverview(main) {
   const head = shell.append("div").attr("class", "home-overview-head");
   head.append("span").attr("class", "section-label").text("Overview");
   head.append("h2").text("Five views of one global coffee system");
-  head.append("p").text("Before scrolling into each chapter, this overview shows the main data angle of each part—from production and trade to market structure, consumption, and climate risk.");
+  head.append("p").text("Before scrolling into each chapter, this overview shows the main data angle of each part?봣rom production and trade to market structure, consumption, and climate risk.");
 
   const grid = shell.append("div").attr("class", "home-overview-grid");
 
@@ -227,7 +228,7 @@ function renderChapterSection(main, page) {
 function renderConclusion(main) {
   const conclusion = main.append("section").attr("id", "conclusion").attr("class", "story-conclusion reveal-item");
   conclusion.append("p").attr("class", "section-label").text("Conclusion");
-  conclusion.append("h2").html("From tropical farms to city cafés,<br/>coffee is a global system.");
+  conclusion.append("h2").html("From tropical farms to city caf챕s,<br/>coffee is a global system.");
   conclusion.append("p")
     .text("A single cup connects land, labor, transport, brands, consumption cultures, and climate uncertainty. The journey is not linear; it is a network of places, people, markets, and environmental pressures.");
 

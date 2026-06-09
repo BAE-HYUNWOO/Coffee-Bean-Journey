@@ -1,0 +1,188 @@
+/* Chapter 2 priority layout patch
+   Goal: make the key trade-structure charts bigger, keep timeline/map as compact support views. */
+
+.theme-trade .chapter2-trade {
+  padding-inline: clamp(8px, 0.9vw, 18px) !important;
+}
+
+.theme-trade .chapter2-hero,
+.theme-trade .chapter2-controls.sticky-trade-controls,
+.theme-trade .chapter2-status-strip,
+.theme-trade .chapter2-visual-grid {
+  width: calc(100vw - clamp(18px, 1.8vw, 34px)) !important;
+  max-width: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* New visual hierarchy:
+   1) Sankey + Network are the first large reading row.
+   2) Ring is the largest focus chart; Matrix stays visible but not dominant.
+   3) Timeline and map become compact supporting context. */
+.theme-trade .chapter2-visual-grid {
+  display: grid !important;
+  grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+  grid-template-rows:
+    clamp(500px, 31vw, 620px)
+    clamp(620px, 39vw, 760px)
+    clamp(340px, 24vw, 430px) !important;
+  grid-template-areas:
+    "sankey sankey sankey sankey sankey sankey network network network network network network"
+    "ring   ring   ring   ring   ring   ring   ring    matrix  matrix  matrix  matrix  matrix"
+    "timeline timeline timeline timeline timeline map     map     map     map     map     map     map" !important;
+  gap: clamp(14px, 0.95vw, 20px) !important;
+  align-items: stretch !important;
+}
+
+.theme-trade #chapter2-timeline { grid-area: timeline !important; }
+.theme-trade #chapter2-sankey { grid-area: sankey !important; }
+.theme-trade #chapter2-network { grid-area: network !important; }
+.theme-trade #chapter2-trade-ring { grid-area: ring !important; }
+.theme-trade #chapter2-trade-matrix { grid-area: matrix !important; }
+.theme-trade #chapter2-map { grid-area: map !important; }
+
+.theme-trade .chapter2-visual-grid > .chapter2-grid-cell {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+.theme-trade .chapter2-visual-grid .viz-card {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  overflow: hidden !important;
+}
+
+.theme-trade .chapter2-visual-grid .viz-card-title {
+  min-height: 0 !important;
+  padding: 12px 18px 4px !important;
+  gap: 8px !important;
+}
+
+.theme-trade .chapter2-visual-grid .viz-card-title span {
+  font-size: clamp(16px, 1.05vw, 22px) !important;
+  line-height: 1.04 !important;
+}
+
+.theme-trade .chapter2-visual-grid .viz-card-title small,
+.theme-trade .chapter2-visual-grid .viz-help {
+  font-size: clamp(8px, 0.58vw, 10px) !important;
+  line-height: 1.08 !important;
+}
+
+.theme-trade .chapter2-cell-sankey .viz-card-title span,
+.theme-trade .chapter2-cell-network .viz-card-title span,
+.theme-trade .chapter2-cell-ring .viz-card-title span {
+  font-size: clamp(19px, 1.22vw, 28px) !important;
+}
+
+.theme-trade .chapter2-cell-timeline .viz-card-title span,
+.theme-trade .chapter2-cell-map .viz-card-title span {
+  font-size: clamp(14px, 0.9vw, 18px) !important;
+}
+
+.theme-trade .chapter2-visual-grid svg {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  display: block !important;
+  overflow: visible !important;
+}
+
+/* Supporting views: keep them readable but visually lighter. */
+.theme-trade .chapter2-cell-timeline .timeline-svg {
+  transform: scale(0.94) !important;
+  transform-origin: 50% 50% !important;
+}
+
+.theme-trade .chapter2-cell-map .trade-map-card {
+  min-height: 0 !important;
+  background:
+    radial-gradient(circle at 42% 36%, rgba(255, 253, 246, .96), rgba(244, 229, 205, .86) 60%, rgba(226, 203, 169, .92) 100%) !important;
+}
+
+.theme-trade .chapter2-cell-map .trade-map-svg {
+  transform: scale(1.01) !important;
+  transform-origin: 50% 50% !important;
+}
+
+/* Key charts: enlarge the actual drawing area inside the cards. */
+.theme-trade .chapter2-cell-sankey .sankey-svg {
+  transform: scale(1.08) !important;
+  transform-origin: 50% 52% !important;
+}
+
+.theme-trade .chapter2-cell-network .network-svg {
+  transform: scale(1.10) !important;
+  transform-origin: 50% 54% !important;
+}
+
+.theme-trade .chapter2-cell-ring .trade-ring-svg {
+  transform: scale(1.18) !important;
+  transform-origin: 50% 52% !important;
+}
+
+.theme-trade .chapter2-cell-matrix .trade-matrix-svg {
+  transform: scale(0.96) !important;
+  transform-origin: 50% 50% !important;
+}
+
+/* Prevent old sidebar-stack rules from forcing the right charts tiny. */
+.theme-trade .chapter2-cell-sankey,
+.theme-trade .chapter2-cell-network,
+.theme-trade .chapter2-cell-ring,
+.theme-trade .chapter2-cell-matrix,
+.theme-trade .chapter2-cell-map,
+.theme-trade .chapter2-cell-timeline {
+  grid-column: auto !important;
+  grid-row: auto !important;
+}
+
+@media (max-width: 1320px) {
+  .theme-trade .chapter2-visual-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: 430px 560px 620px 360px 420px !important;
+    grid-template-areas:
+      "sankey   network"
+      "ring     ring"
+      "matrix   matrix"
+      "timeline timeline"
+      "map      map" !important;
+  }
+}
+
+@media (max-width: 860px) {
+  .theme-trade .chapter2-visual-grid {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: none !important;
+    grid-template-areas:
+      "sankey"
+      "network"
+      "ring"
+      "matrix"
+      "timeline"
+      "map" !important;
+  }
+
+  .theme-trade .chapter2-visual-grid > .chapter2-grid-cell {
+    min-height: 440px !important;
+  }
+
+  .theme-trade .chapter2-cell-ring {
+    min-height: 560px !important;
+  }
+
+  .theme-trade .chapter2-cell-timeline,
+  .theme-trade .chapter2-cell-map {
+    min-height: 360px !important;
+  }
+}
