@@ -1,0 +1,363 @@
+/* Final layout tuning: make Origin charts fill their cards and turn Chapter 4 into a varied mosaic. */
+
+/* ===== Origin: bigger cards, less dead space, charts fill the panels ===== */
+
+.theme-origin .chapter-visual-board {
+  padding-left: clamp(14px, 1.2vw, 24px) !important;
+  padding-right: clamp(14px, 1.2vw, 24px) !important;
+}
+
+.theme-origin .chapter-panel-head,
+.theme-origin .visual-grid {
+  width: calc(100vw - clamp(28px, 2.4vw, 46px)) !important;
+  max-width: none !important;
+}
+
+.theme-origin .visual-grid {
+  grid-template-columns: minmax(0, 3fr) minmax(320px, 1fr) !important;
+  gap: clamp(18px, 1.35vw, 26px) !important;
+}
+
+.theme-origin #origin-map .chart-frame {
+  min-height: clamp(720px, 48vw, 900px) !important;
+  height: clamp(720px, 48vw, 900px) !important;
+  display: grid !important;
+  grid-template-rows: auto 1fr auto !important;
+}
+
+.theme-origin #origin-bar .chart-frame {
+  min-height: clamp(720px, 48vw, 900px) !important;
+  height: clamp(720px, 48vw, 900px) !important;
+  display: grid !important;
+  grid-template-rows: auto 1fr auto !important;
+}
+
+.theme-origin #origin-line .chart-frame {
+  min-height: clamp(560px, 34vw, 720px) !important;
+  height: clamp(560px, 34vw, 720px) !important;
+  display: grid !important;
+  grid-template-rows: auto 1fr auto !important;
+}
+
+.theme-origin #origin-map .chart-frame-header,
+.theme-origin #origin-bar .chart-frame-header,
+.theme-origin #origin-line .chart-frame-header {
+  padding: clamp(18px, 1.25vw, 24px) clamp(20px, 1.35vw, 28px) 8px !important;
+}
+
+.theme-origin #origin-map .chart-frame-body,
+.theme-origin #origin-bar .chart-frame-body,
+.theme-origin #origin-line .chart-frame-body {
+  height: 100% !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: clamp(8px, .8vw, 14px) clamp(18px, 1.2vw, 26px) !important;
+}
+
+.theme-origin #origin-map .map-controls {
+  flex: 0 0 auto !important;
+  margin-bottom: 10px !important;
+}
+
+.theme-origin #origin-map .map-svg-wrap,
+.theme-origin #origin-bar .bar-race-svg-wrap {
+  flex: 1 1 auto !important;
+  min-height: clamp(560px, 38vw, 720px) !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  border-radius: 10px !important;
+}
+
+.theme-origin #origin-map .map-svg-wrap svg {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  display: block !important;
+}
+
+.theme-origin #origin-bar .bar-race-svg-wrap {
+  min-height: clamp(520px, 36vw, 690px) !important;
+  overflow: visible !important;
+  align-items: center !important;
+}
+
+.theme-origin #origin-bar .bar-race-svg-wrap svg {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  transform: scale(1.08) translateY(1%);
+  transform-origin: center center;
+  display: block !important;
+}
+
+.theme-origin #origin-line .chart-frame-body > div,
+.theme-origin #origin-line svg {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: clamp(430px, 28vw, 610px) !important;
+}
+
+.theme-origin #origin-map .map-legend {
+  flex: 0 0 auto !important;
+  padding-top: 12px !important;
+}
+
+.theme-origin #origin-map .chart-frame-description,
+.theme-origin #origin-bar .chart-frame-description,
+.theme-origin #origin-line .chart-frame-description {
+  padding: 0 clamp(20px, 1.35vw, 28px) clamp(18px, 1.3vw, 24px) !important;
+  margin: 0 !important;
+}
+
+.theme-origin #origin-bar .bar-race-controls {
+  transform: scale(1.08);
+  transform-origin: left center;
+  margin-bottom: 6px !important;
+}
+
+.theme-origin #origin-bar .race-year-display {
+  font-size: clamp(2.1rem, 2.2vw, 3rem) !important;
+}
+
+/* ===== Consumption: variable card sizes + safer graph fitting ===== */
+
+.theme-consumption .chapter-visual-board {
+  padding-inline: clamp(12px, 1vw, 22px) !important;
+}
+
+.chapter4-board.is-card-grid {
+  width: calc(100vw - clamp(24px, 2vw, 42px)) !important;
+  max-width: none !important;
+  margin-inline: auto !important;
+  display: grid !important;
+  grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+  grid-auto-flow: row dense !important;
+  grid-auto-rows: 92px !important;
+  gap: clamp(14px, 1.1vw, 22px) !important;
+  align-items: stretch !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  grid-column: span 4;
+  grid-row: span 4;
+}
+
+.chapter4-board.is-card-grid .chapter4-card-square {
+  grid-column: span 3 !important;
+  grid-row: span 4 !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-card-wide {
+  grid-column: span 5 !important;
+  grid-row: span 4 !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-card-medium {
+  grid-column: span 4 !important;
+  grid-row: span 4 !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-card-large {
+  grid-column: span 6 !important;
+  grid-row: span 5 !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-bean-share-shell) {
+  grid-column: span 3 !important;
+  grid-row: span 4 !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-sensory-radar-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-altitude-quality-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-processing-method-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-world-trend-shell) {
+  grid-column: span 5 !important;
+  grid-row: span 4 !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-profile-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-focus-shell) {
+  grid-column: span 6 !important;
+  grid-row: span 5 !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-nutrient-compare-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-milk-choice-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-caffeine-range-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-consumption-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-ranking-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-outcomes-shell) {
+  grid-column: span 4 !important;
+  grid-row: span 4 !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-panel {
+  padding: clamp(46px, 2.7vw, 60px) clamp(16px, 1.05vw, 24px) clamp(14px, 1vw, 20px) !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-panel::before {
+  left: clamp(16px, 1vw, 24px) !important;
+  right: 76px !important;
+  max-width: calc(100% - 108px) !important;
+  font-size: clamp(1rem, 0.95vw, 1.28rem) !important;
+  line-height: 1.15 !important;
+  white-space: normal !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-panel-toolbar {
+  flex: 0 0 auto !important;
+  margin: -2px 0 8px !important;
+  max-height: 54px !important;
+  overflow: hidden !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-controls {
+  gap: 5px !important;
+  flex-wrap: wrap !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-chip {
+  padding: 4px 8px !important;
+  font-size: clamp(0.54rem, 0.5vw, 0.66rem) !important;
+  line-height: 1.08 !important;
+}
+
+.chapter4-board.is-card-grid .chart-frame,
+.chapter4-board.is-card-grid .chart-frame-body,
+.chapter4-board.is-card-grid .chapter4-flip-card,
+.chapter4-board.is-card-grid .chapter4-flip-inner,
+.chapter4-board.is-card-grid .chapter4-flip-face {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+.chapter4-board.is-card-grid .chart-frame {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.chapter4-board.is-card-grid .chart-frame-body {
+  flex: 1 1 auto !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+}
+
+.chapter4-board.is-card-grid .chart-frame svg,
+.chapter4-board.is-card-grid .chapter4-panel svg {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  display: block !important;
+}
+
+/* Chart-type-specific fitting: donut can stay square, label-heavy charts get more room. */
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-bean-share-shell) .chapter4-panel svg {
+  width: 94% !important;
+  height: 94% !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-sensory-radar-shell) .chapter4-panel svg,
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-altitude-quality-shell) .chapter4-panel svg,
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-processing-method-shell) .chapter4-panel svg,
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-caffeine-range-shell) .chapter4-panel svg,
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-ranking-shell) .chapter4-panel svg {
+  width: 96% !important;
+  height: 96% !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-nutrient-compare-shell) .chapter4-panel svg,
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-milk-choice-shell) .chapter4-panel svg {
+  width: 92% !important;
+  height: 92% !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-profile-shell) .chapter4-profile-shell {
+  height: 100% !important;
+  grid-template-columns: 0.75fr 1.25fr !important;
+  gap: 10px !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-profile-rail {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-profile-main,
+.chapter4-board.is-card-grid .chapter4-profile-stage,
+.chapter4-board.is-card-grid .chapter4-profile-deck {
+  min-height: 0 !important;
+  height: 100% !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section-copy {
+  padding: clamp(22px, 2vw, 34px) !important;
+  overflow: auto !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section-copy h3 {
+  font-size: clamp(1.6rem, 2.1vw, 2.7rem) !important;
+  line-height: 1.05 !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section-copy p {
+  font-size: clamp(0.92rem, 0.95vw, 1.08rem) !important;
+  line-height: 1.75 !important;
+}
+
+@media (max-width: 1320px) {
+  .chapter4-board.is-card-grid {
+    grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
+  }
+
+  .chapter4-board.is-card-grid .chapter4-section,
+  .chapter4-board.is-card-grid .chapter4-card-square,
+  .chapter4-board.is-card-grid .chapter4-card-medium,
+  .chapter4-board.is-card-grid .chapter4-card-wide,
+  .chapter4-board.is-card-grid .chapter4-card-large {
+    grid-column: span 4 !important;
+    grid-row: span 4 !important;
+  }
+}
+
+@media (max-width: 860px) {
+  .theme-origin .visual-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .theme-origin #origin-map .chart-frame,
+  .theme-origin #origin-bar .chart-frame,
+  .theme-origin #origin-line .chart-frame {
+    height: auto !important;
+    min-height: 560px !important;
+  }
+
+  .chapter4-board.is-card-grid {
+    grid-template-columns: 1fr !important;
+    grid-auto-rows: auto !important;
+    width: calc(100vw - 24px) !important;
+  }
+
+  .chapter4-board.is-card-grid .chapter4-section,
+  .chapter4-board.is-card-grid .chapter4-card-square,
+  .chapter4-board.is-card-grid .chapter4-card-medium,
+  .chapter4-board.is-card-grid .chapter4-card-wide,
+  .chapter4-board.is-card-grid .chapter4-card-large {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    min-height: 430px !important;
+  }
+}
