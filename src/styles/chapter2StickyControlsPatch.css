@@ -538,3 +538,193 @@
     min-height: 560px !important;
   }
 }
+
+/* ===== Chapter 2 layout re-fix =====
+   - remove card overlap
+   - timeline back to original top-right position
+   - matrix + map on the same row
+   - matrix left / map right = 1:3
+*/
+
+.theme-trade .chapter-shell {
+  display: block !important;
+}
+
+.theme-trade .chapter2-title-timeline {
+  display: none !important;
+}
+
+.theme-trade .chapter2-visual-grid {
+  width: min(1760px, calc(100vw - 28px)) !important;
+  max-width: none !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr)
+    minmax(0, 1fr)
+    minmax(360px, 1fr) !important;
+  grid-template-areas:
+    "sankey sankey sankey timeline"
+    "network network ring ring"
+    "matrix map map map" !important;
+  grid-auto-rows: minmax(380px, auto) !important;
+  gap: 18px !important;
+  align-items: stretch !important;
+}
+
+.theme-trade #chapter2-sankey { grid-area: sankey !important; }
+.theme-trade #chapter2-timeline { grid-area: timeline !important; }
+.theme-trade #chapter2-network { grid-area: network !important; }
+.theme-trade #chapter2-trade-ring { grid-area: ring !important; }
+.theme-trade #chapter2-trade-matrix { grid-area: matrix !important; }
+.theme-trade #chapter2-map { grid-area: map !important; }
+
+.theme-trade .chapter2-visual-grid > .chapter2-grid-cell {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  z-index: 0 !important;
+}
+
+.theme-trade .chapter2-visual-grid .viz-card {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+}
+
+.theme-trade .chapter2-visual-grid .viz-card-title {
+  min-height: 0 !important;
+  padding: 14px 18px 6px !important;
+  display: flex !important;
+  gap: 10px !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  flex-wrap: nowrap !important;
+}
+
+.theme-trade .chapter2-visual-grid .viz-card-title > div:first-child {
+  min-width: 0 !important;
+}
+
+.theme-trade .chapter2-visual-grid .viz-help {
+  white-space: normal !important;
+  text-align: right !important;
+}
+
+.theme-trade .chapter2-visual-grid .viz-card svg {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+}
+
+.theme-trade .chapter2-cell-sankey,
+.theme-trade .chapter2-cell-timeline {
+  min-height: 380px !important;
+}
+
+.theme-trade .chapter2-cell-network,
+.theme-trade .chapter2-cell-ring {
+  min-height: 430px !important;
+}
+
+.theme-trade .chapter2-cell-matrix,
+.theme-trade .chapter2-cell-map {
+  min-height: 560px !important;
+}
+
+.theme-trade .chapter2-cell-map .trade-map-card {
+  background:
+    radial-gradient(circle at 42% 38%, rgba(255, 253, 246, .95), rgba(244, 229, 205, .88) 58%, rgba(226, 203, 169, .94) 100%) !important;
+}
+
+.theme-trade .chapter2-cell-map .map-sphere {
+  fill: rgba(238, 219, 189, .66) !important;
+  stroke: rgba(76, 119, 131, .54) !important;
+  stroke-width: 1.2 !important;
+}
+
+.theme-trade .chapter2-cell-map .map-graticule {
+  stroke: rgba(95, 74, 57, .18) !important;
+  stroke-width: .8 !important;
+}
+
+.theme-trade .chapter2-cell-map .map-land {
+  fill: rgba(126, 119, 88, .45) !important;
+  stroke: rgba(71, 56, 44, .20) !important;
+}
+
+.theme-trade .chapter2-cell-map .route-line {
+  stroke: rgba(73, 129, 147, .74) !important;
+  mix-blend-mode: multiply !important;
+}
+
+.theme-trade .chapter2-cell-map .bundle-line {
+  stroke: rgba(75, 126, 141, .50) !important;
+  mix-blend-mode: multiply !important;
+}
+
+.theme-trade .chapter2-cell-map .map-caption,
+.theme-trade .chapter2-cell-map .viz-card-title span,
+.theme-trade .chapter2-cell-map .viz-card-title small,
+.theme-trade .chapter2-cell-map .viz-help {
+  color: #4b3325 !important;
+  fill: rgba(74, 54, 41, .76) !important;
+}
+
+.theme-trade .chapter2-cell-sankey svg > g,
+.theme-trade .chapter2-cell-ring svg > g,
+.theme-trade .chapter2-cell-matrix svg > g,
+.theme-trade .chapter2-cell-network svg > g {
+  transform: none !important;
+}
+
+@media (max-width: 1320px) {
+  .theme-trade .chapter2-visual-grid {
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-areas:
+      "sankey timeline"
+      "network ring"
+      "matrix map" !important;
+  }
+
+  .theme-trade .chapter2-cell-map,
+  .theme-trade .chapter2-cell-matrix {
+    min-height: 500px !important;
+  }
+}
+
+@media (max-width: 920px) {
+  .theme-trade .chapter2-visual-grid {
+    grid-template-columns: 1fr !important;
+    grid-template-areas:
+      "sankey"
+      "timeline"
+      "network"
+      "ring"
+      "matrix"
+      "map" !important;
+  }
+
+  .theme-trade .chapter2-visual-grid > .chapter2-grid-cell {
+    min-height: 420px !important;
+  }
+
+  .theme-trade .chapter2-cell-map {
+    min-height: 560px !important;
+  }
+}
