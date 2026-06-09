@@ -170,7 +170,7 @@ function renderHomeOverview(main) {
   const head = shell.append("div").attr("class", "home-overview-head");
   head.append("span").attr("class", "section-label").text("Overview");
   head.append("h2").text("Five views of one global coffee system");
-  head.append("p").text("Before scrolling into each chapter, this overview shows the main data angle of each part?봣rom production and trade to market structure, consumption, and climate risk.");
+  head.append("p").text("Before scrolling into each chapter, this overview shows the main data angle of each parts from production and trade to market structure, consumption, and climate risk.");
 
   const grid = shell.append("div").attr("class", "home-overview-grid");
 
@@ -228,7 +228,7 @@ function renderChapterSection(main, page) {
 function renderConclusion(main) {
   const conclusion = main.append("section").attr("id", "conclusion").attr("class", "story-conclusion reveal-item");
   conclusion.append("p").attr("class", "section-label").text("Conclusion");
-  conclusion.append("h2").html("From tropical farms to city caf챕s,<br/>coffee is a global system.");
+  conclusion.append("h2").html("From tropical farms to city cafes,<br/>coffee is a global system.");
   conclusion.append("p")
     .text("A single cup connects land, labor, transport, brands, consumption cultures, and climate uncertainty. The journey is not linear; it is a network of places, people, markets, and environmental pressures.");
 
