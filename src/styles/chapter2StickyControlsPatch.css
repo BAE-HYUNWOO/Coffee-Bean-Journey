@@ -1,14 +1,17 @@
 /* Clean, stable Chapter 2 trade layout reset
    ------------------------------------------------
-   This file intentionally overrides earlier Chapter 2 layout patches.
-
    Final layout:
-   - remove oversized blank space above controls
-   - keep controls + KPI strip aligned
-   - prevent chart cards from overlapping
+   - no duplicated inner Chapter 2 hero gap
+   - controls + KPI strip aligned
+   - chart cards do not overlap
    - row 1: Sankey | Timeline
    - row 2: Network | Ring
    - row 3: Matrix | Map  (Matrix : Map = 1 : 3)
+
+   IMPORTANT:
+   Do NOT set `transform: none` on svg > g.
+   D3 charts such as the ring chart depend on SVG group transform attributes
+   like translate(x, y). Overriding them breaks the chart position.
 */
 
 .theme-trade .chapter-shell,
@@ -208,7 +211,7 @@
   white-space: normal !important;
 }
 
-/* SVGs stay inside cards */
+/* SVGs stay inside cards, but preserve internal D3 transforms */
 .theme-trade .chapter2-visual-grid .viz-card svg {
   display: block !important;
   width: 100% !important;
@@ -236,15 +239,11 @@
   min-height: 600px !important;
 }
 
-/* Prevent older transform-based patches from making charts escape their cards. */
-.theme-trade .chapter2-cell-sankey svg > g,
-.theme-trade .chapter2-cell-network svg > g,
-.theme-trade .chapter2-cell-ring svg > g,
-.theme-trade .chapter2-cell-matrix svg > g,
-.theme-trade .chapter2-cell-timeline svg > g,
-.theme-trade .chapter2-cell-map svg > g {
-  transform: none !important;
-  transform-origin: center center !important;
+/* Ring chart fix:
+   Allow SVG groups to keep D3's translate(...) attributes.
+   This prevents the ring from jumping to the top-left corner. */
+.theme-trade .chapter2-cell-ring .trade-ring-svg {
+  overflow: hidden !important;
 }
 
 /* Timeline compactness */
