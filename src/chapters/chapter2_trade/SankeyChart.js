@@ -1,90 +1,29 @@
 import * as d3 from "d3";
 import { createTooltip, formatKg, formatMoney, metricFormatter, routeKey, topN } from "./utils.js";
 
-function renderMiniRanking(svg, items, opt) {
-  const { x, y, width, title, metric, role, state, tooltip } = opt;
-  const height = 190;
-  const labelW = 118;
-  const valueW = 74;
-  const barH = 15;
-  const rowGap = 7;
-  const max = d3.max(items, d => d[1]) || 1;
-  const xScale = d3.scaleLinear().domain([0, max]).range([0, width - labelW - valueW - 18]);
+function countryTooltipHTML(name, value, role, metric) {
+  return `
+    <b>${name}</b><br/>
+    ${metricFormatter(metric)(value)}<br/>
+    <span>${role === "exporter" ? "Exporter total" : "Import market total"}. Click to pin this country.</span>
+  `;
+}
 
-  const g = svg.append("g").attr("class", "sankey-mini-ranking").attr("transform", `translate(${x},${y})`);
-  g.append("text")
-    .attr("class", "sankey-ranking-title")
-    .attr("x", 0)
-    .attr("y", 0)
-    .text(title);
-  g.append("text")
-    .attr("class", "sankey-ranking-note")
-    .attr("x", width)
-    .attr("y", 0)
-    .attr("text-anchor", "end")
-    .text("same totals as ranking cards");
-
-  const rows = g.selectAll("g.sankey-mini-row")
-    .data(items)
-    .join("g")
-    .attr("class", "sankey-mini-row")
-    .attr("transform", (_, i) => `translate(0,${26 + i * (barH + rowGap)})`)
-    .on("mousemove", (event, d) => tooltip.show(event, `
-      <b>${d[0]}</b><br/>
-      ${metricFormatter(metric)(d[1])}<br/>
-      <span>Click to pin this country.</span>
-    `))
-    .on("mouseleave", tooltip.hide)
-    .on("click", (event, d) => {
-      event.stopPropagation();
-      state.onSelectItem?.({
-        type: "country",
-        country: d[0],
-        value: d[1],
-        role,
-        roleLabel: role === "exporter" ? "top exporter" : "top import market",
-      });
-    });
-
-  rows.append("text")
-    .attr("class", "sankey-mini-label")
-    .attr("x", labelW - 8)
-    .attr("y", barH / 2)
-    .attr("dy", "0.34em")
-    .attr("text-anchor", "end")
-    .text(d => d[0]);
-
-  rows.append("rect")
-    .attr("class", "sankey-mini-bar-bg")
-    .attr("x", labelW)
-    .attr("y", 0)
-    .attr("width", width - labelW - valueW)
-    .attr("height", barH)
-    .attr("rx", 8);
-
-  rows.append("rect")
-    .attr("class", "sankey-mini-bar")
-    .attr("x", labelW)
-    .attr("y", 0)
-    .attr("width", d => Math.max(5, xScale(d[1])))
-    .attr("height", barH)
-    .attr("rx", 8);
-
-  rows.append("text")
-    .attr("class", "sankey-mini-value")
-    .attr("x", d => Math.min(labelW + xScale(d[1]) + 8, width - valueW + 4))
-    .attr("y", barH / 2)
-    .attr("dy", "0.34em")
-    .text(d => metricFormatter(metric)(d[1]));
-
-  return height;
+function pinCountry(state, name, value, role) {
+  state.onSelectItem?.({
+    type: "country",
+    country: name,
+    value,
+    role,
+    roleLabel: role === "exporter" ? "top exporter" : "top import market",
+  });
 }
 
 export function renderSankeyChart(container, flows, state) {
   container.selectAll("*").remove();
   const width = 960;
-  const height = 720;
-  const margin = { top: 78, right: 172, bottom: 250, left: 172 };
+  const height = 560;
+  const margin = { top: 82, right: 180, bottom: 48, left: 180 };
   const metric = state.metric;
   const tooltip = createTooltip(container);
   const selectedKey = routeKey(state.selectedItem);
@@ -99,25 +38,25 @@ export function renderSankeyChart(container, flows, state) {
   );
   const displayData = topN(allYearData, metric, state.flowLimit || 110);
 
-  const card = container.append("div").attr("class", "viz-card sankey-card");
+  const card = container.append("div").attr("class", "viz-card sankey-card sankey-card-no-mini-ranks");
   card.append("div").attr("class", "viz-card-title interactive-title").html(`
-    <div><span>Exporters → importers</span><small>${state.year} · Sankey ribbons + top exporter/importer totals</small></div>
-    <div class="viz-help">Hover to isolate · click a ribbon or bar to pin</div>
+    <div><span>Exporters → importers</span><small>${state.year} · Sankey ribbons + interactive side totals</small></div>
+    <div class="viz-help">Hover side bars or ribbons · click to pin</div>
   `);
 
   const svg = card.append("svg").attr("viewBox", `0 0 ${width} ${height}`).attr("class", "sankey-svg");
   svg.append("rect").attr("width", width).attr("height", height).attr("rx", 24).attr("class", "sankey-bg");
 
   if (!allYearData.length) {
-    svg.append("text").attr("x", width/2).attr("y", height/2).attr("text-anchor", "middle").attr("class", "empty-note")
+    svg.append("text").attr("x", width / 2).attr("y", height / 2).attr("text-anchor", "middle").attr("class", "empty-note")
       .text("Sankey needs partner-level rows. In UN Comtrade, set Partners = All.");
     return;
   }
 
   const exporterTotals = d3.rollups(allYearData, v => d3.sum(v, d => d[metric]), d => d.exporter)
-    .sort((a,b)=>b[1]-a[1]);
+    .sort((a, b) => b[1] - a[1]);
   const importerTotals = d3.rollups(allYearData, v => d3.sum(v, d => d[metric]), d => d.importer)
-    .sort((a,b)=>b[1]-a[1]);
+    .sort((a, b) => b[1] - a[1]);
   const topExporters = exporterTotals.slice(0, 10);
   const topImporters = importerTotals.slice(0, 10);
   const exporters = new Set(topExporters.map(d => d[0]));
@@ -129,22 +68,20 @@ export function renderSankeyChart(container, flows, state) {
   );
 
   const sankeyBottom = height - margin.bottom;
-  const yLeft = d3.scalePoint().domain([...exporters]).range([margin.top + 10, sankeyBottom]).padding(0.55);
-  const yRight = d3.scalePoint().domain([...importers]).range([margin.top + 10, sankeyBottom]).padding(0.55);
+  const yLeft = d3.scalePoint().domain(topExporters.map(d => d[0])).range([margin.top + 10, sankeyBottom]).padding(0.5);
+  const yRight = d3.scalePoint().domain(topImporters.map(d => d[0])).range([margin.top + 10, sankeyBottom]).padding(0.5);
   const xLeft = margin.left;
   const xRight = width - margin.right;
 
-  const totalsLeft = new Map(topExporters);
-  const totalsRight = new Map(topImporters);
-  const totalMax = d3.max([...totalsLeft.values(), ...totalsRight.values()]) || 1;
-  const barWidth = d3.scaleLinear().domain([0, totalMax]).range([18, 88]);
+  const totalMax = d3.max([...topExporters, ...topImporters], d => d[1]) || 1;
+  const barWidth = d3.scaleLinear().domain([0, totalMax]).range([26, 150]);
   const stroke = d3.scaleSqrt().domain([0, d3.max(links, d => d[metric]) || 1]).range([1.4, 11.5]);
 
   const leftLayer = svg.append("g");
   const rightLayer = svg.append("g");
   const linkLayer = svg.append("g").attr("class", "sankey-links");
 
-  linkLayer.selectAll("path")
+  const link = linkLayer.selectAll("path")
     .data(links)
     .join("path")
     .attr("class", d => `sankey-link ${routeKey(d) === selectedKey ? "is-selected" : ""}`)
@@ -158,7 +95,7 @@ export function renderSankeyChart(container, flows, state) {
       return `M ${xLeft} ${y1} C ${c1} ${y1}, ${c2} ${y2}, ${xRight} ${y2}`;
     })
     .on("mouseenter", function (event, d) {
-      linkLayer.selectAll("path").classed("is-muted", true);
+      link.classed("is-muted", true);
       d3.select(this).classed("is-muted", false).classed("is-hovered", true).raise();
       tooltip.show(event, `
         <b>${d.exporter} → ${d.importer}</b><br/>
@@ -169,7 +106,7 @@ export function renderSankeyChart(container, flows, state) {
       `);
     })
     .on("mouseleave", function () {
-      linkLayer.selectAll("path").classed("is-muted", false).classed("is-hovered", false);
+      link.classed("is-muted", false).classed("is-hovered", false);
       tooltip.hide();
     })
     .on("click", (event, d) => {
@@ -177,82 +114,87 @@ export function renderSankeyChart(container, flows, state) {
       state.onSelectItem?.(d);
     });
 
+  function decorateRows(rows, role) {
+    rows
+      .on("mouseenter", function (event, d) {
+        const name = d[0];
+        link.classed("is-muted", true);
+        link
+          .filter(l => role === "exporter" ? l.exporter === name : l.importer === name)
+          .classed("is-muted", false)
+          .classed("is-hovered", true)
+          .raise();
+        d3.select(this).classed("is-related", true).raise();
+        tooltip.show(event, countryTooltipHTML(name, d[1], role, metric));
+      })
+      .on("mousemove", (event, d) => tooltip.show(event, countryTooltipHTML(d[0], d[1], role, metric)))
+      .on("mouseleave", function () {
+        link.classed("is-muted", false).classed("is-hovered", false);
+        d3.select(this).classed("is-related", false);
+        tooltip.hide();
+      })
+      .on("click", (event, d) => {
+        event.stopPropagation();
+        pinCountry(state, d[0], d[1], role);
+      });
+  }
+
   const leftRows = leftLayer.selectAll("g")
-    .data([...exporters])
+    .data(topExporters)
     .join("g")
-    .attr("class", "sankey-node-row")
-    .attr("transform", d => `translate(0,${yLeft(d)})`);
+    .attr("class", "sankey-node-row sankey-side-total-row")
+    .attr("transform", d => `translate(0,${yLeft(d[0])})`);
 
   leftRows.append("rect")
     .attr("class", "sankey-node-bar")
-    .attr("x", d => xLeft - barWidth(totalsLeft.get(d)))
-    .attr("y", -11)
-    .attr("width", d => barWidth(totalsLeft.get(d)))
-    .attr("height", 22)
-    .attr("rx", 11);
+    .attr("x", d => xLeft - barWidth(d[1]))
+    .attr("y", -13)
+    .attr("width", d => barWidth(d[1]))
+    .attr("height", 26)
+    .attr("rx", 13);
 
   leftRows.append("text")
     .attr("class", "sankey-node-label")
     .attr("x", xLeft - 10)
     .attr("text-anchor", "end")
     .attr("dy", "0.34em")
-    .text(d => d);
+    .text(d => d[0]);
 
   leftRows.append("text")
     .attr("class", "sankey-node-value")
     .attr("x", xLeft - 10)
-    .attr("y", 14)
+    .attr("y", 16)
     .attr("text-anchor", "end")
-    .text(d => metricFormatter(metric)(totalsLeft.get(d)));
+    .text(d => metricFormatter(metric)(d[1]));
+  decorateRows(leftRows, "exporter");
 
   const rightRows = rightLayer.selectAll("g")
-    .data([...importers])
+    .data(topImporters)
     .join("g")
-    .attr("class", "sankey-node-row")
-    .attr("transform", d => `translate(0,${yRight(d)})`);
+    .attr("class", "sankey-node-row sankey-side-total-row")
+    .attr("transform", d => `translate(0,${yRight(d[0])})`);
 
   rightRows.append("rect")
     .attr("class", "sankey-node-bar")
     .attr("x", xRight)
-    .attr("y", -11)
-    .attr("width", d => barWidth(totalsRight.get(d)))
-    .attr("height", 22)
-    .attr("rx", 11);
+    .attr("y", -13)
+    .attr("width", d => barWidth(d[1]))
+    .attr("height", 26)
+    .attr("rx", 13);
 
   rightRows.append("text")
     .attr("class", "sankey-node-label")
     .attr("x", xRight + 10)
     .attr("dy", "0.34em")
-    .text(d => d);
+    .text(d => d[0]);
 
   rightRows.append("text")
     .attr("class", "sankey-node-value")
     .attr("x", xRight + 10)
-    .attr("y", 14)
-    .text(d => metricFormatter(metric)(totalsRight.get(d)));
+    .attr("y", 16)
+    .text(d => metricFormatter(metric)(d[1]));
+  decorateRows(rightRows, "importer");
 
-  svg.append("text").attr("class", "axis-title").attr("x", xLeft - 64).attr("y", 54).attr("text-anchor", "middle").text("Exporting countries");
-  svg.append("text").attr("class", "axis-title").attr("x", xRight + 64).attr("y", 54).attr("text-anchor", "middle").text("Import markets");
-
-  const rankY = height - 210;
-  renderMiniRanking(svg, exporterTotals.slice(0, 8), {
-    x: 34,
-    y: rankY,
-    width: 420,
-    title: "Top coffee exporters",
-    metric,
-    role: "exporter",
-    state,
-    tooltip,
-  });
-  renderMiniRanking(svg, importerTotals.slice(0, 8), {
-    x: width - 454,
-    y: rankY,
-    width: 420,
-    title: "Top coffee import markets",
-    metric,
-    role: "importer",
-    state,
-    tooltip,
-  });
+  svg.append("text").attr("class", "axis-title").attr("x", xLeft - 70).attr("y", 54).attr("text-anchor", "middle").text("Exporting countries");
+  svg.append("text").attr("class", "axis-title").attr("x", xRight + 70).attr("y", 54).attr("text-anchor", "middle").text("Import markets");
 }

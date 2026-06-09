@@ -1,0 +1,84 @@
+/* Chapter 2 usability patch: sticky controls + cleaner Sankey side rankings. */
+.theme-trade .chapter2-controls.sticky-trade-controls {
+  position: sticky !important;
+  top: 66px !important;
+  z-index: 90 !important;
+  width: min(100%, calc(100vw - clamp(28px, 4vw, 76px))) !important;
+  max-width: none !important;
+  margin: 0 auto clamp(18px, 1.8vw, 30px) !important;
+  padding: 0 !important;
+  isolation: isolate;
+}
+
+.theme-trade .chapter2-controls.sticky-trade-controls::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -12px -10px;
+  border-radius: 26px;
+  background:
+    linear-gradient(180deg, rgba(242, 229, 210, 0.96), rgba(242, 229, 210, 0.72)),
+    radial-gradient(circle at 20% 0%, rgba(255,255,255,0.72), transparent 38%);
+  box-shadow: 0 18px 42px rgba(86, 58, 32, 0.14);
+  backdrop-filter: blur(14px);
+}
+
+.theme-trade .chapter2-controls.sticky-trade-controls .control-block {
+  min-height: 78px;
+  border-color: rgba(99, 69, 45, 0.13) !important;
+  background: rgba(255, 252, 246, 0.82) !important;
+}
+
+.theme-trade .chapter2-dashboard {
+  margin-top: 0 !important;
+}
+
+.theme-trade #chapter2-rankings {
+  display: none !important;
+}
+
+.theme-trade .sankey-card-no-mini-ranks {
+  min-height: clamp(520px, 38vw, 660px) !important;
+}
+
+.theme-trade .sankey-card-no-mini-ranks .sankey-svg {
+  min-height: clamp(490px, 34vw, 600px) !important;
+}
+
+.sankey-side-total-row {
+  cursor: pointer;
+}
+
+.sankey-side-total-row .sankey-node-bar {
+  transition: fill 180ms ease, stroke 180ms ease, filter 180ms ease, opacity 180ms ease;
+}
+
+.sankey-side-total-row:hover .sankey-node-bar,
+.sankey-side-total-row.is-related .sankey-node-bar {
+  fill: rgba(218, 166, 96, 0.36) !important;
+  stroke: rgba(145, 91, 47, 0.38) !important;
+  filter: drop-shadow(0 7px 14px rgba(120, 83, 54, 0.12));
+}
+
+.sankey-side-total-row:hover .sankey-node-label,
+.sankey-side-total-row.is-related .sankey-node-label {
+  fill: #2d1a12 !important;
+  font-weight: 950 !important;
+}
+
+.sankey-side-total-row:hover .sankey-node-value,
+.sankey-side-total-row.is-related .sankey-node-value {
+  fill: #8a5b2e !important;
+  font-weight: 900 !important;
+}
+
+@media (max-width: 980px) {
+  .theme-trade .chapter2-controls.sticky-trade-controls {
+    top: 58px !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  .theme-trade .chapter2-controls.sticky-trade-controls::before {
+    inset: -8px -6px;
+  }
+}

@@ -4,7 +4,6 @@ import { loadChapter2Data } from "./dataLoader.js";
 import { renderTradeFlowMap } from "./TradeFlowMap.js";
 import { renderSankeyChart } from "./SankeyChart.js";
 import { renderNetworkGraph } from "./NetworkGraph.js";
-import { renderRankingCharts } from "./RankingCharts.js";
 import { renderTimelineChart } from "./TimelineChart.js";
 import { renderTradeRingChart } from "./TradeRingChart.js";
 import { renderTradeMatrixChart } from "./TradeMatrixChart.js";
@@ -27,7 +26,7 @@ function renderDetailPanel(container, state) {
       : "Explore the coffee route network";
   const copy = selected
     ? routeDetailHTML(selected, state.metric)
-    : "Click any route, ribbon, node, ring, matrix cell, or ranking bar to pin one selection here.";
+    : "Click any route, ribbon, node, ring, or matrix cell to pin one selection here.";
 
   card.html(`
     <span class="detail-kicker">${kicker}</span>
@@ -78,14 +77,7 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
     hero.append("div").attr("class", "demo-warning").html("⚠ Demo placeholder data is showing. Replace the raw CSV and run <code>process_trade_data.py</code> before submission.");
   }
 
-  const dashboard = shell.append("div").attr("class", "chapter2-dashboard");
-  const sidebar = dashboard.append("aside").attr("class", "chapter2-sidebar");
-  const stage = dashboard.append("div").attr("class", "chapter2-stage");
-
-  const detail = sidebar.append("div").attr("id", "chapter2-detail");
-  const kpis = sidebar.append("div").attr("class", "kpi-grid sidebar-kpis");
-
-  const controls = stage.append("div").attr("class", "chapter2-controls compact-controls");
+  const controls = shell.append("div").attr("class", "chapter2-controls compact-controls sticky-trade-controls");
   controls.append("div").attr("class", "control-block").html(`<label>Year</label><div id="chapter2-year-buttons" class="year-buttons"></div>`);
   controls.append("div").attr("class", "control-block").html(`
     <label>Metric</label>
@@ -99,7 +91,14 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
     <input id="chapter2-flow-limit" type="range" min="30" max="180" step="10" value="${state.flowLimit}" />
   `);
 
+  const dashboard = shell.append("div").attr("class", "chapter2-dashboard");
+  const sidebar = dashboard.append("aside").attr("class", "chapter2-sidebar");
+  const stage = dashboard.append("div").attr("class", "chapter2-stage");
+
+  const detail = sidebar.append("div").attr("id", "chapter2-detail");
+  const kpis = sidebar.append("div").attr("class", "kpi-grid sidebar-kpis");
   const timeline = stage.append("div").attr("id", "chapter2-timeline").attr("class", "chapter2-stage-chart");
+
   const map = shell.append("div").attr("id", "chapter2-map");
   const features = shell.append("div").attr("class", "chapter2-feature-stack");
   const sankey = features.append("div").attr("id", "chapter2-sankey");
@@ -108,8 +107,6 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
   const lab = shell.append("div").attr("class", "chapter2-network-lab");
   const ring = lab.append("div").attr("id", "chapter2-trade-ring");
   const matrix = lab.append("div").attr("id", "chapter2-trade-matrix");
-
-  const rankings = shell.append("div").attr("id", "chapter2-rankings").attr("class", "chapter2-compact-chart");
 
   state.onSelectItem = (item) => {
     state.selectedItem = item;
@@ -163,7 +160,6 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
     renderNetworkGraph(network, data.flows, state);
     renderTradeRingChart(ring, data.flows, state);
     renderTradeMatrixChart(matrix, data.flows, state);
-    renderRankingCharts(rankings, data.flows, state);
   }
 
   update();

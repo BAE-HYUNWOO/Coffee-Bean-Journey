@@ -3,7 +3,7 @@ import { pages, chapters } from "./chapterRegistry.js";
 import { initScrollProgress } from "./shared/scrollProgress.js";
 import "./styles/finalPolish.css";
 import "./styles/chapterRefineFinal.css";
-import "./styles/originWidePatch.css";
+import "./styles/chapter2StickyControlsPatch.css";
 import "./chapters/chapter4_consumption/chapter4Cards.js";
 
 const HERO_SLIDE_ROOTS = ["/images/hero-slides"];
@@ -77,7 +77,6 @@ function renderNavigation() {
     `);
 
   const menu = header.append("nav").attr("class", "site-menu").attr("aria-label", "Primary navigation");
-
   [{ id: "home", path: "#home", navTitle: "Home" }, ...chapters].forEach((page) => {
     menu.append("a")
       .attr("href", page.path)
