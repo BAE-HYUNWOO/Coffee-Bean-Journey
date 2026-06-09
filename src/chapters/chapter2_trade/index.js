@@ -92,26 +92,9 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
     onSelectItem: null,
   };
 
-  const rootNode = root.node();
-  const chapterShellNode = rootNode?.closest(".chapter-shell");
-  let titleTimelineHost = null;
+  const shell = root.append("section").attr("class", "chapter2-trade chapter2-grid-mode");
 
-  if (chapterShellNode && rootNode) {
-    titleTimelineHost = d3.select(chapterShellNode).select(".chapter2-title-timeline");
-
-    if (titleTimelineHost.empty()) {
-      const host = document.createElement("div");
-      host.className = "chapter2-title-timeline";
-      chapterShellNode.insertBefore(host, rootNode);
-      titleTimelineHost = d3.select(host);
-    }
-
-    titleTimelineHost.selectAll("*").remove();
-  }
-
-  const tradeShell = root.append("section").attr("class", "chapter2-trade chapter2-grid-mode");
-
-  const hero = tradeShell.append("header").attr("class", "chapter2-hero compact-hero");
+  const hero = shell.append("header").attr("class", "chapter2-hero compact-hero");
   hero.append("p").attr("class", "eyebrow").text("Chapter 02 · Trade");
   hero.append("h2").text("Trade");
 
@@ -119,16 +102,7 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
     hero.append("div").attr("class", "demo-warning").html("⚠ Demo placeholder data is showing. Replace the raw CSV and run <code>process_trade_data.py</code> before submission.");
   }
 
-  const timelineHost = titleTimelineHost && !titleTimelineHost.empty()
-    ? titleTimelineHost
-    : tradeShell.append("div").attr("class", "chapter2-title-timeline");
-
-  const timeline = timelineHost
-    .append("div")
-    .attr("id", "chapter2-timeline")
-    .attr("class", "chapter2-grid-cell chapter2-cell-timeline");
-
-  const controls = tradeShell.append("div").attr("class", "chapter2-controls compact-controls sticky-trade-controls");
+  const controls = shell.append("div").attr("class", "chapter2-controls compact-controls sticky-trade-controls");
   controls.append("div").attr("class", "control-block").html(`<label>Year</label><div id="chapter2-year-buttons" class="year-buttons"></div>`);
   controls.append("div").attr("class", "control-block").html(`
     <label>Metric</label>
@@ -142,18 +116,19 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
     <input id="chapter2-flow-limit" type="range" min="30" max="180" step="10" value="${state.flowLimit}" />
   `);
 
-  const status = tradeShell.append("div").attr("class", "chapter2-status-strip");
+  const status = shell.append("div").attr("class", "chapter2-status-strip");
   const detail = status.append("div").attr("id", "chapter2-detail");
   const kpis = status.append("div").attr("class", "kpi-grid sidebar-kpis");
 
-  const visualGrid = tradeShell.append("div").attr("class", "chapter2-visual-grid");
+  const visualGrid = shell.append("div").attr("class", "chapter2-visual-grid");
+  const timeline = visualGrid.append("div").attr("id", "chapter2-timeline").attr("class", "chapter2-grid-cell chapter2-cell-timeline");
   const sankey = visualGrid.append("div").attr("id", "chapter2-sankey").attr("class", "chapter2-grid-cell chapter2-cell-sankey");
-  const matrix = visualGrid.append("div").attr("id", "chapter2-trade-matrix").attr("class", "chapter2-grid-cell chapter2-cell-matrix");
   const network = visualGrid.append("div").attr("id", "chapter2-network").attr("class", "chapter2-grid-cell chapter2-cell-network");
   const ring = visualGrid.append("div").attr("id", "chapter2-trade-ring").attr("class", "chapter2-grid-cell chapter2-cell-ring");
+  const matrix = visualGrid.append("div").attr("id", "chapter2-trade-matrix").attr("class", "chapter2-grid-cell chapter2-cell-matrix");
   const map = visualGrid.append("div").attr("id", "chapter2-map").attr("class", "chapter2-grid-cell chapter2-cell-map");
 
-  bindChapter2ControlVisibility(tradeShell, controls);
+  bindChapter2ControlVisibility(shell, controls);
 
   state.onSelectItem = (item) => {
     state.selectedItem = item;
