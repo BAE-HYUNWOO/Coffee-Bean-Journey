@@ -4,6 +4,7 @@ import { initScrollProgress } from "./shared/scrollProgress.js";
 import "./styles/finalPolish.css";
 import "./styles/chapterRefineFinal.css";
 import "./styles/chapter2StickyControlsPatch.css";
+import "./styles/sectionPolishPatch.css";
 import "./chapters/chapter4_consumption/chapter4Cards.js";
 
 const HERO_SLIDE_ROOTS = ["/images/hero-slides"];
