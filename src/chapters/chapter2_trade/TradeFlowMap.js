@@ -88,8 +88,46 @@ export function renderTradeFlowMap(container, flows, state) {
   );
 
   const valueExtent = d3.extent(data, d => d[metric]);
-  const stroke = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([1.0, 10.5]);
-  const opacity = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([0.18, 0.82]);
+  const stroke = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([0.8, 8.2]);
+  const opacity = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([0.14, 0.64]);
+
+
+
+  const bundleTotals = d3.rollups(
+    data,
+    v => ({
+      exporter: v[0].exporter,
+      exporter_lat: +v[0].exporter_lat,
+      exporter_lon: +v[0].exporter_lon,
+      value: d3.sum(v, d => +d[metric] || 0),
+      destLat: d3.sum(v, d => (+d.importer_lat || 0) * (+d[metric] || 0)) / (d3.sum(v, d => +d[metric] || 0) || 1),
+      destLon: d3.sum(v, d => (+d.importer_lon || 0) * (+d[metric] || 0)) / (d3.sum(v, d => +d[metric] || 0) || 1),
+      count: v.length,
+    }),
+    d => d.exporter
+  ).map(d => d[1]).sort((a, b) => b.value - a.value).slice(0, 8);
+
+  const bundleWidth = d3.scaleSqrt()
+    .domain([0, d3.max(bundleTotals, d => d.value) || 1])
+    .range([5, 23]);
+
+  const bundles = layer.append("g").attr("class", "trade-bundles");
+  bundles.selectAll("path")
+    .data(bundleTotals)
+    .join("path")
+    .attr("class", "bundle-line")
+    .attr("d", d => arcPath(projection, [+d.exporter_lon, +d.exporter_lat], [+d.destLon, +d.destLat]))
+    .attr("stroke-width", d => bundleWidth(d.value))
+    .attr("opacity", 0.36)
+    .attr("filter", "url(#coffee-route-glow)");
+
+  bundles.selectAll("text")
+    .data(bundleTotals.slice(0, 5))
+    .join("text")
+    .attr("class", "bundle-label")
+    .attr("x", d => projection([+d.exporter_lon, +d.exporter_lat])?.[0] + 12)
+    .attr("y", d => projection([+d.exporter_lon, +d.exporter_lat])?.[1] - 12)
+    .text(d => `${d.exporter} hub`);
 
   const routes = layer.append("g").attr("class", "trade-routes");
   routes.selectAll("path")

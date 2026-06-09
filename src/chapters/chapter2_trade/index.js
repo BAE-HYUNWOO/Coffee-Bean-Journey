@@ -6,6 +6,8 @@ import { renderSankeyChart } from "./SankeyChart.js";
 import { renderNetworkGraph } from "./NetworkGraph.js";
 import { renderRankingCharts } from "./RankingCharts.js";
 import { renderTimelineChart } from "./TimelineChart.js";
+import { renderTradeRingChart } from "./TradeRingChart.js";
+import { renderTradeMatrixChart } from "./TradeMatrixChart.js";
 import { formatKg, formatMoney, metricLabel, routeDetailHTML } from "./utils.js";
 
 function sumBy(data, key) {
@@ -25,7 +27,7 @@ function renderDetailPanel(container, state) {
       : "Explore the coffee route network";
   const copy = selected
     ? routeDetailHTML(selected, state.metric)
-    : "Click any route, ribbon, node, or ranking bar to pin one selection here.";
+    : "Click any route, ribbon, node, ring, matrix cell, or ranking bar to pin one selection here.";
 
   card.html(`
     <span class="detail-kicker">${kicker}</span>
@@ -102,6 +104,11 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
   const features = shell.append("div").attr("class", "chapter2-feature-stack");
   const sankey = features.append("div").attr("id", "chapter2-sankey");
   const network = features.append("div").attr("id", "chapter2-network");
+
+  const lab = shell.append("div").attr("class", "chapter2-network-lab");
+  const ring = lab.append("div").attr("id", "chapter2-trade-ring");
+  const matrix = lab.append("div").attr("id", "chapter2-trade-matrix");
+
   const rankings = shell.append("div").attr("id", "chapter2-rankings").attr("class", "chapter2-compact-chart");
 
   state.onSelectItem = (item) => {
@@ -154,6 +161,8 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
     renderTradeFlowMap(map, data.flows, state);
     renderSankeyChart(sankey, data.flows, state);
     renderNetworkGraph(network, data.flows, state);
+    renderTradeRingChart(ring, data.flows, state);
+    renderTradeMatrixChart(matrix, data.flows, state);
     renderRankingCharts(rankings, data.flows, state);
   }
 
