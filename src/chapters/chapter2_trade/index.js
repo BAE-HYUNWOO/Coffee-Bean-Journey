@@ -57,7 +57,7 @@ function bindChapter2ControlVisibility(shell, controls) {
     const isInsideChapter = rect.top < 72 && rect.bottom > 190;
     shell.classed("chapter2-controls-fixed", isInsideChapter);
     if (isInsideChapter) {
-      const width = Math.min(window.innerWidth - 44, 1760);
+      const width = Math.max(320, window.innerWidth - Math.max(24, window.innerWidth * 0.018));
       controls.style("width", `${width}px`);
     } else {
       controls.style("width", null);

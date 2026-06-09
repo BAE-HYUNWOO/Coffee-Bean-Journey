@@ -1,0 +1,263 @@
+/* Visual fit patch: remove dead side space and make the visible charts fill their cards. */
+
+/* ===== Origin ===== */
+.theme-origin #origin-line .chart-frame-body {
+  overflow: hidden !important;
+}
+
+/* The previous broad selector hit every div inside the timeline body, including the legend.
+   Keep the legend natural-height, and let only the SVG wrapper expand. */
+.theme-origin #origin-line .timeline-legend-bar {
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0 4px 8px !important;
+  margin: 0 !important;
+}
+
+.theme-origin #origin-line .timeline-svg-wrap {
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: clamp(385px, 24vw, 560px) !important;
+  overflow: hidden !important;
+}
+
+.theme-origin #origin-line .timeline-svg-wrap svg {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  display: block !important;
+}
+
+.theme-origin #origin-bar .bar-race-svg-wrap {
+  flex: 1 1 auto !important;
+  min-height: clamp(560px, 37vw, 725px) !important;
+  overflow: hidden !important;
+}
+
+.theme-origin #origin-bar .bar-race-svg-wrap svg {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  transform: scale(1.015) !important;
+  transform-origin: center center !important;
+}
+
+/* ===== Trade ===== */
+.theme-trade .chapter2-trade {
+  padding-inline: clamp(8px, 0.9vw, 18px) !important;
+}
+
+.theme-trade .chapter2-hero,
+.theme-trade .chapter2-controls.sticky-trade-controls,
+.theme-trade .chapter2-status-strip,
+.theme-trade .chapter2-visual-grid {
+  width: calc(100vw - clamp(18px, 1.8vw, 34px)) !important;
+  max-width: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.theme-trade .chapter2-controls.sticky-trade-controls {
+  grid-template-columns: minmax(560px, 1.9fr) minmax(220px, 0.55fr) minmax(330px, 0.82fr) !important;
+}
+
+.theme-trade .chapter2-status-strip {
+  grid-template-columns: minmax(245px, 0.72fr) minmax(0, 3.28fr) !important;
+}
+
+.theme-trade .chapter2-visual-grid {
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr)
+    minmax(0, 1fr)
+    minmax(430px, 1.16fr) !important;
+  grid-template-rows:
+    clamp(390px, 25vw, 510px)
+    clamp(375px, 24vw, 505px)
+    clamp(375px, 24vw, 505px)
+    clamp(375px, 24vw, 505px) !important;
+  gap: clamp(12px, 0.85vw, 18px) !important;
+}
+
+.theme-trade .chapter2-visual-grid .viz-card-title {
+  padding: 14px 18px 6px !important;
+}
+
+.theme-trade .chapter2-cell-timeline .timeline-svg,
+.theme-trade .chapter2-cell-sankey .sankey-svg,
+.theme-trade .chapter2-cell-network .network-svg,
+.theme-trade .chapter2-cell-ring .trade-ring-svg,
+.theme-trade .chapter2-cell-matrix .trade-matrix-svg {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+.theme-trade .chapter2-cell-sankey .sankey-svg,
+.theme-trade .chapter2-cell-network .network-svg,
+.theme-trade .chapter2-cell-ring .trade-ring-svg,
+.theme-trade .chapter2-cell-matrix .trade-matrix-svg {
+  transform: scale(1.04) !important;
+  transform-origin: 50% 53% !important;
+}
+
+.theme-trade .chapter2-cell-map .trade-map-card {
+  min-height: 0 !important;
+}
+
+@media (max-width: 1320px) {
+  .theme-trade .chapter2-controls.sticky-trade-controls {
+    grid-template-columns: 1fr !important;
+  }
+
+  .theme-trade .chapter2-visual-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-rows: 380px 560px 380px 380px !important;
+    grid-template-areas:
+      "timeline timeline"
+      "map      map"
+      "sankey   network"
+      "ring     matrix" !important;
+  }
+}
+
+/* ===== Consumption ===== */
+.theme-consumption .chapter-visual-board {
+  padding-inline: clamp(8px, 1vw, 18px) !important;
+}
+
+.chapter4-board.is-card-grid {
+  width: calc(100vw - clamp(18px, 1.8vw, 34px)) !important;
+  max-width: none !important;
+  grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+  grid-auto-rows: clamp(86px, 5vw, 108px) !important;
+  gap: clamp(14px, 1vw, 20px) !important;
+  grid-auto-flow: row dense !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section {
+  min-height: 0 !important;
+  height: auto !important;
+  grid-column: span 4 !important;
+  grid-row: span 4 !important;
+}
+
+/* First visible block: 3 + 5 + 4, then 6 + 6, so there is no empty right-side hole. */
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-bean-share-shell) {
+  grid-column: span 3 !important;
+  grid-row: span 4 !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-sensory-radar-shell) {
+  grid-column: span 5 !important;
+  grid-row: span 4 !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-caffeine-range-shell) {
+  grid-column: span 4 !important;
+  grid-row: span 4 !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-altitude-quality-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-processing-method-shell) {
+  grid-column: span 6 !important;
+  grid-row: span 4 !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-nutrient-compare-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-milk-choice-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-world-trend-shell) {
+  grid-column: span 4 !important;
+  grid-row: span 4 !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-consumption-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-ranking-shell) {
+  grid-column: span 6 !important;
+  grid-row: span 4 !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-profile-shell) {
+  grid-column: span 8 !important;
+  grid-row: span 5 !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-outcomes-shell) {
+  grid-column: span 4 !important;
+  grid-row: span 5 !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-focus-shell) {
+  grid-column: span 12 !important;
+  grid-row: span 5 !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-panel {
+  padding: clamp(48px, 2.55vw, 58px) clamp(8px, 0.75vw, 14px) clamp(8px, 0.75vw, 14px) !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-panel::before {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  line-height: 1.08 !important;
+}
+
+.chapter4-board.is-card-grid .chart-frame svg,
+.chapter4-board.is-card-grid .chapter4-panel svg {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  transform: scale(1.08) !important;
+  transform-origin: 50% 51% !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-altitude-quality-shell) .chapter4-panel svg,
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-processing-method-shell) .chapter4-panel svg,
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-caffeine-range-shell) .chapter4-panel svg {
+  transform: scale(1.05) !important;
+}
+
+@media (max-width: 1320px) {
+  .chapter4-board.is-card-grid {
+    grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
+  }
+
+  .chapter4-board.is-card-grid .chapter4-section,
+  .chapter4-board.is-card-grid .chapter4-section:has(#chapter4-bean-share-shell),
+  .chapter4-board.is-card-grid .chapter4-section:has(#chapter4-sensory-radar-shell),
+  .chapter4-board.is-card-grid .chapter4-section:has(#chapter4-caffeine-range-shell),
+  .chapter4-board.is-card-grid .chapter4-section:has(#chapter4-altitude-quality-shell),
+  .chapter4-board.is-card-grid .chapter4-section:has(#chapter4-processing-method-shell),
+  .chapter4-board.is-card-grid .chapter4-section:has(#chapter4-nutrient-compare-shell),
+  .chapter4-board.is-card-grid .chapter4-section:has(#chapter4-milk-choice-shell),
+  .chapter4-board.is-card-grid .chapter4-section:has(#chapter4-world-trend-shell),
+  .chapter4-board.is-card-grid .chapter4-section:has(#chapter4-consumption-shell),
+  .chapter4-board.is-card-grid .chapter4-section:has(#chapter4-ranking-shell),
+  .chapter4-board.is-card-grid .chapter4-section:has(#chapter4-profile-shell),
+  .chapter4-board.is-card-grid .chapter4-section:has(#chapter4-outcomes-shell) {
+    grid-column: span 4 !important;
+  }
+
+  .chapter4-board.is-card-grid .chapter4-section:has(#chapter4-focus-shell) {
+    grid-column: span 8 !important;
+  }
+}
+
+@media (max-width: 860px) {
+  .chapter4-board.is-card-grid {
+    grid-template-columns: 1fr !important;
+    grid-auto-rows: auto !important;
+  }
+
+  .chapter4-board.is-card-grid .chapter4-section,
+  .chapter4-board.is-card-grid .chapter4-section:has(#chapter4-focus-shell) {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    min-height: 430px !important;
+  }
+}

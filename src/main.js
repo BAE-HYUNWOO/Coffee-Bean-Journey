@@ -7,6 +7,7 @@ import "./styles/chapter2StickyControlsPatch.css";
 import "./styles/originWidePatch.css";
 import "./styles/sectionPolishPatch.css";
 import "./styles/finalLayoutTuning.css";
+import "./styles/visualFitPatch.css";
 import "./chapters/chapter4_consumption/chapter4Cards.js";
 import "./shared/finalLayoutTune.js";
 

@@ -141,12 +141,14 @@ export function drawBarRaceChart(containerSelector, { rankingData, timelineData:
     .style("cursor", "pointer");
 
   // SVG
+  // The bar-race card is tall and narrow in the final layout.
+  // A taller viewBox avoids vertical letterboxing and lets the ranking fill the card.
   const svgWrap = body.append("div").attr("class", "bar-race-svg-wrap");
-  const { svg, width } = getSvg(svgWrap, 380);
+  const { svg, width } = getSvg(svgWrap, 620);
 
-  const margin = { top: 10, right: 130, bottom: 10, left: 65 };
+  const margin = { top: 18, right: 132, bottom: 22, left: 68 };
   const innerW = width - margin.left - margin.right;
-  const innerH = 360;
+  const innerH = 560;
   svg.attr("viewBox", `0 0 ${width} ${innerH + margin.top + margin.bottom}`);
 
   const chartG = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
