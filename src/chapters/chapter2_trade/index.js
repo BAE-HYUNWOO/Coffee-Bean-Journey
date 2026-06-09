@@ -49,6 +49,31 @@ function renderKPIs(container, cards) {
   `);
 }
 
+function bindChapter2ControlVisibility(shell, controls) {
+  const sync = () => {
+    const node = shell.node();
+    if (!node) return;
+    const rect = node.getBoundingClientRect();
+    const isInsideChapter = rect.top < 72 && rect.bottom > 190;
+    shell.classed("chapter2-controls-fixed", isInsideChapter);
+    if (isInsideChapter) {
+      const width = Math.min(window.innerWidth - 44, 1760);
+      controls.style("width", `${width}px`);
+    } else {
+      controls.style("width", null);
+    }
+  };
+
+  sync();
+  window.addEventListener("scroll", sync, { passive: true });
+  window.addEventListener("resize", sync, { passive: true });
+
+  return () => {
+    window.removeEventListener("scroll", sync);
+    window.removeEventListener("resize", sync);
+  };
+}
+
 export async function renderChapter2Trade(containerSelector = "#chapter2-trade") {
   const root = d3.select(containerSelector);
   if (root.empty()) {
@@ -67,7 +92,7 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
     onSelectItem: null,
   };
 
-  const shell = root.append("section").attr("class", "chapter2-trade");
+  const shell = root.append("section").attr("class", "chapter2-trade chapter2-grid-mode");
 
   const hero = shell.append("header").attr("class", "chapter2-hero compact-hero");
   hero.append("p").attr("class", "eyebrow").text("Chapter 02 · Trade");
@@ -91,22 +116,19 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
     <input id="chapter2-flow-limit" type="range" min="30" max="180" step="10" value="${state.flowLimit}" />
   `);
 
-  const dashboard = shell.append("div").attr("class", "chapter2-dashboard");
-  const sidebar = dashboard.append("aside").attr("class", "chapter2-sidebar");
-  const stage = dashboard.append("div").attr("class", "chapter2-stage");
+  const status = shell.append("div").attr("class", "chapter2-status-strip");
+  const detail = status.append("div").attr("id", "chapter2-detail");
+  const kpis = status.append("div").attr("class", "kpi-grid sidebar-kpis");
 
-  const detail = sidebar.append("div").attr("id", "chapter2-detail");
-  const kpis = sidebar.append("div").attr("class", "kpi-grid sidebar-kpis");
-  const timeline = stage.append("div").attr("id", "chapter2-timeline").attr("class", "chapter2-stage-chart");
+  const visualGrid = shell.append("div").attr("class", "chapter2-visual-grid");
+  const timeline = visualGrid.append("div").attr("id", "chapter2-timeline").attr("class", "chapter2-grid-cell chapter2-cell-timeline");
+  const sankey = visualGrid.append("div").attr("id", "chapter2-sankey").attr("class", "chapter2-grid-cell chapter2-cell-sankey");
+  const map = visualGrid.append("div").attr("id", "chapter2-map").attr("class", "chapter2-grid-cell chapter2-cell-map");
+  const network = visualGrid.append("div").attr("id", "chapter2-network").attr("class", "chapter2-grid-cell chapter2-cell-network");
+  const ring = visualGrid.append("div").attr("id", "chapter2-trade-ring").attr("class", "chapter2-grid-cell chapter2-cell-ring");
+  const matrix = visualGrid.append("div").attr("id", "chapter2-trade-matrix").attr("class", "chapter2-grid-cell chapter2-cell-matrix");
 
-  const map = shell.append("div").attr("id", "chapter2-map");
-  const features = shell.append("div").attr("class", "chapter2-feature-stack");
-  const sankey = features.append("div").attr("id", "chapter2-sankey");
-  const network = features.append("div").attr("id", "chapter2-network");
-
-  const lab = shell.append("div").attr("class", "chapter2-network-lab");
-  const ring = lab.append("div").attr("id", "chapter2-trade-ring");
-  const matrix = lab.append("div").attr("id", "chapter2-trade-matrix");
+  bindChapter2ControlVisibility(shell, controls);
 
   state.onSelectItem = (item) => {
     state.selectedItem = item;
@@ -155,8 +177,8 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
     renderKPIs(kpis, cards);
 
     renderTimelineChart(timeline, data.flows, state, y => { state.year = y; state.selectedItem = null; update(); });
-    renderTradeFlowMap(map, data.flows, state);
     renderSankeyChart(sankey, data.flows, state);
+    renderTradeFlowMap(map, data.flows, state);
     renderNetworkGraph(network, data.flows, state);
     renderTradeRingChart(ring, data.flows, state);
     renderTradeMatrixChart(matrix, data.flows, state);
