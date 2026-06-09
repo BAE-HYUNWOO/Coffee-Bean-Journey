@@ -123,10 +123,10 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
   const visualGrid = shell.append("div").attr("class", "chapter2-visual-grid");
   const timeline = visualGrid.append("div").attr("id", "chapter2-timeline").attr("class", "chapter2-grid-cell chapter2-cell-timeline");
   const sankey = visualGrid.append("div").attr("id", "chapter2-sankey").attr("class", "chapter2-grid-cell chapter2-cell-sankey");
-  const map = visualGrid.append("div").attr("id", "chapter2-map").attr("class", "chapter2-grid-cell chapter2-cell-map");
   const network = visualGrid.append("div").attr("id", "chapter2-network").attr("class", "chapter2-grid-cell chapter2-cell-network");
   const ring = visualGrid.append("div").attr("id", "chapter2-trade-ring").attr("class", "chapter2-grid-cell chapter2-cell-ring");
   const matrix = visualGrid.append("div").attr("id", "chapter2-trade-matrix").attr("class", "chapter2-grid-cell chapter2-cell-matrix");
+  const map = visualGrid.append("div").attr("id", "chapter2-map").attr("class", "chapter2-grid-cell chapter2-cell-map");
 
   bindChapter2ControlVisibility(shell, controls);
 
@@ -178,10 +178,10 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
 
     renderTimelineChart(timeline, data.flows, state, y => { state.year = y; state.selectedItem = null; update(); });
     renderSankeyChart(sankey, data.flows, state);
-    renderTradeFlowMap(map, data.flows, state);
     renderNetworkGraph(network, data.flows, state);
     renderTradeRingChart(ring, data.flows, state);
     renderTradeMatrixChart(matrix, data.flows, state);
+    renderTradeFlowMap(map, data.flows, state);
   }
 
   update();

@@ -194,13 +194,16 @@ export function drawTimelineChart(containerSelector, { timelineData }) {
 
   // SVG setup
   const svgWrap = body.append("div").attr("class", "timeline-svg-wrap");
-  const { svg, width } = getSvg(svgWrap, 400);
+  // Put the chart canvas before the legend. This prevents the legend from
+  // eating the chart height when parent CSS uses flex/grid fitting rules.
+  svgWrap.lower();
+  const { svg, width } = getSvg(svgWrap, 430);
 
-  const margin = { top: 20, right: 30, bottom: 20, left: 60 };
+  const margin = { top: 22, right: 34, bottom: 26, left: 70 };
   const innerW = width - margin.left - margin.right;
-  const mainH = 260;
-  const miniH = 36;
-  const miniGap = 12;
+  const mainH = 320;
+  const miniH = 44;
+  const miniGap = 14;
   const innerMainH = mainH - margin.top;
   const totalH = margin.top + innerMainH + 20 + miniGap + miniH + margin.bottom;
 
@@ -556,14 +559,7 @@ export function drawTimelineChart(containerSelector, { timelineData }) {
 
   render();
 
-  // ResizeObserver
-  const chartFrameEl = body.node()?.closest(".chart-frame");
-  if (chartFrameEl) {
-    const observer = new ResizeObserver(() => {
-      const w = Math.max(340, svgWrap.node()?.getBoundingClientRect().width || 640);
-      const h = 400;
-      svg.attr("viewBox", `0 0 ${w} ${h}`);
-    });
-    observer.observe(chartFrameEl);
-  }
+  // A second render after layout settles keeps the timeline visible when the
+  // chapter is drawn before fonts / sticky header sizes finish resolving.
+  requestAnimationFrame(render);
 }

@@ -91,11 +91,17 @@
   display: block !important;
 }
 
-.theme-origin #origin-line .chart-frame-body > div,
-.theme-origin #origin-line svg {
+.theme-origin #origin-line .timeline-svg-wrap,
+.theme-origin #origin-line .timeline-svg-wrap svg {
   width: 100% !important;
   height: 100% !important;
   min-height: clamp(430px, 28vw, 610px) !important;
+}
+
+.theme-origin #origin-line .timeline-legend-bar {
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
 }
 
 .theme-origin #origin-map .map-legend {
