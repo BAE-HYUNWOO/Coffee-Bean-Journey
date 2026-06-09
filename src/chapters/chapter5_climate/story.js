@@ -1,19 +1,19 @@
 export const story = {
   chapter: 5,
   title: "Climate future",
-  subtitle: "Can coffee remain prosperous in the future?",
+  subtitle: "Can coffee still be grown in the same places?",
   narrative: [
     {
       trigger: "risk-map",
-      text: "Climate pressure is spatial. Coffee regions face different combinations of heat, rainfall volatility, and suitability shifts."
+      text: "The climate layer first maps projected warming across the world, using gridded temperature data rather than country-level summaries."
     },
     {
-      trigger: "scenario",
-      text: "Even simple scenarios show how adaptation can slow but not fully eliminate long-run suitability loss."
+      trigger: "suitability-map",
+      text: "The coffee belt is then filtered by the 18°C–24°C suitability window, showing which areas remain suitable, disappear, or newly emerge by 2050."
     },
     {
-      trigger: "temperature-yield",
-      text: "The relationship between temperature and yield is not mechanical, but the risk direction is clear: heat stress makes production less stable."
+      trigger: "producer-risk",
+      text: "Finally, the chapter connects climate exposure back to major coffee-producing countries, linking future warming with present production scale."
     }
   ]
 };
