@@ -197,9 +197,9 @@ export function drawChoroplethMap(containerSelector, { mapData, worldTopoJSON })
     .on("zoom", (event) => { g.attr("transform", event.transform); });
   svg.call(zoom);
   // Initial zoom — focus on the coffee belt (tropics) for a more impactful first view
-  const initialScale = 1.35;
-  const initialTx = width / 2 - (width / 2) * initialScale;
-  const initialTy = mapHeight / 2 - (mapHeight / 2) * initialScale + 40;
+  const initialScale = 1.5;
+  const initialTx = width / 2 - (width / 2) * initialScale - 35;
+  const initialTy = mapHeight / 2 - (mapHeight / 2) * initialScale + 30;
   const initialTransform = d3.zoomIdentity.translate(initialTx, initialTy).scale(initialScale);
   svg.call(zoom.transform, initialTransform);
 
