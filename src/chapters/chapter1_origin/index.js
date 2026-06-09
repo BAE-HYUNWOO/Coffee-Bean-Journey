@@ -51,7 +51,7 @@ export function renderChapter1(containerSelector) {
 
     drawMetricCards("#chapter1_origin-stats", [
       { value: formatCompact.format(totalProduction) + " t", label: "Global production (2024)" },
-      { value: { "巴西": "Brazil", "越南": "Vietnam", "哥伦比亚": "Colombia", "印度尼西亚": "Indonesia" }[topProducer.Country] || topProducer.Country || "—", label: "Top producer" },
+      { value: topProducer.Country || "—", label: "Top producer" },
       { value: String(totalCountries), label: "Producing countries" },
     ]);
 

@@ -144,7 +144,7 @@ export function drawBarRaceChart(containerSelector, { rankingData, timelineData:
   const svgWrap = body.append("div").attr("class", "bar-race-svg-wrap");
   const { svg, width } = getSvg(svgWrap, 380);
 
-  const margin = { top: 10, right: 90, bottom: 10, left: 65 };
+  const margin = { top: 10, right: 130, bottom: 10, left: 65 };
   const innerW = width - margin.left - margin.right;
   const innerH = 360;
   svg.attr("viewBox", `0 0 ${width} ${innerH + margin.top + margin.bottom}`);
@@ -186,7 +186,7 @@ export function drawBarRaceChart(containerSelector, { rankingData, timelineData:
   function renderFrame(year) {
     const data = rankingMap.get(year) || [];
     const maxProd = d3.max(data, d => d.production) || 1;
-    xScale.domain([0, maxProd * 1.06]);
+    xScale.domain([0, maxProd * 1.15]);
     yScale.domain(data.map(d => d.country));
 
     // Bars
