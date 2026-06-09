@@ -158,7 +158,7 @@
 .scrubber-handle:active { cursor: grabbing; fill: #006241; }
 /* Unified story integration */
 .unified-page .chapter3-wrapper {
-  width: 100%;
+  width: 90%;
   height: min(78vh, 760px);
   min-height: 560px;
   border-radius: 28px;
@@ -166,7 +166,7 @@
 }
 
 .unified-page #expansion-map .chart-frame {
-  min-height: 650px;
+  min-height: 470px;
 }
 
 .unified-page #expansion-map .chart-frame-body {
