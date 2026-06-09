@@ -32,12 +32,15 @@ function ribbonPath(source, target, cx, cy) {
 
 export function renderTradeRingChart(container, flows, state) {
   container.selectAll("*").remove();
+  // The ring is usually rendered in a wide but not very tall card.
+  // Keep the SVG aspect ratio flatter and the radius smaller so the ring
+  // stays inside the card instead of being clipped at the top/left.
   const width = 980;
-  const height = 840;
+  const height = 660;
   const cx = width / 2;
-  const cy = height / 2 + 10;
-  const outerR = Math.min(width, height) * 0.405;
-  const innerR = outerR - 20;
+  const cy = height / 2 + 18;
+  const outerR = Math.min(width, height) * 0.35;
+  const innerR = outerR - 18;
   const metric = state.metric;
   const tooltip = createTooltip(container);
   const selectedKey = routeKey(state.selectedItem);
@@ -53,7 +56,10 @@ export function renderTradeRingChart(container, flows, state) {
     <div class="viz-help">Hover to isolate · click ring or ribbon to pin</div>
   `);
 
-  const svg = card.append("svg").attr("viewBox", `0 0 ${width} ${height}`).attr("class", "trade-ring-svg");
+  const svg = card.append("svg")
+    .attr("viewBox", `0 0 ${width} ${height}`)
+    .attr("preserveAspectRatio", "xMidYMid meet")
+    .attr("class", "trade-ring-svg");
   svg.append("rect").attr("width", width).attr("height", height).attr("rx", 26).attr("class", "trade-ring-bg");
 
   if (!countries.length || !links.length) {
@@ -161,11 +167,11 @@ export function renderTradeRingChart(container, flows, state) {
     .attr("class", "ring-country-label")
     .attr("x", d => {
       const a = (d.startAngle + d.endAngle) / 2 - Math.PI / 2;
-      return cx + Math.cos(a) * (outerR + 30);
+      return cx + Math.cos(a) * (outerR + 24);
     })
     .attr("y", d => {
       const a = (d.startAngle + d.endAngle) / 2 - Math.PI / 2;
-      return cy + Math.sin(a) * (outerR + 30);
+      return cy + Math.sin(a) * (outerR + 24);
     })
     .attr("text-anchor", d => {
       const a = (d.startAngle + d.endAngle) / 2;
