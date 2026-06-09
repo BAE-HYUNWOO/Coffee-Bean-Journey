@@ -7,19 +7,69 @@ import "./styles/chapter2StickyControlsPatch.css";
 import "./styles/originWidePatch.css";
 import "./styles/sectionPolishPatch.css";
 import "./styles/finalLayoutTuning.css";
-import "./styles/visualFitPatch.css";
 import "./chapters/chapter4_consumption/chapter4Cards.js";
 import "./shared/finalLayoutTune.js";
 
 const HERO_SLIDE_ROOTS = ["/images/hero-slides"];
-const HERO_SLIDE_CANDIDATES = [
-  "hero-1.png",
-  "hero-2.png",
-  "hero-3.png",
-  "hero-4.png",
-  "hero-5.png",
-  "hero-6.png",
-].flatMap((fileName) => HERO_SLIDE_ROOTS.map((root) => `${import.meta.env.BASE_URL}${root.replace(/^\//, "")}/${fileName}`));
+const HERO_SLIDE_FILENAMES = [
+  ...Array.from({ length: 6 }, (_, index) => `hero-${index + 1}.png`),
+  "coffee-1.jpg",
+  "coffee-2.jpg",
+  "coffee-3.jpg",
+  "coffee-4.jpg",
+  "coffee-5.jpg",
+];
+const HERO_SLIDE_CANDIDATES = HERO_SLIDE_FILENAMES.flatMap((fileName) =>
+  HERO_SLIDE_ROOTS.map((root) => `${import.meta.env.BASE_URL}${root.replace(/^\//, "")}/${fileName}`)
+);
+
+const HOME_OVERVIEW_ITEMS = [
+  {
+    id: "origin",
+    number: "01",
+    title: "Origin",
+    stat: "81 countries · 11.3M t",
+    meta: "FAOSTAT production geography",
+    blurb: "Where coffee grows, who produces the most, and how output changes over time.",
+    themeClass: "overview-origin",
+  },
+  {
+    id: "trade",
+    number: "02",
+    title: "Trade",
+    stat: "$41.4B · 148 exporters",
+    meta: "UN Comtrade global flow network",
+    blurb: "Major exporter-importer corridors, route intensity, and cross-border coffee circulation.",
+    themeClass: "overview-trade",
+  },
+  {
+    id: "market",
+    number: "03",
+    title: "Market",
+    stat: "Global brand footprint",
+    meta: "Starbucks stores and expansion",
+    blurb: "How coffee demand became a worldwide retail network across countries and years.",
+    themeClass: "overview-market",
+  },
+  {
+    id: "consumption",
+    number: "04",
+    title: "Consumption",
+    stat: "Habits · caffeine · taste",
+    meta: "ICO / CQI / nutrition data",
+    blurb: "Daily coffee culture through bean type, beverage choice, and consumption patterns.",
+    themeClass: "overview-consumption",
+  },
+  {
+    id: "prosperity",
+    number: "05",
+    title: "Future",
+    stat: "Climate suitability & risk",
+    meta: "WorldClim + climate indicators",
+    blurb: "How temperature and rainfall pressure may reshape coffee regions in the future.",
+    themeClass: "overview-future",
+  },
+];
 
 const app = d3.select("#app");
 let heroSlideTimer = null;
@@ -106,6 +156,34 @@ function renderOpening(main) {
   const titleLayer = hero.append("div").attr("class", "opening-title-layer reveal-item");
   titleLayer.append("p").attr("class", "opening-kicker").text("Data Visualization Project");
   titleLayer.append("h1").text("A Coffee Bean's Journey Around the World");
+}
+
+
+function renderHomeOverview(main) {
+  const overview = main.append("section")
+    .attr("class", "home-overview reveal-item")
+    .attr("aria-label", "Story overview");
+
+  const shell = overview.append("div").attr("class", "home-overview-shell");
+
+  const head = shell.append("div").attr("class", "home-overview-head");
+  head.append("span").attr("class", "section-label").text("Overview");
+  head.append("h2").text("Five views of one global coffee system");
+  head.append("p").text("Before scrolling into each chapter, this overview shows the main data angle of each part—from production and trade to market structure, consumption, and climate risk.");
+
+  const grid = shell.append("div").attr("class", "home-overview-grid");
+
+  HOME_OVERVIEW_ITEMS.forEach((item) => {
+    const card = grid.append("a")
+      .attr("class", `home-overview-card ${item.themeClass}`)
+      .attr("href", `#${item.id}`);
+
+    card.append("span").attr("class", "overview-chip").text(`Chapter ${item.number}`);
+    card.append("h3").text(item.title);
+    card.append("strong").attr("class", "overview-stat").text(item.stat);
+    card.append("p").attr("class", "overview-meta").text(item.meta);
+    card.append("p").attr("class", "overview-blurb").text(item.blurb);
+  });
 }
 
 function renderChapterSection(main, page) {
@@ -211,6 +289,7 @@ function renderUnifiedStory() {
   const main = app.append("main").attr("id", "page-root").attr("class", "page-root unified-page");
 
   renderOpening(main);
+  renderHomeOverview(main);
   chapters.forEach((page) => renderChapterSection(main, page));
   renderConclusion(main);
 
