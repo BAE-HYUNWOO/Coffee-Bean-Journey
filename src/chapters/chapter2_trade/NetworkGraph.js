@@ -3,8 +3,8 @@ import { createTooltip, formatKg, formatMoney, metricFormatter, topN } from "./u
 
 export function renderNetworkGraph(container, flows, state) {
   container.selectAll("*").remove();
-  const width = 760;
-  const height = 470;
+  const width = 820;
+  const height = 560;
   const metric = state.metric;
   const tooltip = createTooltip(container);
 
@@ -58,9 +58,9 @@ export function renderNetworkGraph(container, flows, state) {
   const linkWidth = d3.scaleSqrt().domain([0, d3.max(filteredLinks, d => d.value) || 1]).range([0.8, 5.2]);
 
   const simulation = d3.forceSimulation(finalNodes)
-    .force("link", d3.forceLink(filteredLinks).id(d => d.id).distance(72).strength(0.18))
-    .force("charge", d3.forceManyBody().strength(-110))
-    .force("center", d3.forceCenter(width / 2, height / 2 + 16))
+    .force("link", d3.forceLink(filteredLinks).id(d => d.id).distance(82).strength(0.16))
+    .force("charge", d3.forceManyBody().strength(-135))
+    .force("center", d3.forceCenter(width / 2, height / 2 + 18))
     .force("collision", d3.forceCollide().radius(d => size(d.value) + 8));
 
   const link = linkG.selectAll("line")

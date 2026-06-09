@@ -69,18 +69,27 @@
 }
 
 .theme-trade .chapter2-visual-grid {
-  grid-template-columns:
-    minmax(0, 1fr)
-    minmax(0, 1fr)
-    minmax(0, 1fr)
-    minmax(430px, 1.16fr) !important;
+  grid-template-columns: minmax(0, 1.24fr) minmax(0, 0.9fr) !important;
   grid-template-rows:
-    clamp(390px, 25vw, 510px)
-    clamp(375px, 24vw, 505px)
-    clamp(375px, 24vw, 505px)
-    clamp(375px, 24vw, 505px) !important;
-  gap: clamp(12px, 0.85vw, 18px) !important;
+    clamp(300px, 19vw, 380px)
+    clamp(430px, 27vw, 540px)
+    clamp(500px, 31vw, 640px)
+    clamp(480px, 33vw, 620px) !important;
+  grid-template-areas:
+    "timeline timeline"
+    "sankey   network"
+    "ring     matrix"
+    "map      map" !important;
+  gap: clamp(14px, 0.95vw, 20px) !important;
+  align-items: stretch !important;
 }
+
+.theme-trade #chapter2-timeline { grid-area: timeline !important; }
+.theme-trade #chapter2-sankey { grid-area: sankey !important; }
+.theme-trade #chapter2-network { grid-area: network !important; }
+.theme-trade #chapter2-trade-ring { grid-area: ring !important; }
+.theme-trade #chapter2-trade-matrix { grid-area: matrix !important; }
+.theme-trade #chapter2-map { grid-area: map !important; }
 
 .theme-trade .chapter2-visual-grid .viz-card-title {
   padding: 14px 18px 6px !important;
@@ -108,6 +117,54 @@
   min-height: 0 !important;
 }
 
+
+.theme-trade .chapter2-cell-timeline .viz-card {
+  min-height: 0 !important;
+}
+
+.theme-trade .chapter2-cell-timeline .viz-card-title,
+.theme-trade .chapter2-cell-matrix .viz-card-title {
+  padding-bottom: 4px !important;
+}
+
+.theme-trade .chapter2-cell-timeline .timeline-svg {
+  transform: scale(0.96) !important;
+  transform-origin: 50% 50% !important;
+}
+
+.theme-trade .chapter2-cell-sankey .sankey-svg {
+  transform: scale(1.06) !important;
+  transform-origin: 50% 52% !important;
+}
+
+.theme-trade .chapter2-cell-network .network-svg {
+  transform: scale(1.08) !important;
+  transform-origin: 50% 54% !important;
+}
+
+.theme-trade .chapter2-cell-ring .trade-ring-svg {
+  transform: scale(1.14) !important;
+  transform-origin: 50% 52% !important;
+}
+
+.theme-trade .chapter2-cell-matrix .trade-matrix-svg {
+  transform: scale(0.93) !important;
+  transform-origin: 50% 50% !important;
+}
+
+.theme-trade .chapter2-cell-map .viz-card-title {
+  padding-bottom: 6px !important;
+}
+
+.theme-trade .chapter2-cell-map .trade-map-svg {
+  transform: scale(1.01) !important;
+  transform-origin: 50% 50% !important;
+}
+
+.theme-trade .chapter2-cell-map .viz-card {
+  min-height: 0 !important;
+}
+
 @media (max-width: 1320px) {
   .theme-trade .chapter2-controls.sticky-trade-controls {
     grid-template-columns: 1fr !important;
@@ -115,12 +172,12 @@
 
   .theme-trade .chapter2-visual-grid {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
-    grid-template-rows: 380px 560px 380px 380px !important;
+    grid-template-rows: 320px 430px 470px 480px !important;
     grid-template-areas:
       "timeline timeline"
-      "map      map"
       "sankey   network"
-      "ring     matrix" !important;
+      "ring     matrix"
+      "map      map" !important;
   }
 }
 

@@ -34,7 +34,7 @@ async function loadWorldGeoJSON() {
 export function renderTradeFlowMap(container, flows, state) {
   container.selectAll("*").remove();
   const width = 1500;
-  const height = 1080;
+  const height = 860;
   const metric = state.metric;
   const tooltip = createTooltip(container);
 
@@ -62,7 +62,7 @@ export function renderTradeFlowMap(container, flows, state) {
   merge.append("feMergeNode").attr("in", "SourceGraphic");
 
   const projection = d3.geoNaturalEarth1();
-  projection.fitExtent([[46, 112], [width - 46, height - 86]], { type: "Sphere" });
+  projection.fitExtent([[34, 80], [width - 34, height - 42]], { type: "Sphere" });
   const path = d3.geoPath(projection);
 
   svg.append("rect").attr("width", width).attr("height", height).attr("rx", 28).attr("class", "map-bg");
@@ -191,7 +191,7 @@ export function renderTradeFlowMap(container, flows, state) {
       state.onSelectItem?.({ type: "country", country: d.country, value: d.exportValue + d.importValue, role: d.exportValue >= d.importValue ? "exporter" : "importer", roleLabel: d.exportValue >= d.importValue ? "mainly exporter" : "mainly importer" });
     });
 
-  svg.append("text").attr("x", width - 40).attr("y", height - 40).attr("text-anchor", "end").attr("class", "map-caption").text("Scroll wheel zooms · drag the map to pan · click routes/countries to pin details");
+  svg.append("text").attr("x", width - 32).attr("y", height - 24).attr("text-anchor", "end").attr("class", "map-caption").text("Scroll wheel zooms · drag the map to pan · click routes/countries to pin details");
 
   if (!data.length) {
     svg.append("text")

@@ -32,12 +32,12 @@ function ribbonPath(source, target, cx, cy) {
 
 export function renderTradeRingChart(container, flows, state) {
   container.selectAll("*").remove();
-  const width = 940;
-  const height = 780;
+  const width = 980;
+  const height = 840;
   const cx = width / 2;
-  const cy = height / 2 + 16;
-  const outerR = Math.min(width, height) * 0.39;
-  const innerR = outerR - 18;
+  const cy = height / 2 + 10;
+  const outerR = Math.min(width, height) * 0.405;
+  const innerR = outerR - 20;
   const metric = state.metric;
   const tooltip = createTooltip(container);
   const selectedKey = routeKey(state.selectedItem);
@@ -161,11 +161,11 @@ export function renderTradeRingChart(container, flows, state) {
     .attr("class", "ring-country-label")
     .attr("x", d => {
       const a = (d.startAngle + d.endAngle) / 2 - Math.PI / 2;
-      return cx + Math.cos(a) * (outerR + 26);
+      return cx + Math.cos(a) * (outerR + 30);
     })
     .attr("y", d => {
       const a = (d.startAngle + d.endAngle) / 2 - Math.PI / 2;
-      return cy + Math.sin(a) * (outerR + 26);
+      return cy + Math.sin(a) * (outerR + 30);
     })
     .attr("text-anchor", d => {
       const a = (d.startAngle + d.endAngle) / 2;
