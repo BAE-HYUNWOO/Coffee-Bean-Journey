@@ -34,7 +34,7 @@ async function loadWorldGeoJSON() {
 export function renderTradeFlowMap(container, flows, state) {
   container.selectAll("*").remove();
   const width = 1500;
-  const height = 680;
+  const height = 1080;
   const metric = state.metric;
   const tooltip = createTooltip(container);
 
@@ -49,6 +49,7 @@ export function renderTradeFlowMap(container, flows, state) {
 
   const svg = card.append("svg")
     .attr("viewBox", `0 0 ${width} ${height}`)
+    .attr("preserveAspectRatio", "xMidYMid meet")
     .attr("class", "trade-map-svg");
 
   const defs = svg.append("defs");
@@ -60,10 +61,11 @@ export function renderTradeFlowMap(container, flows, state) {
   merge.append("feMergeNode").attr("in", "colorBlur");
   merge.append("feMergeNode").attr("in", "SourceGraphic");
 
-  const projection = d3.geoNaturalEarth1().scale(255).translate([width / 2, height / 2 + 36]);
+  const projection = d3.geoNaturalEarth1();
+  projection.fitExtent([[46, 112], [width - 46, height - 86]], { type: "Sphere" });
   const path = d3.geoPath(projection);
 
-  svg.append("rect").attr("width", width).attr("height", height).attr("rx", 26).attr("class", "map-bg");
+  svg.append("rect").attr("width", width).attr("height", height).attr("rx", 28).attr("class", "map-bg");
   const layer = svg.append("g").attr("class", "map-zoom-layer");
   const landLayer = layer.append("g").attr("class", "map-land-layer");
 
@@ -83,15 +85,13 @@ export function renderTradeFlowMap(container, flows, state) {
   svg.call(
     d3.zoom()
       .scaleExtent([1, 4.5])
-      .translateExtent([[-140, -140], [width + 140, height + 140]])
+      .translateExtent([[-160, -160], [width + 160, height + 160]])
       .on("zoom", (event) => layer.attr("transform", event.transform))
   );
 
   const valueExtent = d3.extent(data, d => d[metric]);
-  const stroke = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([0.8, 8.2]);
-  const opacity = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([0.14, 0.64]);
-
-
+  const stroke = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([1.0, 9.8]);
+  const opacity = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([0.18, 0.72]);
 
   const bundleTotals = d3.rollups(
     data,
@@ -109,7 +109,7 @@ export function renderTradeFlowMap(container, flows, state) {
 
   const bundleWidth = d3.scaleSqrt()
     .domain([0, d3.max(bundleTotals, d => d.value) || 1])
-    .range([5, 23]);
+    .range([6, 27]);
 
   const bundles = layer.append("g").attr("class", "trade-bundles");
   bundles.selectAll("path")
@@ -170,7 +170,7 @@ export function renderTradeFlowMap(container, flows, state) {
   });
   const countries = [...countryTotals.values()];
   const maxTotal = d3.max(countries, d => d.exportValue + d.importValue) || 1;
-  const r = d3.scaleSqrt().domain([0, maxTotal]).range([3.5, 21]);
+  const r = d3.scaleSqrt().domain([0, maxTotal]).range([4.2, 25]);
 
   layer.append("g").attr("class", "country-node-layer").selectAll("circle")
     .data(countries)
@@ -191,7 +191,7 @@ export function renderTradeFlowMap(container, flows, state) {
       state.onSelectItem?.({ type: "country", country: d.country, value: d.exportValue + d.importValue, role: d.exportValue >= d.importValue ? "exporter" : "importer", roleLabel: d.exportValue >= d.importValue ? "mainly exporter" : "mainly importer" });
     });
 
-  svg.append("text").attr("x", width - 34).attr("y", height - 34).attr("text-anchor", "end").attr("class", "map-caption").text("Scroll wheel zooms · drag the map to pan · click routes/countries to pin details");
+  svg.append("text").attr("x", width - 40).attr("y", height - 40).attr("text-anchor", "end").attr("class", "map-caption").text("Scroll wheel zooms · drag the map to pan · click routes/countries to pin details");
 
   if (!data.length) {
     svg.append("text")
