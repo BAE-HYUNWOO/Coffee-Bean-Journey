@@ -1,20 +1,153 @@
-/* src/chapters/chapter3_market/style.css */
+/* ==========================================================================
+   1. GLOBAL GRID & LAYOUT
+   ========================================================================== */
+#ch3-grid {
+    width: 97vw;
+    margin: 0 auto;
+}
 
-.chapter3-wrapper {
-    width: 85vw;
+#market-charts-row {
+    width: 100%; 
+    margin: 0 auto 15px auto;
+    display: grid;
+    grid-template-columns: 4fr 5fr;
+    gap: 15px;
+}
+
+/* ==========================================================================
+   2. CHARTS (CHART 1 & CHART 2)
+   ========================================================================== */
+/* Common Chart Frame Styles */
+#market-chart-1 .chart-frame,
+#market-chart-2 .chart-frame {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 300px;
+}
+
+#market-chart-1 .chart-frame-body,
+#market-chart-2 .chart-frame-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Common Wrapper Styles */
+.ch3-chart-1-wrapper,
+.ch3-chart-2-wrapper {
+    background: transparent;
+    box-sizing: border-box;
+    display: flex;
+    width: 98%; 
+    margin: auto;  
+}
+
+/* Individual Chart Heights */
+.ch3-chart-1-wrapper { height: 60vh; }
+.ch3-chart-2-wrapper { 
+    height: 60vh; 
+    min-width: 300px;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Common Text & Axis Line Styles */
+.ch3-chart-1-wrapper text, 
+.ch3-chart-2-wrapper text {
+    fill: #4e4e4e;
+    font-size: 12px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+.ch3-chart-1-wrapper .axis-line path,
+.ch3-chart-1-wrapper .axis-line line{
+    stroke: #747474;
+    opacity: 0;
+}
+
+/* ---------------------------------------------------------
+   Chart UI Elements (Buttons & Tooltips)
+   --------------------------------------------------------- */
+.chart-controls {
+    position: relative;
+    margin: auto 10px 0 auto;
+    height: 65%;
+    display: flex;
+    gap: 10px;
+    z-index: 100;
+}
+
+.chart-btn {
+    cursor: pointer;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.btn-active {
+    background-color: #006241;
+    color: #fff;
+    border: 1px solid #006241;
+}
+
+.btn-inactive {
+    background-color: #222;
+    color: #aaa;
+    border: 1px solid #444;
+}
+
+.sb-chart-tooltip {
+    position: absolute;
+    background: rgba(20, 20, 20, 0.9);
+    border: 1px solid #444;
+    color: #fff;
+    padding: 10px;
+    border-radius: 6px;
+    pointer-events: none;
+    font-size: 12px;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.sb-brush-tooltip {
+    position: absolute;
+    background: rgba(0, 98, 65, 0.9);
+    border: 1px solid #006241;
+    color: #fff;
+    padding: 10px;
+    border-radius: 6px;
+    pointer-events: none;
+    font-size: 12px;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+/* ==========================================================================
+   3. MARKET MAP 
+   ========================================================================== */
+#market-map {
+    margin: 0 auto;
+}
+
+.ch3-map-wrapper {
+    width: 90vw;
     height: 78vh;
-    min-height: 470px;
+    min-height: 450px;
     margin: 0 auto;
     font-family: 'Helvetica Neue', Arial, sans-serif;
     color: #ffffff;
     overflow: hidden;
     position: relative;
-    border-radius: 12px;
+    border-radius: 7px;
     display: flex;
     flex-direction: column;
 }
 
-/* --- Map Section --- */
 .map-section {
     flex: 1; 
     position: relative;
@@ -22,7 +155,9 @@
     overflow: hidden;
 }
 
-#map-svg, #map-canvas {
+/* Map Layers */
+#map-svg, 
+#map-canvas {
     position: absolute;
     top: 0;
     left: 0;
@@ -34,6 +169,7 @@
 #map-svg { z-index: 2; }
 #map-canvas { z-index: 3; pointer-events: none; }
 
+/* Country Paths */
 .country {
     fill: #2e3337; 
     stroke: #fcfcfc; 
@@ -50,34 +186,33 @@
     stroke-dasharray: none; 
 }
 
-.country.active:hover {
-    fill: #008256; 
-}
+.country.active:hover { fill: #008256; }
 
-/* --- Hover Tooltip (Identical to milestone tooltip) --- */
-.hover-tooltip {
+/* ---------------------------------------------------------
+   Map Tooltips (Combined Hover & Milestone Styles)
+   --------------------------------------------------------- */
+.hover-tooltip,
+.milestone-tooltip {
     position: absolute;
     background: rgba(10, 10, 10, 0.75); 
     border: 1px solid #006241;
     border-radius: 6px;
     padding: 10px 15px;
-    pointer-events: none;
-    opacity: 0;
-    z-index: 10;
     box-shadow: 0 5px 20px rgba(0,0,0,0.4);
     white-space: nowrap;
     display: flex;
     align-items: center;
     gap: 10px;
+    opacity: 0;
+}
+
+/* Tooltip Specifics */
+.hover-tooltip {
+    pointer-events: none;
+    z-index: 10;
     transition: opacity 0.1s ease;
 }
 
-.hover-tooltip img { width: 32px; height: auto; border-radius: 3px; border: 1px solid #444; }
-.hover-tooltip .tt-text { display: flex; flex-direction: column; }
-.hover-tooltip .tt-country { font-size: 14px; font-weight: bold; color: #ffffff; margin-bottom: 2px; }
-.hover-tooltip .tt-city { font-size: 11px; color: #aaa; }
-
-/* --- Dynamic Milestone Tooltips --- */
 .milestone-anchor {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -86,26 +221,23 @@
 }
 
 .milestone-tooltip {
-    position: absolute;
-    top: 0; left: 0; 
-    background: rgba(10, 10, 10, 0.75); 
-    border: 1px solid #006241;
-    border-radius: 6px;
-    padding: 10px 15px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.4);
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    opacity: 0;
+    top: 0; 
+    left: 0; 
 }
 
+/* Shared Tooltip Inner Elements */
+.hover-tooltip img, 
 .milestone-tooltip img { width: 32px; height: auto; border-radius: 3px; border: 1px solid #444; }
+.hover-tooltip .tt-text, 
 .milestone-tooltip .tt-text { display: flex; flex-direction: column; }
+.hover-tooltip .tt-country, 
 .milestone-tooltip .tt-country { font-size: 14px; font-weight: bold; color: #ffffff; margin-bottom: 2px; }
+.hover-tooltip .tt-city, 
 .milestone-tooltip .tt-city { font-size: 11px; color: #aaa; }
 
-/* --- Info Box (Top Right on Map) --- */
+/* ---------------------------------------------------------
+   Map Overlays (Info Box & Scrubber)
+   --------------------------------------------------------- */
 .info-box {
     position: absolute;
     top: 20px;
@@ -127,14 +259,13 @@
 .region-name { color: #ccc; }
 .region-value { font-weight: bold; color: #006241; }
 
-/* --- Timeline Scrubber (Bottom Right inside Map) --- */
 .scrubber-container {
     position: absolute;
     bottom: 20px;
-    right: 20px; /* Align to the right */
+    right: 20px; 
     left: auto; 
     transform: none; 
-    width: 45%; /* Slightly increase the ratio for a spacious layout */
+    width: 45%; 
     min-width: 300px;
     height: 15%;
     min-height: 65px;
@@ -156,5 +287,3 @@
 .scrubber-milestone { fill: #aaaaaa; }
 .scrubber-handle { fill: #ffffff; stroke: #111; stroke-width: 2px; cursor: grab; rx: 4px; }
 .scrubber-handle:active { cursor: grabbing; fill: #006241; }
-/* Unified story integration */
-
