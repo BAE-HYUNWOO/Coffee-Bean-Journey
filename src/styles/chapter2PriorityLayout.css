@@ -1330,3 +1330,135 @@ html body .theme-trade .trade-hero-axis {
   opacity: 1 !important;
 }
 
+/* ===== Chapter 2 visible map source + clearer hero axes ===== */
+
+/* Make the map cell contain the card and the source line as two rows. */
+html body .theme-trade .chapter2-cell-map {
+  display: grid !important;
+  grid-template-rows: minmax(0, 1fr) auto !important;
+  align-items: stretch !important;
+  overflow: visible !important;
+}
+
+html body .theme-trade .chapter2-cell-map .trade-map-card {
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+html body .theme-trade .chapter2-cell-map .trade-map-source-outside {
+  grid-row: 2 !important;
+  justify-self: start !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 8px 0 0 18px !important;
+  padding: 0 0 3px !important;
+  color: rgba(75, 52, 38, 0.74) !important;
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+  font-weight: 750 !important;
+  letter-spacing: 0.01em !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  z-index: 5 !important;
+}
+
+html body .theme-trade .chapter2-cell-map .trade-map-source-outside span {
+  color: rgba(75, 52, 38, 0.70) !important;
+  font-weight: 850 !important;
+}
+
+html body .theme-trade .chapter2-cell-map .trade-map-source-outside a {
+  color: rgba(102, 65, 40, 0.96) !important;
+  font-weight: 850 !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  text-decoration-thickness: 1px !important;
+}
+
+html body .theme-trade .chapter2-cell-map .trade-map-source-outside a:hover {
+  color: #2b1a12 !important;
+}
+
+/* Preserve map tooltip hover details while keeping wheel zoom and drag pan. */
+html body .theme-trade .chapter2-cell-map .map-zoom-layer {
+  pointer-events: all !important;
+  transform-origin: 0 0 !important;
+  will-change: transform;
+}
+
+html body .theme-trade .chapter2-cell-map .map-zoom-surface {
+  fill: transparent !important;
+  pointer-events: all !important;
+  cursor: grab !important;
+}
+
+html body .theme-trade .chapter2-cell-map .route-line,
+html body .theme-trade .chapter2-cell-map .bundle-line {
+  pointer-events: stroke !important;
+}
+
+html body .theme-trade .chapter2-cell-map .country-node {
+  pointer-events: all !important;
+}
+
+html body .theme-trade .chapter2-cell-map .trade-map-svg {
+  cursor: grab !important;
+  touch-action: none !important;
+  overscroll-behavior: contain !important;
+}
+
+html body .theme-trade .chapter2-cell-map .trade-map-svg:active,
+html body .theme-trade .chapter2-cell-map .map-zoom-surface:active {
+  cursor: grabbing !important;
+}
+
+/* Remove hero chart fade/mask and make x/y labels and ticks easier to read. */
+html body .theme-trade .trade-hero-trajectory {
+  opacity: 0.98 !important;
+}
+
+html body .theme-trade .trade-hero-trajectory-svg {
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+html body .theme-trade .trade-hero-axis text {
+  fill: rgba(46, 30, 22, 0.88) !important;
+  font-size: 13px !important;
+  font-weight: 850 !important;
+}
+
+html body .theme-trade .trade-hero-axis line,
+html body .theme-trade .trade-hero-axis path {
+  stroke: rgba(66, 44, 31, 0.46) !important;
+  stroke-width: 1.1px !important;
+}
+
+html body .theme-trade .trade-hero-axis-label {
+  fill: rgba(42, 27, 18, 0.94) !important;
+  font-size: 14px !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.02em !important;
+  paint-order: stroke fill !important;
+  stroke: rgba(247, 235, 214, 0.72) !important;
+  stroke-width: 2.2px !important;
+}
+
+html body .theme-trade .trade-hero-grid line {
+  stroke: rgba(88, 66, 48, 0.22) !important;
+  stroke-width: 1px !important;
+}
+
+html body .theme-trade .trade-hero-line,
+html body .theme-trade .trade-hero-area,
+html body .theme-trade .trade-hero-dot {
+  opacity: 1 !important;
+}
+

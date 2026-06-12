@@ -167,6 +167,7 @@ export function renderTradeFlowMap(container, flows, state) {
     <a href="https://comtradeplus.un.org/TradeFlow?Frequency=A&Flows=X&CommodityCodes=0901&Partners=all&Reporters=all&period=recent&AggregateBy=none&BreakdownMode=plus" target="_blank" rel="noopener noreferrer">UN Comtrade Coffee Trade Flow Dataset</a>
   `);
 
+
   const valueExtent = d3.extent(data, d => d[metric]);
   const stroke = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([1.0, 9.8]);
   const opacity = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([0.18, 0.72]);
