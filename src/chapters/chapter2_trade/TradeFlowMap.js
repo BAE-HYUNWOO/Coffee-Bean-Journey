@@ -67,14 +67,8 @@ export function renderTradeFlowMap(container, flows, state) {
 
   svg.append("rect").attr("width", width).attr("height", height).attr("rx", 28).attr("class", "map-bg");
 
-  // Dedicated viewport: every map layer goes inside this group, so d3.zoom
-  // can freely update its SVG transform attribute.
-  const layer = svg.append("g").attr("class", "map-zoom-layer");
-  const landLayer = layer.append("g").attr("class", "map-land-layer");
-
-  // Full-card interaction surface. It sits above the background but below
-  // the geographic/route layers, so wheel zoom and drag-pan work anywhere
-  // inside the map card.
+  // Full-card interaction surface for blank areas.
+  // It must be BELOW the routes/nodes, otherwise it blocks hover tooltips.
   const zoomSurface = svg.append("rect")
     .attr("class", "map-zoom-surface")
     .attr("x", 0)
@@ -84,6 +78,11 @@ export function renderTradeFlowMap(container, flows, state) {
     .attr("rx", 28)
     .style("fill", "transparent")
     .style("pointer-events", "all");
+
+  // Dedicated viewport: every visible map layer goes inside this group, so d3.zoom
+  // can freely update its SVG transform attribute.
+  const layer = svg.append("g").attr("class", "map-zoom-layer");
+  const landLayer = layer.append("g").attr("class", "map-land-layer");
 
   const graticule = d3.geoGraticule10();
   layer.append("path").datum({ type: "Sphere" }).attr("d", path).attr("class", "map-sphere");

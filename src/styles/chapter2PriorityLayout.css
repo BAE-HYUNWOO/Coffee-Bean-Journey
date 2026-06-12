@@ -1167,3 +1167,25 @@ html body .theme-trade .chapter2-cell-map .map-zoom-surface:active {
   cursor: grabbing !important;
 }
 
+/* ===== Chapter 2 Global routes zoom + hover coexistence =====
+   The transparent zoom surface sits below routes/nodes, so blank-area
+   drag-pan works while route/country mouseover tooltips still work. */
+html body .theme-trade .chapter2-cell-map .map-zoom-layer {
+  pointer-events: all !important;
+}
+
+html body .theme-trade .chapter2-cell-map .route-line,
+html body .theme-trade .chapter2-cell-map .country-node,
+html body .theme-trade .chapter2-cell-map .bundle-line {
+  pointer-events: stroke !important;
+}
+
+html body .theme-trade .chapter2-cell-map .country-node {
+  pointer-events: all !important;
+}
+
+html body .theme-trade .chapter2-cell-map .map-zoom-surface {
+  fill: transparent !important;
+  pointer-events: all !important;
+}
+
