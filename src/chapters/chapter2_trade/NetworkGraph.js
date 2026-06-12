@@ -14,6 +14,10 @@ export function renderNetworkGraph(container, flows, state) {
     <div><span>Trade network graph</span><small>${state.year} · drag nodes, zoom the graph, click to pin</small></div>
     <div class="viz-help">Drag nodes · wheel zoom · double-click background to reset</div>
   `);
+  card.append("div").attr("class", "network-inline-legend").html(`
+    <span><i class="legend-dot is-exporter"></i>Exporter / origin hub</span>
+    <span><i class="legend-dot is-importer"></i>Importer / market hub</span>
+  `);
   const svg = card.append("svg").attr("viewBox", `0 0 ${width} ${height}`).attr("class", "network-svg");
   svg.append("rect").attr("width", width).attr("height", height).attr("rx", 24).attr("class", "network-bg");
 
@@ -144,9 +148,4 @@ export function renderNetworkGraph(container, flows, state) {
     node.attr("transform", d => `translate(${d.x},${d.y})`);
   });
 
-  const legend = svg.append("g").attr("class", "network-legend").attr("transform", `translate(18,${height - 22})`);
-  legend.append("circle").attr("r", 5).attr("fill", "#6f95a8");
-  legend.append("text").attr("x", 12).attr("y", 4).text("Exporter / origin hub");
-  legend.append("circle").attr("cx", 160).attr("r", 5).attr("fill", "#d6a15b");
-  legend.append("text").attr("x", 172).attr("y", 4).text("Importer / market hub");
 }

@@ -82,12 +82,46 @@ export function renderTradeFlowMap(container, flows, state) {
       .attr("d", path);
   });
 
-  svg.call(
-    d3.zoom()
-      .scaleExtent([1, 4.5])
-      .translateExtent([[-160, -160], [width + 160, height + 160]])
-      .on("zoom", (event) => layer.attr("transform", event.transform))
-  );
+  const zoomBehavior = d3.zoom()
+    .scaleExtent([0.85, 6])
+    .translateExtent([[-260, -260], [width + 260, height + 260]])
+    .on("zoom", (event) => layer.attr("transform", event.transform));
+
+  svg.call(zoomBehavior).on("dblclick.zoom", null);
+  svg.on("dblclick", () => {
+    svg.transition().duration(420).call(zoomBehavior.transform, d3.zoomIdentity);
+  });
+
+  const zoomControls = card.append("div").attr("class", "map-zoom-controls");
+  zoomControls.append("button")
+    .attr("type", "button")
+    .attr("class", "map-zoom-button")
+    .attr("aria-label", "Zoom in global coffee routes")
+    .text("+")
+    .on("click", (event) => {
+      event.stopPropagation();
+      svg.transition().duration(240).call(zoomBehavior.scaleBy, 1.35);
+    });
+
+  zoomControls.append("button")
+    .attr("type", "button")
+    .attr("class", "map-zoom-button")
+    .attr("aria-label", "Zoom out global coffee routes")
+    .text("−")
+    .on("click", (event) => {
+      event.stopPropagation();
+      svg.transition().duration(240).call(zoomBehavior.scaleBy, 0.74);
+    });
+
+  zoomControls.append("button")
+    .attr("type", "button")
+    .attr("class", "map-zoom-button map-zoom-reset")
+    .attr("aria-label", "Reset global coffee routes zoom")
+    .text("Reset")
+    .on("click", (event) => {
+      event.stopPropagation();
+      svg.transition().duration(360).call(zoomBehavior.transform, d3.zoomIdentity);
+    });
 
   const valueExtent = d3.extent(data, d => d[metric]);
   const stroke = d3.scaleSqrt().domain(valueExtent[0] === valueExtent[1] ? [0, valueExtent[1] || 1] : valueExtent).range([1.0, 9.8]);
