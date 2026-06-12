@@ -220,7 +220,6 @@ html body .theme-trade .chapter2-visual-grid .viz-card svg {
 /* Cancel older patches that scaled internal groups and caused overlap/clipping. */
 html body .theme-trade .chapter2-cell-sankey svg > g,
 html body .theme-trade .chapter2-cell-network svg > g,
-html body .theme-trade .chapter2-cell-ring svg > g,
 html body .theme-trade .chapter2-cell-matrix svg > g,
 html body .theme-trade .chapter2-cell-timeline svg > g,
 html body .theme-trade .chapter2-cell-map svg > g {
@@ -715,5 +714,19 @@ html body .theme-trade .chapter2-cell-matrix .matrix-legend-label {
   fill: rgba(52, 34, 24, 0.84) !important;
   font-size: 13px !important;
   font-weight: 850 !important;
+}
+
+/* ===== Chapter 2 ring centering fix =====
+   Do NOT reset transform on .chapter2-cell-ring svg > g.
+   The trade ring arc layer relies on its SVG translate(cx, cy) transform.
+   Resetting that transform moves the outer ring arcs to the top-left corner. */
+html body .theme-trade .chapter2-cell-ring .trade-ring-svg {
+  overflow: hidden !important;
+  transform: none !important;
+  transform-origin: center center !important;
+}
+
+html body .theme-trade .chapter2-cell-ring .ring-country-arc {
+  vector-effect: non-scaling-stroke;
 }
 
