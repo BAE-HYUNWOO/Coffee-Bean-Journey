@@ -139,7 +139,7 @@ html body .theme-trade .chapter2-visual-grid {
   grid-template-rows:
     clamp(620px, 38vw, 780px)
     clamp(540px, 36vw, 700px)
-    clamp(520px, 32vw, 660px) !important;
+    clamp(680px, 42vw, 860px) !important;
   gap: 20px !important;
   align-items: stretch !important;
   grid-auto-flow: row !important;
@@ -238,7 +238,7 @@ html body .theme-trade .chapter2-cell-ring {
 }
 
 html body .theme-trade .chapter2-cell-map {
-  min-height: clamp(520px, 32vw, 660px) !important;
+  min-height: clamp(680px, 42vw, 860px) !important;
 }
 
 html body .theme-trade .chapter2-cell-timeline {
@@ -492,7 +492,7 @@ html body .theme-trade .chapter2-visual-grid {
   grid-template-rows:
     clamp(620px, 38vw, 780px)
     clamp(540px, 36vw, 700px)
-    clamp(520px, 32vw, 660px) !important;
+    clamp(680px, 42vw, 860px) !important;
   gap: 20px !important;
   align-items: stretch !important;
 }
@@ -508,7 +508,7 @@ html body .theme-trade .chapter2-cell-ring {
 }
 
 html body .theme-trade .chapter2-cell-map {
-  min-height: clamp(520px, 32vw, 660px) !important;
+  min-height: clamp(680px, 42vw, 860px) !important;
 }
 
 html body .theme-trade #chapter2-timeline {
@@ -546,7 +546,7 @@ html body .theme-trade .chapter2-visual-grid {
   grid-template-rows:
     clamp(620px, 38vw, 780px)
     clamp(540px, 36vw, 700px)
-    clamp(520px, 32vw, 660px) !important;
+    clamp(680px, 42vw, 860px) !important;
   align-items: stretch !important;
 }
 
@@ -728,5 +728,98 @@ html body .theme-trade .chapter2-cell-ring .trade-ring-svg {
 
 html body .theme-trade .chapter2-cell-ring .ring-country-arc {
   vector-effect: non-scaling-stroke;
+}
+
+/* ===== Chapter 2 Global coffee routes map fit + clarity =====
+   Give the map row more height and make the map fill the card without
+   clipping the bottom of the world projection. */
+html body .theme-trade .chapter2-visual-grid {
+  grid-template-rows:
+    clamp(620px, 38vw, 780px)
+    clamp(540px, 36vw, 700px)
+    clamp(680px, 42vw, 860px) !important;
+}
+
+html body .theme-trade .chapter2-cell-map,
+html body .theme-trade .chapter2-cell-map .viz-card,
+html body .theme-trade .chapter2-cell-map .trade-map-card {
+  height: 100% !important;
+  min-height: clamp(680px, 42vw, 860px) !important;
+  overflow: hidden !important;
+}
+
+html body .theme-trade .chapter2-cell-map .viz-card-title {
+  padding: 16px 20px 2px !important;
+  min-height: 48px !important;
+}
+
+html body .theme-trade .chapter2-cell-map .viz-card-title span {
+  font-size: clamp(22px, 1.45vw, 30px) !important;
+  line-height: 1.02 !important;
+  font-weight: 950 !important;
+  color: #2a1a12 !important;
+}
+
+html body .theme-trade .chapter2-cell-map .viz-card-title small,
+html body .theme-trade .chapter2-cell-map .viz-help {
+  font-size: 11.5px !important;
+  font-weight: 800 !important;
+  color: rgba(63, 43, 30, 0.78) !important;
+}
+
+html body .theme-trade .chapter2-cell-map .trade-map-svg,
+html body .theme-trade .chapter2-cell-map .viz-card svg {
+  width: 100% !important;
+  height: calc(100% - 50px) !important;
+  min-height: clamp(610px, 38vw, 790px) !important;
+  max-height: none !important;
+  overflow: visible !important;
+  display: block !important;
+}
+
+html body .theme-trade .chapter2-cell-map .map-sphere {
+  fill: rgba(239, 220, 190, 0.78) !important;
+  stroke: rgba(72, 119, 135, 0.72) !important;
+  stroke-width: 1.35px !important;
+}
+
+html body .theme-trade .chapter2-cell-map .map-graticule {
+  stroke: rgba(95, 74, 57, 0.25) !important;
+  stroke-width: 0.9px !important;
+}
+
+html body .theme-trade .chapter2-cell-map .map-land {
+  fill: rgba(129, 118, 86, 0.55) !important;
+  stroke: rgba(70, 54, 41, 0.25) !important;
+  stroke-width: 0.55px !important;
+}
+
+html body .theme-trade .chapter2-cell-map .route-line {
+  stroke: rgba(54, 112, 132, 0.88) !important;
+  stroke-opacity: 0.92 !important;
+  mix-blend-mode: multiply !important;
+  filter: drop-shadow(0 2px 5px rgba(54, 112, 132, 0.15)) !important;
+}
+
+html body .theme-trade .chapter2-cell-map .bundle-line {
+  stroke: rgba(64, 122, 139, 0.62) !important;
+  stroke-opacity: 0.72 !important;
+  mix-blend-mode: multiply !important;
+}
+
+html body .theme-trade .chapter2-cell-map .map-node,
+html body .theme-trade .chapter2-cell-map .country-node {
+  stroke-width: 1.6px !important;
+  filter: drop-shadow(0 3px 8px rgba(65, 42, 26, 0.18)) !important;
+}
+
+html body .theme-trade .chapter2-cell-map .map-label,
+html body .theme-trade .chapter2-cell-map .hub-label {
+  fill: rgba(45, 29, 20, 0.86) !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  paint-order: stroke fill !important;
+  stroke: rgba(255, 248, 239, 0.80) !important;
+  stroke-width: 2.8px !important;
 }
 
