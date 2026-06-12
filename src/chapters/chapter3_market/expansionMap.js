@@ -94,25 +94,23 @@ const REGION_MAP = {
 };
 
 /**
- * Renders the Starbucks interactive global expansion map template.
- * Displays choropleth paths, Canvas point locations, and dynamic tooltips linked to a timeline scrubber.
+ * Initializes and renders the Expansion Map visualization inside the specified container.
+ * @param {string} containerId - The DOM selector for the container element.
  */
 export function drawExpansionSlot(containerId, { worldData, expansionData, storesData }) {
-    // Initialize chart frame container with metadata
     const { body } = chartFrame(containerId, {
         title: "Starbucks Global Expansion",
         tag: "Choropleth",
         description:
             "Illustrates how Starbucks expanded its business globally after being founded in the United States.",
-        wide: false,
+        wide: true,
     });
 
     body.node()?.closest(".chart-frame")?.querySelector(".chart-frame-header em")?.remove();
 
-    // Setup main flexbox wrapper container
-    const wrapper = body.append("div").attr("class", "ch3-map-wrapper");
+    const wrapper = body.append("div").attr("class", "chapter3-wrapper");
 
-    // Initialize layout views, tooltips, panel counters, and timeline tracks
+    // --- 1. Map Section ---
     const mapSection = wrapper.append("div").attr("class", "map-section");
     const hoverTooltip = mapSection.append("div").attr("class", "hover-tooltip");
     const milestoneAnchor = mapSection.append("div").attr("class", "milestone-anchor");
@@ -133,12 +131,10 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
         .text("Drag or use ← → arrows to navigate");
     const scrubberSvg = scrubberContainer.append("svg").attr("id", "scrubber-svg");
 
-    // Render map asynchronously to synchronize with DOM container dimension updates
     setTimeout(() => {
         const mapWidth = mapSection.node().getBoundingClientRect().width;
         const mapHeight = mapSection.node().getBoundingClientRect().height;
 
-        // Append base SVG element for vector geography paths
         const svg = mapSection
             .append("svg")
             .attr("id", "map-svg")
@@ -147,7 +143,6 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
             .style("width", `${mapWidth}px`)
             .style("height", `${mapHeight}px`);
 
-        // Inject drop shadow filter definitions for depth visualization
         const defs = svg.append("defs");
         const filter = defs
             .append("filter")
@@ -164,7 +159,6 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
             .attr("flood-color", "#0b1c24")
             .attr("flood-opacity", "0.6");
 
-        // Append HTML5 Canvas layer for high-performance store point rendering
         const canvas = mapSection
             .append("canvas")
             .attr("id", "map-canvas")
@@ -176,6 +170,7 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
         const ctx = canvas.node().getContext("2d");
         const mapGroup = svg.append("g").attr("filter", "url(#drop-shadow)");
 
+        // --- State Variables ---
         let currentYear = START_YEAR;
         let storesByCountry = {};
         let expansionDataRef = [];
@@ -186,15 +181,11 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
         expansionDataRef = expansionData;
         milestoneYears = [...new Set(expansionData.map((d) => d.year))].sort((a, b) => a - b);
 
-        // Group store metadata entries by individual country country codes
         storesData.forEach((store) => {
             if (!storesByCountry[store.code]) storesByCountry[store.code] = [];
             storesByCountry[store.code].push(store);
         });
 
-        /**
-         * Maps geographic feature records to proprietary expansion metadata objects.
-         */
         function getMarketData(geoFeature) {
             const explicitMap = {
                 USA: "US",
@@ -215,7 +206,6 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
             );
         }
 
-        // Parse input topojson/geojson formats and build cartographic projection parameters
         let geoFeatures =
             worldData.type === "FeatureCollection"
                 ? worldData
@@ -223,7 +213,6 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
         projection = d3.geoNaturalEarth1().fitSize([mapWidth, mapHeight], geoFeatures);
         path = d3.geoPath().projection(projection);
 
-        // Render geographical boundaries and attach mouse events for data tooltips
         mapGroup
             .selectAll("path")
             .data(geoFeatures.features)
@@ -242,7 +231,7 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
 
                     const displayCode = market.code === "TW" ? "cn" : market.code.toLowerCase();
                     const displayCountry = market.code === "TW" ? "Taiwan, China" : market.country;
-
+                    
                     hoverTooltip
                         .html(
                             `<img src="https://flagcdn.com/w40/${displayCode}.png" alt="flag">
@@ -276,9 +265,6 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
                 hoverTooltip.style("opacity", 0);
             });
 
-        /**
-         * Computes and yields an array of visible stores based on a linear historical estimation.
-         */
         function getVisibleStores(year) {
             let visible = [];
             for (const code in storesByCountry) {
@@ -300,7 +286,6 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
             return visible;
         }
 
-        // Configure zoom limits and transformations across coordinate layers
         zoom = d3
             .zoom()
             .scaleExtent([1, 8])
@@ -330,7 +315,6 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
             });
         svg.call(zoom);
 
-        // Bind interactive callbacks onto the scrubber control timeline tracking setup
         const scrubberControl = setupScrubber(
             scrubberSvg,
             START_YEAR,
@@ -343,9 +327,6 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
 
         window.addEventListener("keydown", handleKeyboard);
 
-        /**
-         * Keydown event listener for arrow key navigation across milestone records.
-         */
         function handleKeyboard(e) {
             if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
             if (e.key === "ArrowRight") {
@@ -360,9 +341,6 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
             }
         }
 
-        /**
-         * Updates layout paths, regional panel counters, and triggers focus camera zoom animations.
-         */
         function setYear(year) {
             currentYear = year;
             d3.select("#info-year").text(currentYear);
@@ -446,15 +424,16 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
                     .append("div")
                     .attr("class", "milestone-tooltip")
                     .html((d) => {
+       
                         const displayCode = d.code === "TW" ? "cn" : d.code.toLowerCase();
                         const displayCountry = d.code === "TW" ? "Taiwan, China" : d.country;
-
+        
                         return `<img src="https://flagcdn.com/w40/${displayCode}.png" alt="flag">
                         <div class="tt-text">
                             <span class="tt-country">${displayCountry}</span>
                             <span class="tt-city">Entered: ${d.city} (${d.year})</span>
                         </div>`;
-                    });
+    });
 
                 tooltipsEnter
                     .merge(tooltips)
@@ -491,7 +470,6 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
 
                 const tooltipOffsetX = 40;
 
-                // Execute transitions focused over current milestone coordinates
                 svg.transition()
                     .duration(1000)
                     .call(
@@ -502,7 +480,6 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
                             .translate(-targetX, -targetY),
                     );
             } else {
-                // Clear tooltips and zoom out to full screen perspective
                 activeMilestoneData = [];
                 milestoneAnchor
                     .selectAll(".milestone-tooltip")
@@ -513,7 +490,6 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
                 svg.transition().duration(1000).call(zoom.transform, d3.zoomIdentity);
             }
 
-            // Sync canvas elements with current scale variables
             const currentZoom = d3.zoomTransform(svg.node());
             drawCanvasPoints(
                 ctx,
@@ -533,7 +509,7 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
 /* --- Components --- */
 
 /**
- * Initializes SVG slider components, progress trackers, and milestone nodes on the timeline track.
+ * Creates and initializes the interactive timeline scrubber.
  */
 function setupScrubber(svg, startYear, endYear, milestones, onDrag) {
     const parentNode = svg.node().parentElement;
@@ -549,7 +525,6 @@ function setupScrubber(svg, startYear, endYear, milestones, onDrag) {
         .clamp(true);
     const g = svg.append("g").attr("transform", `translate(0, ${centerY})`);
 
-    // Append horizontal axis lines
     g.append("line")
         .attr("class", "scrubber-track")
         .attr("x1", paddingX)
@@ -564,7 +539,6 @@ function setupScrubber(svg, startYear, endYear, milestones, onDrag) {
         .attr("y1", 0)
         .attr("y2", 0);
 
-    // Append small reference nodes for distinct milestones
     g.selectAll(".scrubber-milestone")
         .data(milestones)
         .enter()
@@ -574,7 +548,6 @@ function setupScrubber(svg, startYear, endYear, milestones, onDrag) {
         .attr("cy", 0)
         .attr("r", 2.5);
 
-    // Render underlying timeline year ticks
     const xAxis = d3
         .axisBottom(x)
         .tickValues([1970, 1980, 1990, 2000, 2010, 2020])
@@ -583,7 +556,6 @@ function setupScrubber(svg, startYear, endYear, milestones, onDrag) {
     g.selectAll(".tick line").remove();
     g.selectAll(".tick text").attr("fill", "#666").attr("font-size", "10px");
 
-    // Append central grab handle block
     const handle = g
         .append("rect")
         .attr("class", "scrubber-handle")
@@ -593,7 +565,6 @@ function setupScrubber(svg, startYear, endYear, milestones, onDrag) {
         .attr("height", 20)
         .attr("rx", 4);
 
-    // Configure drag controls and track clicks
     const drag = d3.drag().on("drag", (event) => onDrag(Math.round(x.invert(event.x))));
     handle.call(drag);
     svg.on("click", (event) => onDrag(Math.round(x.invert(event.offsetX))));
@@ -608,7 +579,7 @@ function setupScrubber(svg, startYear, endYear, milestones, onDrag) {
 }
 
 /**
- * Renders individual store coordinates using canvas vectors for fast rendering during scale mutations.
+ * Draws individual store location points onto the HTML5 Canvas.
  */
 function drawCanvasPoints(ctx, stores, transform, projection, width, height) {
     ctx.save();
