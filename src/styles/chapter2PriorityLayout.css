@@ -1130,3 +1130,18 @@ html body .theme-future.story-chapter {
   padding-top: clamp(24px, 3vw, 48px) !important;
 }
 
+/* ===== Chapter 2 Global coffee routes wheel zoom guarantee ===== */
+html body .theme-trade .chapter2-cell-map .trade-map-svg {
+  cursor: grab !important;
+  touch-action: none !important;
+  overscroll-behavior: contain !important;
+}
+
+html body .theme-trade .chapter2-cell-map .trade-map-svg:active {
+  cursor: grabbing !important;
+}
+
+html body .theme-trade .chapter2-cell-map .map-zoom-controls {
+  pointer-events: auto !important;
+}
+

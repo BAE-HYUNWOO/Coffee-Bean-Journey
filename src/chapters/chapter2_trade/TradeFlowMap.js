@@ -44,7 +44,7 @@ export function renderTradeFlowMap(container, flows, state) {
   const card = container.append("div").attr("class", "viz-card trade-map-card");
   card.append("div").attr("class", "viz-card-title interactive-title").html(`
     <div><span>Global coffee routes</span><small>${state.year} · top ${data.length} bilateral export flows</small></div>
-    <div class="viz-help">Hover for values · click route to pin · wheel to zoom</div>
+    <div class="viz-help">Wheel to zoom · drag to pan · double-click to reset</div>
   `);
 
   const svg = card.append("svg")
@@ -83,11 +83,28 @@ export function renderTradeFlowMap(container, flows, state) {
   });
 
   const zoomBehavior = d3.zoom()
-    .scaleExtent([0.85, 6])
-    .translateExtent([[-260, -260], [width + 260, height + 260]])
+    .filter((event) => {
+      // Enable mouse wheel zoom, drag panning, and touch gestures on the map.
+      // Ignore right-click / secondary-button drags.
+      return !event.button;
+    })
+    .wheelDelta((event) => {
+      // Slightly stronger than d3's default, so wheel zoom feels responsive.
+      const modeScale = event.deltaMode === 1 ? 0.075 : event.deltaMode ? 1 : 0.0028;
+      return -event.deltaY * modeScale;
+    })
+    .scaleExtent([0.72, 7])
+    .translateExtent([[-360, -320], [width + 360, height + 320]])
     .on("zoom", (event) => layer.attr("transform", event.transform));
 
   svg.call(zoomBehavior).on("dblclick.zoom", null);
+
+  // Prevent the page itself from scrolling while the mouse is over the map.
+  // The wheel event still reaches d3.zoom, so the map zooms instead.
+  svg.on("wheel.preventPageScroll", (event) => {
+    event.preventDefault();
+  }, { passive: false });
+
   svg.on("dblclick", () => {
     svg.transition().duration(420).call(zoomBehavior.transform, d3.zoomIdentity);
   });
