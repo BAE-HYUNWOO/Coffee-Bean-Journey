@@ -231,7 +231,7 @@ html body .theme-trade .chapter2-cell-map svg > g {
 
 html body .theme-trade .chapter2-cell-sankey,
 html body .theme-trade .chapter2-cell-timeline {
-  min-height: clamp(430px, 28vw, 540px) !important;
+  min-height: clamp(520px, 34vw, 660px) !important;
 }
 
 html body .theme-trade .chapter2-cell-network,
