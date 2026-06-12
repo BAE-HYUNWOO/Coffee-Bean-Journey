@@ -1069,3 +1069,84 @@ html body .theme-trade .chapter2-controls .year-buttons button.active {
   }
 }
 
+/* ===== Chapter 2 hero trajectory resized + less faded =====
+   Make the right-side hero chart larger, remove the left-to-right fade,
+   keep it only slightly muted overall, and place the y-axis on the right. */
+html body .theme-trade .compact-chapter-intro {
+  min-height: clamp(320px, 28vw, 470px) !important;
+}
+
+html body .theme-trade .trade-hero-trajectory {
+  right: clamp(12px, 1.8vw, 34px) !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: min(58vw, 1050px) !important;
+  height: clamp(360px, 31vw, 500px) !important;
+  opacity: 0.82 !important;
+  overflow: visible !important;
+}
+
+html body .theme-trade .trade-hero-trajectory-svg {
+  width: 100% !important;
+  height: 100% !important;
+  overflow: visible !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  filter: none !important;
+}
+
+html body .theme-trade .trade-hero-grid line {
+  stroke: rgba(109, 88, 71, 0.14) !important;
+}
+
+html body .theme-trade .trade-hero-axis text {
+  fill: rgba(96, 78, 64, 0.66) !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+}
+
+html body .theme-trade .trade-hero-axis line,
+html body .theme-trade .trade-hero-axis path {
+  stroke: rgba(105, 81, 60, 0.26) !important;
+}
+
+html body .theme-trade .trade-hero-axis-label {
+  fill: rgba(60, 42, 32, 0.78) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em !important;
+}
+
+html body .theme-trade .trade-hero-area {
+  fill: rgba(111, 149, 168, 0.12) !important;
+}
+
+html body .theme-trade .trade-hero-line {
+  fill: none !important;
+  stroke: #6f95a8 !important;
+  stroke-width: 4.8px !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  opacity: 0.88 !important;
+  filter: none !important;
+}
+
+html body .theme-trade .trade-hero-dot {
+  fill: #d49a53 !important;
+  stroke: rgba(255, 248, 239, 0.96) !important;
+  stroke-width: 2px !important;
+  opacity: 0.90 !important;
+}
+
+html body .theme-trade .trade-hero-dot.active {
+  opacity: 1 !important;
+}
+
+@media (max-width: 1200px) {
+  html body .theme-trade .trade-hero-trajectory {
+    width: min(56vw, 940px) !important;
+    height: clamp(320px, 29vw, 430px) !important;
+    right: 8px !important;
+  }
+}
+

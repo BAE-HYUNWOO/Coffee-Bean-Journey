@@ -70,9 +70,9 @@ export function renderTimelineChart(container, flows, state, onYearChange) {
 export function renderTimelineHeroGraph(container, flows, state) {
   container.selectAll("*").remove();
 
-  const width = 1280;
-  const height = 460;
-  const margin = { top: 34, right: 54, bottom: 72, left: 104 };
+  const width = 1420;
+  const height = 560;
+  const margin = { top: 28, right: 92, bottom: 84, left: 36 };
   const metric = state.metric;
   const tooltip = createTooltip(container);
 
@@ -89,7 +89,7 @@ export function renderTimelineHeroGraph(container, flows, state) {
   const x = d3.scalePoint()
     .domain(data.map(d => d.year))
     .range([margin.left, width - margin.right])
-    .padding(0.35);
+    .padding(0.32);
 
   const maxValue = d3.max(data, d => d[metric]) || 1;
   const y = d3.scaleLinear()
@@ -116,7 +116,13 @@ export function renderTimelineHeroGraph(container, flows, state) {
 
   svg.append("g")
     .attr("class", "trade-hero-grid")
-    .call(d3.axisLeft(y).ticks(5).tickSize(-(width - margin.left - margin.right)).tickFormat(""))
+    .attr("transform", `translate(${width - margin.right},0)`)
+    .call(
+      d3.axisRight(y)
+        .ticks(5)
+        .tickSize(-(width - margin.left - margin.right))
+        .tickFormat("")
+    )
     .call(g => g.select(".domain").remove());
 
   svg.append("path")
@@ -135,10 +141,10 @@ export function renderTimelineHeroGraph(container, flows, state) {
     .call(d3.axisBottom(x).tickSizeOuter(0));
 
   svg.append("g")
-    .attr("transform", `translate(${margin.left},0)`)
+    .attr("transform", `translate(${width - margin.right},0)`)
     .attr("class", "trade-hero-axis trade-hero-axis-y")
     .call(
-      d3.axisLeft(y)
+      d3.axisRight(y)
         .ticks(5)
         .tickFormat(d => metric === "net_weight_kg"
           ? formatKg(d).replace(" kg", "")
@@ -155,7 +161,7 @@ export function renderTimelineHeroGraph(container, flows, state) {
 
   svg.append("text")
     .attr("class", "trade-hero-axis-label trade-hero-axis-label-y")
-    .attr("transform", `translate(24,${height / 2}) rotate(-90)`)
+    .attr("transform", `translate(${width - 18},${height / 2}) rotate(90)`)
     .attr("text-anchor", "middle")
     .text(metricName);
 
@@ -167,19 +173,18 @@ export function renderTimelineHeroGraph(container, flows, state) {
     .attr("class", d => +d.year === +state.year ? "trade-hero-dot active" : "trade-hero-dot")
     .attr("cx", d => x(d.year))
     .attr("cy", d => y(d[metric]))
-    .attr("r", d => +d.year === +state.year ? 8.5 : 5.5)
+    .attr("r", d => +d.year === +state.year ? 9.5 : 6.5)
     .on("mousemove", (event, d) => tooltip.show(event, `
       <b>${d.year}</b><br/>
       ${metricName}: ${metricFormatter(metric)(d[metric])}<br/>
       Bilateral flows: ${d.flows.toLocaleString()}
     `))
-    .on("mouseenter", function() { d3.select(this).attr("r", 10); })
+    .on("mouseenter", function() { d3.select(this).attr("r", 11.5); })
     .on("mouseleave", function(event, d) {
-      d3.select(this).attr("r", +d.year === +state.year ? 8.5 : 5.5);
+      d3.select(this).attr("r", +d.year === +state.year ? 9.5 : 6.5);
       tooltip.hide();
     });
 
-  // Larger invisible hover targets for easier mouse interaction
   svg.append("g")
     .attr("class", "trade-hero-hit-targets")
     .selectAll("circle")
@@ -188,7 +193,7 @@ export function renderTimelineHeroGraph(container, flows, state) {
     .attr("class", "trade-hero-hit-dot")
     .attr("cx", d => x(d.year))
     .attr("cy", d => y(d[metric]))
-    .attr("r", 18)
+    .attr("r", 20)
     .style("fill", "transparent")
     .style("cursor", "default")
     .on("mousemove", (event, d) => tooltip.show(event, `
@@ -197,10 +202,10 @@ export function renderTimelineHeroGraph(container, flows, state) {
       Bilateral flows: ${d.flows.toLocaleString()}
     `))
     .on("mouseenter", function(event, d) {
-      points.filter(p => p.year === d.year).attr("r", 10);
+      points.filter(p => p.year === d.year).attr("r", 11.5);
     })
     .on("mouseleave", function(event, d) {
-      points.filter(p => p.year === d.year).attr("r", p => +p.year === +state.year ? 8.5 : 5.5);
+      points.filter(p => p.year === d.year).attr("r", p => +p.year === +state.year ? 9.5 : 6.5);
       tooltip.hide();
     });
 }
