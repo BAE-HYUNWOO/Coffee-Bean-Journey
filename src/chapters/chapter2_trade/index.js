@@ -4,7 +4,7 @@ import { loadChapter2Data } from "./dataLoader.js";
 import { renderTradeFlowMap } from "./TradeFlowMap.js";
 import { renderSankeyChart } from "./SankeyChart.js";
 import { renderNetworkGraph } from "./NetworkGraph.js";
-import { renderTimelineChart } from "./TimelineChart.js";
+import { renderTimelineHeroGraph } from "./TimelineChart.js";
 import { renderTradeRingChart } from "./TradeRingChart.js";
 import { renderTradeMatrixChart } from "./TradeMatrixChart.js";
 import { formatKg, formatMoney, metricLabel, routeDetailHTML } from "./utils.js";
@@ -94,6 +94,16 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
 
   const shell = root.append("section").attr("class", "chapter2-trade chapter2-grid-mode");
 
+  const pageSection = root.node()?.closest(".story-chapter");
+  const chapterIntro = pageSection ? d3.select(pageSection).select(".chapter-intro") : null;
+  const heroTrajectory = chapterIntro && !chapterIntro.empty()
+    ? chapterIntro.selectAll(".trade-hero-trajectory")
+      .data([null])
+      .join("div")
+      .attr("class", "trade-hero-trajectory")
+    : root.append("div")
+      .attr("class", "trade-hero-trajectory trade-hero-trajectory-fallback");
+
   const hero = shell.append("header").attr("class", "chapter2-hero compact-hero");
   hero.append("p").attr("class", "eyebrow").text("Chapter 02 · Trade");
   hero.append("h2").text("Trade");
@@ -121,7 +131,6 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
   const kpis = status.append("div").attr("class", "kpi-grid sidebar-kpis");
 
   const visualGrid = shell.append("div").attr("class", "chapter2-visual-grid");
-  const timeline = visualGrid.append("div").attr("id", "chapter2-timeline").attr("class", "chapter2-grid-cell chapter2-cell-timeline");
   const sankey = visualGrid.append("div").attr("id", "chapter2-sankey").attr("class", "chapter2-grid-cell chapter2-cell-sankey");
   const network = visualGrid.append("div").attr("id", "chapter2-network").attr("class", "chapter2-grid-cell chapter2-cell-network");
   const ring = visualGrid.append("div").attr("id", "chapter2-trade-ring").attr("class", "chapter2-grid-cell chapter2-cell-ring");
@@ -176,7 +185,7 @@ export async function renderChapter2Trade(containerSelector = "#chapter2-trade")
     ];
     renderKPIs(kpis, cards);
 
-    renderTimelineChart(timeline, data.flows, state, y => { state.year = y; state.selectedItem = null; update(); });
+    renderTimelineHeroGraph(heroTrajectory, data.flows, state);
     renderSankeyChart(sankey, data.flows, state);
     renderNetworkGraph(network, data.flows, state);
     renderTradeRingChart(ring, data.flows, state);

@@ -66,3 +66,67 @@ export function renderTimelineChart(container, flows, state, onYearChange) {
   svg.append("text").attr("x", width - margin.right).attr("y", margin.top - 22).attr("text-anchor", "end").attr("class", "timeline-current")
     .text(`${active.year}: ${metricFormatter(metric)(active[metric])}`);
 }
+
+export function renderTimelineHeroGraph(container, flows, state) {
+  container.selectAll("*").remove();
+
+  const width = 1200;
+  const height = 360;
+  const margin = { top: 28, right: 28, bottom: 34, left: 34 };
+  const metric = state.metric;
+
+  const data = d3.rollups(flows, v => ({
+    year: +v[0].year,
+    trade_value_usd: d3.sum(v, d => d.trade_value_usd),
+    net_weight_kg: d3.sum(v, d => d.net_weight_kg),
+    flows: v.length,
+  }), d => +d.year).map(d => d[1]).sort((a, b) => a.year - b.year);
+
+  if (!data.length) return;
+
+  const x = d3.scalePoint()
+    .domain(data.map(d => d.year))
+    .range([margin.left, width - margin.right])
+    .padding(0.2);
+
+  const y = d3.scaleLinear()
+    .domain([0, d3.max(data, d => d[metric]) || 1])
+    .nice()
+    .range([height - margin.bottom, margin.top]);
+
+  const area = d3.area()
+    .x(d => x(d.year))
+    .y0(height - margin.bottom)
+    .y1(d => y(d[metric]))
+    .curve(d3.curveCatmullRom.alpha(0.5));
+
+  const line = d3.line()
+    .x(d => x(d.year))
+    .y(d => y(d[metric]))
+    .curve(d3.curveCatmullRom.alpha(0.5));
+
+  const svg = container.append("svg")
+    .attr("viewBox", `0 0 ${width} ${height}`)
+    .attr("class", "trade-hero-trajectory-svg")
+    .attr("aria-hidden", "true");
+
+  svg.append("path")
+    .datum(data)
+    .attr("class", "trade-hero-area")
+    .attr("d", area);
+
+  svg.append("path")
+    .datum(data)
+    .attr("class", "trade-hero-line")
+    .attr("d", line);
+
+  svg.append("g")
+    .selectAll("circle")
+    .data(data)
+    .join("circle")
+    .attr("class", d => +d.year === +state.year ? "trade-hero-dot active" : "trade-hero-dot")
+    .attr("cx", d => x(d.year))
+    .attr("cy", d => y(d[metric]))
+    .attr("r", d => +d.year === +state.year ? 8 : 4.5);
+}
+
