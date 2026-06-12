@@ -137,7 +137,7 @@ html body .theme-trade .chapter2-visual-grid {
     "network network ring ring"
     "matrix map map map" !important;
   grid-template-rows:
-    clamp(430px, 28vw, 540px)
+    clamp(520px, 34vw, 660px)
     clamp(540px, 36vw, 700px)
     clamp(500px, 31vw, 620px) !important;
   row-gap: 10px !important;
