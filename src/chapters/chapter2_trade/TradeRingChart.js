@@ -32,21 +32,20 @@ function ribbonPath(source, target, cx, cy) {
 
 export function renderTradeRingChart(container, flows, state) {
   container.selectAll("*").remove();
-  // The ring is usually rendered in a wide but not very tall card.
-  // Keep the SVG aspect ratio flatter and the radius smaller so the ring
-  // stays inside the card instead of being clipped at the top/left.
-  const width = 980;
-  const height = 660;
+  // Use a squarer viewBox and a larger radius so the circular ring
+  // fills the card instead of floating small in the middle.
+  const width = 920;
+  const height = 760;
   const cx = width / 2;
-  const cy = height / 2 + 18;
-  const outerR = Math.min(width, height) * 0.35;
-  const innerR = outerR - 18;
+  const cy = height / 2 + 20;
+  const outerR = Math.min(width, height) * 0.42;
+  const innerR = outerR - 24;
   const metric = state.metric;
   const tooltip = createTooltip(container);
   const selectedKey = routeKey(state.selectedItem);
 
   const yearFlows = flows.filter(d => +d.year === +state.year && d.exporter && d.importer);
-  const countries = aggregateCountryTotals(yearFlows, metric).slice(0, 24);
+  const countries = aggregateCountryTotals(yearFlows, metric).slice(0, 22);
   const keep = new Set(countries.map(d => d.country));
   const links = topN(yearFlows.filter(d => keep.has(d.exporter) && keep.has(d.importer)), metric, Math.min(state.flowLimit || 90, 120));
 
@@ -90,7 +89,7 @@ export function renderTradeRingChart(container, flows, state) {
   const palette = t => d3.interpolateRgbBasis(["#6f95a8", "#d8a566", "#7b5b43", "#8fa47d"])(color(t));
   const arc = d3.arc().innerRadius(innerR).outerRadius(outerR);
 
-  const linkWidth = d3.scaleSqrt().domain([0, d3.max(links, d => +d[metric] || 0) || 1]).range([0.9, 8]);
+  const linkWidth = d3.scaleSqrt().domain([0, d3.max(links, d => +d[metric] || 0) || 1]).range([1.2, 10]);
   const linkLayer = svg.append("g").attr("class", "ring-links");
   const arcLayer = svg.append("g").attr("transform", `translate(${cx},${cy})`);
   const labelLayer = svg.append("g").attr("class", "ring-labels");
@@ -139,7 +138,7 @@ export function renderTradeRingChart(container, flows, state) {
     .attr("class", "ring-country-arc")
     .attr("d", arc)
     .attr("stroke", (_, i) => palette(i))
-    .attr("stroke-width", 13)
+    .attr("stroke-width", 17)
     .attr("fill", "none")
     .attr("opacity", 0.82)
     .on("mousemove", (event, d) => tooltip.show(event, `
@@ -167,11 +166,11 @@ export function renderTradeRingChart(container, flows, state) {
     .attr("class", "ring-country-label")
     .attr("x", d => {
       const a = (d.startAngle + d.endAngle) / 2 - Math.PI / 2;
-      return cx + Math.cos(a) * (outerR + 24);
+      return cx + Math.cos(a) * (outerR + 28);
     })
     .attr("y", d => {
       const a = (d.startAngle + d.endAngle) / 2 - Math.PI / 2;
-      return cy + Math.sin(a) * (outerR + 24);
+      return cy + Math.sin(a) * (outerR + 28);
     })
     .attr("text-anchor", d => {
       const a = (d.startAngle + d.endAngle) / 2;
