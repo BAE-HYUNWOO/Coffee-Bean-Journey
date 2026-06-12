@@ -22,8 +22,8 @@ function pinCountry(state, name, value, role) {
 export function renderSankeyChart(container, flows, state) {
   container.selectAll("*").remove();
   const width = 960;
-  const height = 560;
-  const margin = { top: 82, right: 180, bottom: 48, left: 180 };
+  const height = 680;
+  const margin = { top: 104, right: 190, bottom: 78, left: 190 };
   const metric = state.metric;
   const tooltip = createTooltip(container);
   const selectedKey = routeKey(state.selectedItem);
@@ -74,8 +74,8 @@ export function renderSankeyChart(container, flows, state) {
   const xRight = width - margin.right;
 
   const totalMax = d3.max([...topExporters, ...topImporters], d => d[1]) || 1;
-  const barWidth = d3.scaleLinear().domain([0, totalMax]).range([26, 150]);
-  const stroke = d3.scaleSqrt().domain([0, d3.max(links, d => d[metric]) || 1]).range([1.4, 11.5]);
+  const barWidth = d3.scaleLinear().domain([0, totalMax]).range([34, 168]);
+  const stroke = d3.scaleSqrt().domain([0, d3.max(links, d => d[metric]) || 1]).range([2.4, 15]);
 
   const leftLayer = svg.append("g");
   const rightLayer = svg.append("g");
@@ -148,10 +148,10 @@ export function renderSankeyChart(container, flows, state) {
   leftRows.append("rect")
     .attr("class", "sankey-node-bar")
     .attr("x", d => xLeft - barWidth(d[1]))
-    .attr("y", -13)
+    .attr("y", -17)
     .attr("width", d => barWidth(d[1]))
-    .attr("height", 26)
-    .attr("rx", 13);
+    .attr("height", 34)
+    .attr("rx", 17);
 
   leftRows.append("text")
     .attr("class", "sankey-node-label")
@@ -163,7 +163,7 @@ export function renderSankeyChart(container, flows, state) {
   leftRows.append("text")
     .attr("class", "sankey-node-value")
     .attr("x", xLeft - 10)
-    .attr("y", 16)
+    .attr("y", 23)
     .attr("text-anchor", "end")
     .text(d => metricFormatter(metric)(d[1]));
   decorateRows(leftRows, "exporter");
@@ -177,10 +177,10 @@ export function renderSankeyChart(container, flows, state) {
   rightRows.append("rect")
     .attr("class", "sankey-node-bar")
     .attr("x", xRight)
-    .attr("y", -13)
+    .attr("y", -17)
     .attr("width", d => barWidth(d[1]))
-    .attr("height", 26)
-    .attr("rx", 13);
+    .attr("height", 34)
+    .attr("rx", 17);
 
   rightRows.append("text")
     .attr("class", "sankey-node-label")
@@ -191,10 +191,10 @@ export function renderSankeyChart(container, flows, state) {
   rightRows.append("text")
     .attr("class", "sankey-node-value")
     .attr("x", xRight + 10)
-    .attr("y", 16)
+    .attr("y", 23)
     .text(d => metricFormatter(metric)(d[1]));
   decorateRows(rightRows, "importer");
 
-  svg.append("text").attr("class", "axis-title").attr("x", xLeft - 70).attr("y", 54).attr("text-anchor", "middle").text("Exporting countries");
-  svg.append("text").attr("class", "axis-title").attr("x", xRight + 70).attr("y", 54).attr("text-anchor", "middle").text("Import markets");
+  svg.append("text").attr("class", "axis-title").attr("x", xLeft - 78).attr("y", 68).attr("text-anchor", "middle").text("Exporting countries");
+  svg.append("text").attr("class", "axis-title").attr("x", xRight + 78).attr("y", 68).attr("text-anchor", "middle").text("Import markets");
 }

@@ -586,3 +586,134 @@ html body .theme-trade .chapter2-cell-matrix svg > g {
   transform-origin: center center !important;
 }
 
+/* ===== Chapter 2 Sankey + Matrix readability boost =====
+   Bigger, clearer labels and visual marks inside the first-row cards. */
+html body .theme-trade .chapter2-cell-sankey .viz-card-title,
+html body .theme-trade .chapter2-cell-matrix .viz-card-title {
+  padding: 16px 20px 8px !important;
+}
+
+html body .theme-trade .chapter2-cell-sankey .viz-card-title span,
+html body .theme-trade .chapter2-cell-matrix .viz-card-title span {
+  font-size: clamp(22px, 1.45vw, 30px) !important;
+  line-height: 1.02 !important;
+  letter-spacing: -0.03em !important;
+  color: #26170f !important;
+  font-weight: 900 !important;
+}
+
+html body .theme-trade .chapter2-cell-sankey .viz-card-title small,
+html body .theme-trade .chapter2-cell-matrix .viz-card-title small,
+html body .theme-trade .chapter2-cell-sankey .viz-help,
+html body .theme-trade .chapter2-cell-matrix .viz-help {
+  font-size: 12px !important;
+  line-height: 1.28 !important;
+  color: rgba(72, 50, 36, 0.78) !important;
+  font-weight: 700 !important;
+}
+
+/* Exporters -> importers */
+html body .theme-trade .chapter2-cell-sankey .sankey-svg {
+  overflow: visible !important;
+}
+
+html body .theme-trade .chapter2-cell-sankey .sankey-link {
+  opacity: 0.50 !important;
+  stroke-opacity: 0.92 !important;
+  filter: drop-shadow(0 3px 6px rgba(92, 64, 44, 0.10)) !important;
+}
+
+html body .theme-trade .chapter2-cell-sankey .sankey-link:hover,
+html body .theme-trade .chapter2-cell-sankey .sankey-link.is-hovered,
+html body .theme-trade .chapter2-cell-sankey .sankey-link.is-selected {
+  opacity: 0.96 !important;
+  stroke-opacity: 1 !important;
+  filter: drop-shadow(0 0 10px rgba(196, 145, 86, 0.34)) !important;
+}
+
+html body .theme-trade .chapter2-cell-sankey .sankey-link.is-muted {
+  opacity: 0.10 !important;
+}
+
+html body .theme-trade .chapter2-cell-sankey .sankey-node-bar {
+  fill: rgba(212, 176, 139, 0.30) !important;
+  stroke: rgba(139, 90, 55, 0.42) !important;
+  stroke-width: 1.4px !important;
+}
+
+html body .theme-trade .chapter2-cell-sankey .sankey-node-row.is-related .sankey-node-bar {
+  fill: rgba(212, 155, 83, 0.42) !important;
+  stroke: rgba(139, 90, 55, 0.58) !important;
+}
+
+html body .theme-trade .chapter2-cell-sankey .sankey-node-label {
+  fill: #2f1f16 !important;
+  font-size: 16px !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.01em !important;
+}
+
+html body .theme-trade .chapter2-cell-sankey .sankey-node-value {
+  fill: rgba(48, 32, 23, 0.82) !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+}
+
+html body .theme-trade .chapter2-cell-sankey .axis-title {
+  fill: rgba(47, 31, 22, 0.92) !important;
+  font-size: 16px !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.03em !important;
+}
+
+/* Export-import intensity matrix */
+html body .theme-trade .chapter2-cell-matrix .trade-matrix-svg,
+html body .theme-trade .chapter2-cell-matrix .viz-card svg {
+  overflow: visible !important;
+}
+
+html body .theme-trade .chapter2-cell-matrix .matrix-axis-title {
+  fill: rgba(45, 29, 20, 0.95) !important;
+  font-size: 19px !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.01em !important;
+}
+
+html body .theme-trade .chapter2-cell-matrix .matrix-axis-label {
+  fill: rgba(43, 28, 20, 0.90) !important;
+  font-size: 14.5px !important;
+  font-weight: 900 !important;
+}
+
+html body .theme-trade .chapter2-cell-matrix .matrix-cell {
+  stroke: rgba(255, 248, 239, 0.82) !important;
+  stroke-width: 1.5px !important;
+  filter: drop-shadow(0 2px 4px rgba(70, 42, 24, 0.10)) !important;
+}
+
+html body .theme-trade .chapter2-cell-matrix .matrix-cell:not(.is-empty) {
+  opacity: 1 !important;
+}
+
+html body .theme-trade .chapter2-cell-matrix .matrix-cell.is-selected,
+html body .theme-trade .chapter2-cell-matrix .matrix-cell:hover {
+  stroke: rgba(45, 29, 20, 0.84) !important;
+  stroke-width: 2.4px !important;
+  filter: drop-shadow(0 4px 9px rgba(70, 42, 24, 0.24)) !important;
+}
+
+html body .theme-trade .chapter2-cell-matrix .matrix-cell-label {
+  fill: rgba(255, 252, 245, 0.98) !important;
+  stroke: rgba(49, 31, 20, 0.34) !important;
+  stroke-width: 0.55px !important;
+  paint-order: stroke fill !important;
+  font-size: 13.5px !important;
+  font-weight: 950 !important;
+}
+
+html body .theme-trade .chapter2-cell-matrix .matrix-legend-label {
+  fill: rgba(52, 34, 24, 0.84) !important;
+  font-size: 13px !important;
+  font-weight: 850 !important;
+}
+

@@ -9,15 +9,15 @@ function aggregateBy(data, key, metric) {
 
 export function renderTradeMatrixChart(container, flows, state) {
   container.selectAll("*").remove();
-  const width = 760;
-  const height = 780;
-  const margin = { top: 118, right: 56, bottom: 84, left: 138 };
+  const width = 860;
+  const height = 860;
+  const margin = { top: 132, right: 54, bottom: 86, left: 164 };
   const metric = state.metric;
   const tooltip = createTooltip(container);
 
   const yearFlows = flows.filter(d => +d.year === +state.year && d.exporter && d.importer);
-  const exporters = aggregateBy(yearFlows, "exporter", metric).slice(0, 12).map(d => d[0]);
-  const importers = aggregateBy(yearFlows, "importer", metric).slice(0, 12).map(d => d[0]);
+  const exporters = aggregateBy(yearFlows, "exporter", metric).slice(0, 10).map(d => d[0]);
+  const importers = aggregateBy(yearFlows, "importer", metric).slice(0, 10).map(d => d[0]);
   const exporterSet = new Set(exporters);
   const importerSet = new Set(importers);
 
@@ -73,20 +73,20 @@ export function renderTradeMatrixChart(container, flows, state) {
 
   const innerW = width - margin.left - margin.right;
   const innerH = height - margin.top - margin.bottom;
-  const x = d3.scaleBand().domain(importers).range([margin.left, margin.left + innerW]).paddingInner(0.08).paddingOuter(0.02);
-  const y = d3.scaleBand().domain(exporters).range([margin.top, margin.top + innerH]).paddingInner(0.08).paddingOuter(0.02);
+  const x = d3.scaleBand().domain(importers).range([margin.left, margin.left + innerW]).paddingInner(0.06).paddingOuter(0.025);
+  const y = d3.scaleBand().domain(exporters).range([margin.top, margin.top + innerH]).paddingInner(0.06).paddingOuter(0.025);
   const maxValue = d3.max(cells, d => +d[metric] || 0) || 1;
   const color = d3.scaleSequentialSqrt(d3.interpolateRgbBasis(["#f3eadf", "#d7a565", "#81553a", "#4a2e20"])).domain([0, maxValue]);
 
   svg.append("text")
     .attr("class", "matrix-axis-title")
     .attr("x", margin.left)
-    .attr("y", 74)
+    .attr("y", 84)
     .text("Import markets →");
   svg.append("text")
     .attr("class", "matrix-axis-title")
-    .attr("x", 22)
-    .attr("y", margin.top - 18)
+    .attr("x", 28)
+    .attr("y", margin.top - 24)
     .text("Exporters ↓");
 
   svg.append("g")
@@ -96,7 +96,7 @@ export function renderTradeMatrixChart(container, flows, state) {
     .attr("class", "matrix-axis-label")
     .attr("transform", d => `translate(${x(d) + x.bandwidth() / 2},${margin.top - 12}) rotate(-42)`)
     .attr("text-anchor", "start")
-    .text(d => d.length > 10 ? `${d.slice(0, 9)}…` : d);
+    .text(d => d.length > 15 ? `${d.slice(0, 14)}…` : d);
 
   svg.append("g")
     .selectAll("text")
@@ -107,7 +107,7 @@ export function renderTradeMatrixChart(container, flows, state) {
     .attr("y", d => y(d) + y.bandwidth() / 2)
     .attr("dy", "0.33em")
     .attr("text-anchor", "end")
-    .text(d => d.length > 13 ? `${d.slice(0, 12)}…` : d);
+    .text(d => d.length > 15 ? `${d.slice(0, 14)}…` : d);
 
   const selected = state.selectedItem;
   const selectedExporter = selected?.exporter;
@@ -122,7 +122,7 @@ export function renderTradeMatrixChart(container, flows, state) {
     .attr("y", d => y(d.exporter))
     .attr("width", x.bandwidth())
     .attr("height", y.bandwidth())
-    .attr("rx", 7)
+    .attr("rx", 9)
     .attr("fill", d => (+d[metric] || 0) > 0 ? color(+d[metric] || 0) : "rgba(91,58,38,0.04)")
     .attr("opacity", d => (+d[metric] || 0) > 0 ? 0.96 : 1)
     .on("mousemove", (event, d) => {
@@ -148,7 +148,7 @@ export function renderTradeMatrixChart(container, flows, state) {
       });
     });
 
-  const labeledCells = topN(cells.filter(d => +d[metric] > 0), metric, 8);
+  const labeledCells = topN(cells.filter(d => +d[metric] > 0), metric, 12);
   svg.append("g")
     .selectAll("text")
     .data(labeledCells)
@@ -159,7 +159,7 @@ export function renderTradeMatrixChart(container, flows, state) {
     .attr("dy", "0.33em")
     .text(d => metricFormatter(metric)(d[metric]).replace("US", ""));
 
-  const legendW = 180;
+  const legendW = 220;
   const legendX = width - margin.right - legendW;
   const legendY = height - 42;
   const gradId = `matrix-gradient-${state.year}-${metric}`;
