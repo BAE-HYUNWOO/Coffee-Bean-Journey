@@ -44,7 +44,7 @@ export function renderTradeFlowMap(container, flows, state) {
   const card = container.append("div").attr("class", "viz-card trade-map-card");
   card.append("div").attr("class", "viz-card-title interactive-title").html(`
     <div><span>Global coffee routes</span><small>${state.year} · top ${data.length} bilateral export flows</small></div>
-    <div class="viz-help">Wheel to zoom · drag to pan · double-click to reset</div>
+    <div class="viz-help">Wheel to zoom · drag to pan · hover for details</div>
   `);
 
   const svg = card.append("svg")
@@ -162,7 +162,7 @@ export function renderTradeFlowMap(container, flows, state) {
       svg.transition().duration(360).call(zoomBehavior.transform, d3.zoomIdentity);
     });
 
-  card.append("div").attr("class", "trade-map-source").html(`
+  container.append("div").attr("class", "trade-map-source trade-map-source-outside").html(`
     <span>数据来源：</span>
     <a href="https://comtradeplus.un.org/TradeFlow?Frequency=A&Flows=X&CommodityCodes=0901&Partners=all&Reporters=all&period=recent&AggregateBy=none&BreakdownMode=plus" target="_blank" rel="noopener noreferrer">UN Comtrade Coffee Trade Flow Dataset</a>
   `);

@@ -1233,3 +1233,100 @@ html body .theme-trade .chapter2-cell-map .trade-map-source a:hover {
   color: #2b1a12 !important;
 }
 
+/* ===== Chapter 2 map source outside + hover restore + hero fade removal ===== */
+
+/* Source line sits outside/below the Global coffee routes card, not inside it. */
+html body .theme-trade .chapter2-cell-map .trade-map-card {
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+html body .theme-trade .chapter2-cell-map .trade-map-source-outside {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: calc(100% - 36px) !important;
+  margin: 8px auto 0 !important;
+  padding: 0 4px 2px !important;
+  color: rgba(75, 52, 38, 0.68) !important;
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html body .theme-trade .chapter2-cell-map .trade-map-source-outside span {
+  color: rgba(75, 52, 38, 0.62) !important;
+  font-weight: 800 !important;
+}
+
+html body .theme-trade .chapter2-cell-map .trade-map-source-outside a {
+  color: rgba(111, 74, 45, 0.90) !important;
+  font-weight: 850 !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  text-decoration-thickness: 1px !important;
+}
+
+html body .theme-trade .chapter2-cell-map .trade-map-source-outside a:hover {
+  color: #2b1a12 !important;
+}
+
+/* Zoom/pan must coexist with route and node hover details. */
+html body .theme-trade .chapter2-cell-map .map-zoom-layer {
+  pointer-events: all !important;
+  transform-origin: 0 0 !important;
+  will-change: transform;
+}
+
+html body .theme-trade .chapter2-cell-map .map-zoom-surface {
+  fill: transparent !important;
+  pointer-events: all !important;
+  cursor: grab !important;
+}
+
+html body .theme-trade .chapter2-cell-map .route-line,
+html body .theme-trade .chapter2-cell-map .bundle-line {
+  pointer-events: stroke !important;
+}
+
+html body .theme-trade .chapter2-cell-map .country-node {
+  pointer-events: all !important;
+}
+
+html body .theme-trade .chapter2-cell-map .trade-map-svg {
+  cursor: grab !important;
+  touch-action: none !important;
+  overscroll-behavior: contain !important;
+}
+
+html body .theme-trade .chapter2-cell-map .trade-map-svg:active,
+html body .theme-trade .chapter2-cell-map .map-zoom-surface:active {
+  cursor: grabbing !important;
+}
+
+/* Remove the fading/mask effect from the Chapter 2 hero line chart. */
+html body .theme-trade .trade-hero-trajectory {
+  opacity: 0.92 !important;
+}
+
+html body .theme-trade .trade-hero-trajectory-svg {
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+html body .theme-trade .trade-hero-line,
+html body .theme-trade .trade-hero-area,
+html body .theme-trade .trade-hero-dot,
+html body .theme-trade .trade-hero-grid,
+html body .theme-trade .trade-hero-axis {
+  opacity: 1 !important;
+}
+
