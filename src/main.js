@@ -29,7 +29,7 @@ const HOME_OVERVIEW_ITEMS = [
     id: "origin",
     number: "01",
     title: "Origin",
-    stat: "81 countries 쨌 11.3M t",
+    stat: "81 countries · 11.3M t",
     meta: "FAOSTAT production geography",
     blurb: "Where coffee grows, who produces the most, and how output changes over time.",
     themeClass: "overview-origin",
@@ -38,7 +38,7 @@ const HOME_OVERVIEW_ITEMS = [
     id: "trade",
     number: "02",
     title: "Trade",
-    stat: "$41.4B 쨌 148 exporters",
+    stat: "$41.4B · 148 exporters",
     meta: "UN Comtrade global flow network",
     blurb: "Major exporter-importer corridors, route intensity, and cross-border coffee circulation.",
     themeClass: "overview-trade",
@@ -56,7 +56,7 @@ const HOME_OVERVIEW_ITEMS = [
     id: "consumption",
     number: "04",
     title: "Consumption",
-    stat: "Habits 쨌 caffeine 쨌 taste",
+    stat: "Habits · caffeine · taste",
     meta: "ICO / CQI / nutrition data",
     blurb: "Daily coffee culture through bean type, beverage choice, and consumption patterns.",
     themeClass: "overview-consumption",
@@ -168,9 +168,7 @@ function renderHomeOverview(main) {
   const shell = overview.append("div").attr("class", "home-overview-shell");
 
   const head = shell.append("div").attr("class", "home-overview-head");
-  head.append("span").attr("class", "section-label").text("Overview");
-  head.append("h2").text("Five views of one global coffee system");
-  head.append("p").text("Before scrolling into each chapter, this overview shows the main data angle of each parts from production and trade to market structure, consumption, and climate risk.");
+  head.append("h2").text("Coffee Journey Overview");
 
   const grid = shell.append("div").attr("class", "home-overview-grid");
 
