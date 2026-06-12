@@ -49,10 +49,8 @@ export function routeDetailHTML(d, metric = "trade_value_usd") {
   }
   if (d.type === "country") {
     return `
-      <b>${d.country}</b><br/>
       Role: ${d.roleLabel || d.role || "trade node"}<br/>
-      Selected metric: ${metricFormatter(metric)(d.value || 0)}<br/>
-      Click another node, route, or bar to replace this card.
+      Selected metric: ${metricFormatter(metric)(d.value || 0)}
     `;
   }
   return `
