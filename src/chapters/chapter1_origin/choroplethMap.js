@@ -55,7 +55,7 @@ function formatPct(n, total) {
 
 // ISO 3166-1 alpha-3 → numeric-3 mapping (TopoJSON id is numeric, CSV has alpha-3)
 const isoA3toN3 = {
-  "TLS":"626","CHN":"156","TWN":"158","CAF":"140","UGA":"800","YEM":"887","BLZ":"084",
+  "TLS":"626","CHN":"156","TWN":"156","CAF":"140","UGA":"800","YEM":"887","BLZ":"084",
   "CPV":"132","GIN":"324","COG":"178","COD":"180","LBR":"430","GHA":"288","GAB":"266",
   "RWA":"646","IND":"356","IDN":"360","GTM":"320","ECU":"218","CUB":"192","COL":"170",
   "CRI":"188","CMR":"120","STP":"678","VCT":"670","GUY":"328","TZA":"834","ETH":"231",
@@ -74,6 +74,9 @@ export function drawChoroplethMap(containerSelector, { mapData, worldTopoJSON })
   const dataMap = new Map(
     mapData.map(d => [isoA3toN3[d.ISO_Code] || d.ISO_Code, d])
   );
+  // Taiwan (158) shares China's (156) data
+  const chinaEntry = dataMap.get("156");
+  if (chinaEntry) dataMap.set("158", chinaEntry);
   const totalProduction = d3.sum(mapData, d => d.Production_tonnes || 0);
   const totalArea = d3.sum(mapData, d => d.Area_Harvested_ha || 0);
 
@@ -346,18 +349,22 @@ export function drawChoroplethMap(containerSelector, { mapData, worldTopoJSON })
       .attr("stroke-width", "0.4px")
       .style("cursor", "pointer")
       .on("mouseover", function (event, d) {
-        d3.select(this)
+        const iso = d.id;
+        // China & Taiwan highlight together
+        const highlightIds = iso === "156" ? ["156", "158"] : iso === "158" ? ["156", "158"] : [iso];
+        g.selectAll("path").filter(p => highlightIds.includes(p.id))
           .attr("stroke", "#5a3a1a")
           .attr("stroke-width", "2px");
-        const iso = d.id;
         const entry = dataMap.get(iso);
         if (!entry) { hideTooltip(); return; }
         const meta = metricLabels[currentMetric];
         const rankArr = [...mapData].sort((a, b) => (b.Production_tonnes || 0) - (a.Production_tonnes || 0));
-        const rank = rankArr.findIndex(r => (isoA3toN3[r.ISO_Code] || r.ISO_Code) === iso) + 1;
+        const rankLookup = iso === "158" ? "156" : iso; // Taiwan → China
+        const rank = rankArr.findIndex(r => (isoA3toN3[r.ISO_Code] || r.ISO_Code) === rankLookup) + 1;
+        const countryLabel = iso === "156" || iso === "158" ? "China" : getEnglishName(entry.Country);
         const html = `
           <div style="font-weight:700;font-size:0.9rem;margin-bottom:6px;color:#C55A11;">
-            ${getEnglishName(entry.Country)}
+            ${countryLabel}
           </div>
           <div style="font-size:0.68rem;color:var(--muted);margin-bottom:8px;">
             Producer rank #${rank} of ${mapData.filter(d => (d.Production_tonnes || 0) > 0).length}
@@ -381,8 +388,11 @@ export function drawChoroplethMap(containerSelector, { mapData, worldTopoJSON })
         `;
         showTooltip(html, event);
       })
-      .on("mouseout", function () {
-        d3.select(this)
+      .on("mouseout", function (event, d) {
+        // De-highlight China & Taiwan together
+        const iso = d.id;
+        const highlightIds = iso === "156" || iso === "158" ? ["156", "158"] : [iso];
+        g.selectAll("path").filter(p => highlightIds.includes(p.id))
           .attr("stroke", "rgba(91,58,38,0.14)")
           .attr("stroke-width", "0.4px");
         hideTooltip();
@@ -391,6 +401,11 @@ export function drawChoroplethMap(containerSelector, { mapData, worldTopoJSON })
         const iso = d.id;
         const entry = dataMap.get(iso);
         if (!entry) { detailDiv.style("display", "none"); return; }
+        // Reset all strokes, then highlight China & Taiwan together
+        g.selectAll("path").attr("stroke", "rgba(91,58,38,0.14)").attr("stroke-width", "0.4px");
+        const highlightIds = iso === "156" || iso === "158" ? ["156", "158"] : [iso];
+        g.selectAll("path").filter(p => highlightIds.includes(p.id))
+          .attr("stroke", "#5a3a1a").attr("stroke-width", "2px");
         showCountryDetail(entry);
       });
   }
