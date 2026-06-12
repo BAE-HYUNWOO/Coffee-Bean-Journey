@@ -66,8 +66,24 @@ export function renderTradeFlowMap(container, flows, state) {
   const path = d3.geoPath(projection);
 
   svg.append("rect").attr("width", width).attr("height", height).attr("rx", 28).attr("class", "map-bg");
+
+  // Dedicated viewport: every map layer goes inside this group, so d3.zoom
+  // can freely update its SVG transform attribute.
   const layer = svg.append("g").attr("class", "map-zoom-layer");
   const landLayer = layer.append("g").attr("class", "map-land-layer");
+
+  // Full-card interaction surface. It sits above the background but below
+  // the geographic/route layers, so wheel zoom and drag-pan work anywhere
+  // inside the map card.
+  const zoomSurface = svg.append("rect")
+    .attr("class", "map-zoom-surface")
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", width)
+    .attr("height", height)
+    .attr("rx", 28)
+    .style("fill", "transparent")
+    .style("pointer-events", "all");
 
   const graticule = d3.geoGraticule10();
   layer.append("path").datum({ type: "Sphere" }).attr("d", path).attr("class", "map-sphere");
@@ -84,25 +100,32 @@ export function renderTradeFlowMap(container, flows, state) {
 
   const zoomBehavior = d3.zoom()
     .filter((event) => {
-      // Enable mouse wheel zoom, drag panning, and touch gestures on the map.
-      // Ignore right-click / secondary-button drags.
-      return !event.button;
+      // Wheel zoom, left-button drag pan, and touch gestures are enabled.
+      // Keep right-click/secondary-button drags disabled.
+      return event.type === "wheel" || event.type === "mousedown" || event.type === "touchstart" || event.type === "touchmove";
     })
     .wheelDelta((event) => {
-      // Slightly stronger than d3's default, so wheel zoom feels responsive.
-      const modeScale = event.deltaMode === 1 ? 0.075 : event.deltaMode ? 1 : 0.0028;
+      // Responsive wheel zoom; trackpads remain smooth, mouse wheels are not too weak.
+      const modeScale = event.deltaMode === 1 ? 0.075 : event.deltaMode ? 1 : 0.0032;
       return -event.deltaY * modeScale;
     })
-    .scaleExtent([0.72, 7])
-    .translateExtent([[-360, -320], [width + 360, height + 320]])
-    .on("zoom", (event) => layer.attr("transform", event.transform));
+    .scaleExtent([0.7, 7])
+    .translateExtent([[-420, -360], [width + 420, height + 360]])
+    .on("zoom", (event) => {
+      layer.attr("transform", event.transform);
+    });
 
   svg.call(zoomBehavior).on("dblclick.zoom", null);
+  zoomSurface.call(zoomBehavior).on("dblclick.zoom", null);
 
-  // Prevent the page itself from scrolling while the mouse is over the map.
-  // The wheel event still reaches d3.zoom, so the map zooms instead.
-  svg.on("wheel.preventPageScroll", (event) => {
+  svg.on("wheel.mapZoomOnly", (event) => {
     event.preventDefault();
+    event.stopPropagation();
+  }, { passive: false });
+
+  zoomSurface.on("wheel.mapZoomOnly", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
   }, { passive: false });
 
   svg.on("dblclick", () => {

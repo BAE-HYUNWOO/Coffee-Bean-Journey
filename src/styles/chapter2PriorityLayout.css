@@ -222,10 +222,6 @@ html body .theme-trade .chapter2-cell-sankey svg > g,
 html body .theme-trade .chapter2-cell-network svg > g,
 html body .theme-trade .chapter2-cell-matrix svg > g,
 html body .theme-trade .chapter2-cell-timeline svg > g,
-html body .theme-trade .chapter2-cell-map svg > g {
-  transform: none !important;
-  transform-origin: center center !important;
-}
 
 html body .theme-trade .chapter2-cell-sankey,
 html body .theme-trade .chapter2-cell-matrix {
@@ -1143,5 +1139,31 @@ html body .theme-trade .chapter2-cell-map .trade-map-svg:active {
 
 html body .theme-trade .chapter2-cell-map .map-zoom-controls {
   pointer-events: auto !important;
+}
+
+/* ===== Chapter 2 Global coffee routes real zoom/pan fix =====
+   Important: do not reset transform on the map zoom layer. d3.zoom writes
+   an SVG transform attribute to .map-zoom-layer; a CSS transform reset would
+   make wheel zoom and drag pan look like they do nothing. */
+html body .theme-trade .chapter2-cell-map .map-zoom-layer {
+  transform-origin: 0 0 !important;
+  will-change: transform;
+}
+
+html body .theme-trade .chapter2-cell-map .map-zoom-surface {
+  fill: transparent !important;
+  pointer-events: all !important;
+  cursor: grab !important;
+}
+
+html body .theme-trade .chapter2-cell-map .trade-map-svg {
+  cursor: grab !important;
+  touch-action: none !important;
+  overscroll-behavior: contain !important;
+}
+
+html body .theme-trade .chapter2-cell-map .trade-map-svg:active,
+html body .theme-trade .chapter2-cell-map .map-zoom-surface:active {
+  cursor: grabbing !important;
 }
 
