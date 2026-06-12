@@ -137,7 +137,7 @@ html body .theme-trade .chapter2-visual-grid {
     "network ring"
     "map map" !important;
   grid-template-rows:
-    clamp(500px, 31vw, 620px)
+    clamp(620px, 38vw, 780px)
     clamp(540px, 36vw, 700px)
     clamp(520px, 32vw, 660px) !important;
   gap: 20px !important;
@@ -230,7 +230,7 @@ html body .theme-trade .chapter2-cell-map svg > g {
 
 html body .theme-trade .chapter2-cell-sankey,
 html body .theme-trade .chapter2-cell-matrix {
-  min-height: clamp(500px, 31vw, 620px) !important;
+  min-height: clamp(620px, 38vw, 780px) !important;
 }
 
 html body .theme-trade .chapter2-cell-network,
@@ -491,7 +491,7 @@ html body .theme-trade .chapter2-visual-grid {
     "network ring"
     "map map" !important;
   grid-template-rows:
-    clamp(500px, 31vw, 620px)
+    clamp(620px, 38vw, 780px)
     clamp(540px, 36vw, 700px)
     clamp(520px, 32vw, 660px) !important;
   gap: 20px !important;
@@ -500,7 +500,7 @@ html body .theme-trade .chapter2-visual-grid {
 
 html body .theme-trade .chapter2-cell-sankey,
 html body .theme-trade .chapter2-cell-matrix {
-  min-height: clamp(500px, 31vw, 620px) !important;
+  min-height: clamp(620px, 38vw, 780px) !important;
 }
 
 html body .theme-trade .chapter2-cell-network,
@@ -539,3 +539,50 @@ html body .theme-trade #chapter2-timeline {
       "map" !important;
   }
 }
+
+/* ===== Chapter 2 equal Sankey/Matrix row + larger matrix graph =====
+   Keep Exporters -> importers and Export-import intensity matrix at the
+   same card height, and give the matrix more vertical drawing space. */
+html body .theme-trade .chapter2-visual-grid {
+  grid-template-rows:
+    clamp(620px, 38vw, 780px)
+    clamp(540px, 36vw, 700px)
+    clamp(520px, 32vw, 660px) !important;
+  align-items: stretch !important;
+}
+
+html body .theme-trade .chapter2-cell-sankey,
+html body .theme-trade .chapter2-cell-matrix {
+  height: 100% !important;
+  min-height: clamp(620px, 38vw, 780px) !important;
+  align-self: stretch !important;
+}
+
+html body .theme-trade .chapter2-cell-sankey .viz-card,
+html body .theme-trade .chapter2-cell-matrix .viz-card {
+  height: 100% !important;
+  min-height: clamp(620px, 38vw, 780px) !important;
+  align-self: stretch !important;
+}
+
+html body .theme-trade .chapter2-cell-matrix .viz-card-title {
+  padding: 12px 16px 4px !important;
+}
+
+html body .theme-trade .chapter2-cell-matrix .viz-card-title span {
+  font-size: clamp(18px, 1.18vw, 24px) !important;
+}
+
+html body .theme-trade .chapter2-cell-matrix .viz-card svg,
+html body .theme-trade .chapter2-cell-matrix .matrix-svg {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: clamp(560px, 34vw, 720px) !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+html body .theme-trade .chapter2-cell-matrix svg > g {
+  transform-origin: center center !important;
+}
+
