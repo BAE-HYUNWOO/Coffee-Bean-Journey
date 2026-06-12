@@ -126,20 +126,20 @@ html body .theme-trade .chapter2-status-strip .kpi-card b {
 }
 
 /* Final chart grid.
-   Row 1: Sankey large + timeline on the right.
-   Row 2: Network + ring.
-   Row 3: Matrix + map, 1:3 width ratio. */
+   Row 1: Exporters -> importers + Export-import intensity matrix.
+   Row 2: Trade network graph + Coffee trade ring.
+   Row 3: Global coffee routes only. */
 html body .theme-trade .chapter2-visual-grid {
   display: grid !important;
-  grid-template-columns: minmax(260px, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(320px, 1fr) !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
   grid-template-areas:
-    "sankey sankey sankey timeline"
-    "network network ring ring"
-    "matrix map map map" !important;
+    "sankey matrix"
+    "network ring"
+    "map map" !important;
   grid-template-rows:
-    clamp(430px, 28vw, 540px)
+    clamp(500px, 31vw, 620px)
     clamp(540px, 36vw, 700px)
-    clamp(500px, 31vw, 620px) !important;
+    clamp(520px, 32vw, 660px) !important;
   gap: 20px !important;
   align-items: stretch !important;
   grid-auto-flow: row !important;
@@ -229,8 +229,8 @@ html body .theme-trade .chapter2-cell-map svg > g {
 }
 
 html body .theme-trade .chapter2-cell-sankey,
-html body .theme-trade .chapter2-cell-timeline {
-  min-height: clamp(430px, 28vw, 540px) !important;
+html body .theme-trade .chapter2-cell-matrix {
+  min-height: clamp(500px, 31vw, 620px) !important;
 }
 
 html body .theme-trade .chapter2-cell-network,
@@ -238,9 +238,12 @@ html body .theme-trade .chapter2-cell-ring {
   min-height: clamp(540px, 36vw, 700px) !important;
 }
 
-html body .theme-trade .chapter2-cell-matrix,
 html body .theme-trade .chapter2-cell-map {
-  min-height: clamp(500px, 31vw, 620px) !important;
+  min-height: clamp(520px, 32vw, 660px) !important;
+}
+
+html body .theme-trade .chapter2-cell-timeline {
+  min-height: 0 !important;
 }
 
 /* Timeline should be a compact supporting chart. */
@@ -252,7 +255,7 @@ html body .theme-trade .chapter2-cell-timeline .timeline-svg {
   overflow: hidden !important;
 }
 
-/* Matrix is narrow in the 1:3 row, so keep labels compact. */
+/* Matrix now shares the first row with Sankey at a 1:1 width ratio. */
 html body .theme-trade .chapter2-cell-matrix .viz-card-title {
   flex-direction: column !important;
   gap: 2px !important;
@@ -481,13 +484,58 @@ html body .theme-trade .trade-hero-trajectory .chapter2-tooltip {
 }
 
 html body .theme-trade .chapter2-visual-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
   grid-template-areas:
-    "sankey sankey sankey sankey"
-    "network network ring ring"
-    "matrix map map map" !important;
+    "sankey matrix"
+    "network ring"
+    "map map" !important;
+  grid-template-rows:
+    clamp(500px, 31vw, 620px)
+    clamp(540px, 36vw, 700px)
+    clamp(520px, 32vw, 660px) !important;
+  gap: 20px !important;
+  align-items: stretch !important;
+}
+
+html body .theme-trade .chapter2-cell-sankey,
+html body .theme-trade .chapter2-cell-matrix {
+  min-height: clamp(500px, 31vw, 620px) !important;
+}
+
+html body .theme-trade .chapter2-cell-network,
+html body .theme-trade .chapter2-cell-ring {
+  min-height: clamp(540px, 36vw, 700px) !important;
+}
+
+html body .theme-trade .chapter2-cell-map {
+  min-height: clamp(520px, 32vw, 660px) !important;
 }
 
 html body .theme-trade #chapter2-timeline {
   display: none !important;
 }
 
+/* ===== Chapter 2 requested responsive 2x2 layout override ===== */
+
+@media (max-width: 1320px) {
+  html body .theme-trade .chapter2-visual-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-areas:
+      "sankey matrix"
+      "network ring"
+      "map map" !important;
+  }
+}
+
+@media (max-width: 860px) {
+  html body .theme-trade .chapter2-visual-grid {
+    grid-template-columns: 1fr !important;
+    grid-template-areas:
+      "sankey"
+      "matrix"
+      "network"
+      "ring"
+      "map" !important;
+  }
+}
