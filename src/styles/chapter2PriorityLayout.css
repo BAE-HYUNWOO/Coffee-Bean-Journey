@@ -372,12 +372,12 @@ html body .theme-trade #chapter2-rankings {
 
 /* ===== Chapter 2 hero trajectory graph =====
    Moves the Recent-period trajectory shape out of the card area and
-   reuses it as a large fading decorative graph on the right side of the
+   reuses it as a large fading interactive graph on the right side of the
    Chapter 02 / Trade title area. */
 html body .theme-trade .compact-chapter-intro {
   position: relative !important;
-  overflow: hidden !important;
-  min-height: clamp(220px, 22vw, 360px) !important;
+  overflow: visible !important;
+  min-height: clamp(280px, 25vw, 430px) !important;
 }
 
 html body .theme-trade .compact-chapter-intro > *:not(.trade-hero-trajectory) {
@@ -387,29 +387,15 @@ html body .theme-trade .compact-chapter-intro > *:not(.trade-hero-trajectory) {
 
 html body .theme-trade .trade-hero-trajectory {
   position: absolute !important;
-  right: clamp(-24px, -1.5vw, -8px) !important;
+  right: clamp(18px, 2.6vw, 48px) !important;
   top: 50% !important;
-  transform: translateY(-50%) scale(1.08) !important;
-  width: min(54vw, 920px) !important;
-  height: clamp(230px, 21vw, 360px) !important;
+  transform: translateY(-50%) !important;
+  width: min(52vw, 900px) !important;
+  height: clamp(300px, 25vw, 430px) !important;
   z-index: 1 !important;
-  pointer-events: none !important;
-  opacity: 0.95 !important;
-
-  -webkit-mask-image: linear-gradient(
-    to left,
-    rgba(0,0,0,1) 0%,
-    rgba(0,0,0,0.92) 30%,
-    rgba(0,0,0,0.48) 68%,
-    transparent 100%
-  ) !important;
-  mask-image: linear-gradient(
-    to left,
-    rgba(0,0,0,1) 0%,
-    rgba(0,0,0,0.92) 30%,
-    rgba(0,0,0,0.48) 68%,
-    transparent 100%
-  ) !important;
+  pointer-events: auto !important;
+  opacity: 0.98 !important;
+  overflow: visible !important;
 }
 
 html body .theme-trade .trade-hero-trajectory-fallback {
@@ -420,10 +406,50 @@ html body .theme-trade .trade-hero-trajectory-svg {
   width: 100% !important;
   height: 100% !important;
   overflow: visible !important;
+  -webkit-mask-image: linear-gradient(
+    to left,
+    rgba(0,0,0,1) 0%,
+    rgba(0,0,0,0.94) 34%,
+    rgba(0,0,0,0.58) 70%,
+    transparent 100%
+  ) !important;
+  mask-image: linear-gradient(
+    to left,
+    rgba(0,0,0,1) 0%,
+    rgba(0,0,0,0.94) 34%,
+    rgba(0,0,0,0.58) 70%,
+    transparent 100%
+  ) !important;
+}
+
+html body .theme-trade .trade-hero-grid line {
+  stroke: rgba(109, 88, 71, 0.12) !important;
+}
+
+html body .theme-trade .trade-hero-grid .domain,
+html body .theme-trade .trade-hero-grid text {
+  display: none !important;
+}
+
+html body .theme-trade .trade-hero-axis text {
+  fill: rgba(103, 84, 68, 0.78) !important;
+  font-size: 11px !important;
+}
+
+html body .theme-trade .trade-hero-axis line,
+html body .theme-trade .trade-hero-axis path {
+  stroke: rgba(105, 81, 60, 0.24) !important;
+}
+
+html body .theme-trade .trade-hero-axis-label {
+  fill: rgba(68, 48, 36, 0.86) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em !important;
 }
 
 html body .theme-trade .trade-hero-area {
-  fill: rgba(111, 149, 168, 0.13) !important;
+  fill: rgba(111, 149, 168, 0.14) !important;
 }
 
 html body .theme-trade .trade-hero-line {
@@ -437,15 +463,23 @@ html body .theme-trade .trade-hero-line {
 
 html body .theme-trade .trade-hero-dot {
   fill: #d49a53 !important;
-  opacity: 0.26 !important;
+  stroke: rgba(255, 248, 239, 0.95) !important;
+  stroke-width: 2px !important;
+  opacity: 0.74 !important;
 }
 
 html body .theme-trade .trade-hero-dot.active {
-  opacity: 0.92 !important;
+  opacity: 1 !important;
 }
 
-/* Since the timeline graph has moved into the title area, let the Sankey
-   chart use the full first row of the visual grid. */
+html body .theme-trade .trade-hero-hit-dot {
+  pointer-events: all !important;
+}
+
+html body .theme-trade .trade-hero-trajectory .chapter2-tooltip {
+  z-index: 6 !important;
+}
+
 html body .theme-trade .chapter2-visual-grid {
   grid-template-areas:
     "sankey sankey sankey sankey"

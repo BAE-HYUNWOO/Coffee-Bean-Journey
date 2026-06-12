@@ -70,10 +70,11 @@ export function renderTimelineChart(container, flows, state, onYearChange) {
 export function renderTimelineHeroGraph(container, flows, state) {
   container.selectAll("*").remove();
 
-  const width = 1200;
-  const height = 360;
-  const margin = { top: 28, right: 28, bottom: 34, left: 34 };
+  const width = 1280;
+  const height = 460;
+  const margin = { top: 34, right: 54, bottom: 72, left: 104 };
   const metric = state.metric;
+  const tooltip = createTooltip(container);
 
   const data = d3.rollups(flows, v => ({
     year: +v[0].year,
@@ -84,13 +85,15 @@ export function renderTimelineHeroGraph(container, flows, state) {
 
   if (!data.length) return;
 
+  const metricName = metric === "net_weight_kg" ? "Net weight (kg)" : "Trade value (US$)";
   const x = d3.scalePoint()
     .domain(data.map(d => d.year))
     .range([margin.left, width - margin.right])
-    .padding(0.2);
+    .padding(0.35);
 
+  const maxValue = d3.max(data, d => d[metric]) || 1;
   const y = d3.scaleLinear()
-    .domain([0, d3.max(data, d => d[metric]) || 1])
+    .domain([0, maxValue * 1.12])
     .nice()
     .range([height - margin.bottom, margin.top]);
 
@@ -108,7 +111,13 @@ export function renderTimelineHeroGraph(container, flows, state) {
   const svg = container.append("svg")
     .attr("viewBox", `0 0 ${width} ${height}`)
     .attr("class", "trade-hero-trajectory-svg")
-    .attr("aria-hidden", "true");
+    .attr("aria-label", "Recent trade trajectory")
+    .attr("role", "img");
+
+  svg.append("g")
+    .attr("class", "trade-hero-grid")
+    .call(d3.axisLeft(y).ticks(5).tickSize(-(width - margin.left - margin.right)).tickFormat(""))
+    .call(g => g.select(".domain").remove());
 
   svg.append("path")
     .datum(data)
@@ -121,12 +130,78 @@ export function renderTimelineHeroGraph(container, flows, state) {
     .attr("d", line);
 
   svg.append("g")
+    .attr("transform", `translate(0,${height - margin.bottom})`)
+    .attr("class", "trade-hero-axis trade-hero-axis-x")
+    .call(d3.axisBottom(x).tickSizeOuter(0));
+
+  svg.append("g")
+    .attr("transform", `translate(${margin.left},0)`)
+    .attr("class", "trade-hero-axis trade-hero-axis-y")
+    .call(
+      d3.axisLeft(y)
+        .ticks(5)
+        .tickFormat(d => metric === "net_weight_kg"
+          ? formatKg(d).replace(" kg", "")
+          : formatMoney(d))
+    )
+    .call(g => g.select(".domain").remove());
+
+  svg.append("text")
+    .attr("class", "trade-hero-axis-label trade-hero-axis-label-x")
+    .attr("x", width - margin.right)
+    .attr("y", height - 18)
+    .attr("text-anchor", "end")
+    .text("Year");
+
+  svg.append("text")
+    .attr("class", "trade-hero-axis-label trade-hero-axis-label-y")
+    .attr("transform", `translate(24,${height / 2}) rotate(-90)`)
+    .attr("text-anchor", "middle")
+    .text(metricName);
+
+  const points = svg.append("g")
+    .attr("class", "trade-hero-points")
     .selectAll("circle")
     .data(data)
     .join("circle")
     .attr("class", d => +d.year === +state.year ? "trade-hero-dot active" : "trade-hero-dot")
     .attr("cx", d => x(d.year))
     .attr("cy", d => y(d[metric]))
-    .attr("r", d => +d.year === +state.year ? 8 : 4.5);
+    .attr("r", d => +d.year === +state.year ? 8.5 : 5.5)
+    .on("mousemove", (event, d) => tooltip.show(event, `
+      <b>${d.year}</b><br/>
+      ${metricName}: ${metricFormatter(metric)(d[metric])}<br/>
+      Bilateral flows: ${d.flows.toLocaleString()}
+    `))
+    .on("mouseenter", function() { d3.select(this).attr("r", 10); })
+    .on("mouseleave", function(event, d) {
+      d3.select(this).attr("r", +d.year === +state.year ? 8.5 : 5.5);
+      tooltip.hide();
+    });
+
+  // Larger invisible hover targets for easier mouse interaction
+  svg.append("g")
+    .attr("class", "trade-hero-hit-targets")
+    .selectAll("circle")
+    .data(data)
+    .join("circle")
+    .attr("class", "trade-hero-hit-dot")
+    .attr("cx", d => x(d.year))
+    .attr("cy", d => y(d[metric]))
+    .attr("r", 18)
+    .style("fill", "transparent")
+    .style("cursor", "default")
+    .on("mousemove", (event, d) => tooltip.show(event, `
+      <b>${d.year}</b><br/>
+      ${metricName}: ${metricFormatter(metric)(d[metric])}<br/>
+      Bilateral flows: ${d.flows.toLocaleString()}
+    `))
+    .on("mouseenter", function(event, d) {
+      points.filter(p => p.year === d.year).attr("r", 10);
+    })
+    .on("mouseleave", function(event, d) {
+      points.filter(p => p.year === d.year).attr("r", p => +p.year === +state.year ? 8.5 : 5.5);
+      tooltip.hide();
+    });
 }
 
