@@ -140,7 +140,8 @@ html body .theme-trade .chapter2-visual-grid {
     clamp(430px, 28vw, 540px)
     clamp(540px, 36vw, 700px)
     clamp(500px, 31vw, 620px) !important;
-  gap: 20px !important;
+  row-gap: 10px !important;
+  column-gap: 20px !important;
   align-items: stretch !important;
   grid-auto-flow: row !important;
 }
