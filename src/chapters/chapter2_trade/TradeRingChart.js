@@ -30,6 +30,61 @@ function ribbonPath(source, target, cx, cy) {
   return `M ${sx} ${sy} C ${mx} ${my}, ${mx} ${my}, ${tx} ${ty}`;
 }
 
+function layoutRingLabels(arcData, cx, cy, outerR, width, height) {
+  const labelR = outerR + 38;
+  const minGap = 23;
+  const topLimit = Math.max(42, cy - outerR - 56);
+  const bottomLimit = Math.min(height - 34, cy + outerR + 56);
+
+  const labels = arcData.map(d => {
+    const angle = (d.startAngle + d.endAngle) / 2 - Math.PI / 2;
+    const side = Math.cos(angle) >= 0 ? "right" : "left";
+    return {
+      ...d,
+      angle,
+      side,
+      x: cx + Math.cos(angle) * labelR,
+      y: cy + Math.sin(angle) * labelR,
+      anchor: side === "right" ? "start" : "end",
+      leaderStartX: cx + Math.cos(angle) * (outerR + 7),
+      leaderStartY: cy + Math.sin(angle) * (outerR + 7),
+    };
+  });
+
+  ["left", "right"].forEach(side => {
+    const group = labels
+      .filter(d => d.side === side)
+      .sort((a, b) => a.y - b.y);
+
+    for (let i = 0; i < group.length; i += 1) {
+      group[i].y = Math.max(group[i].y, topLimit + i * minGap);
+      if (i > 0) group[i].y = Math.max(group[i].y, group[i - 1].y + minGap);
+    }
+
+    const overflow = group.length ? group[group.length - 1].y - bottomLimit : 0;
+    if (overflow > 0) {
+      group.forEach(d => { d.y -= overflow; });
+    }
+
+    for (let i = group.length - 2; i >= 0; i -= 1) {
+      group[i].y = Math.min(group[i].y, group[i + 1].y - minGap);
+    }
+
+    group.forEach((d, i) => {
+      d.y = Math.max(topLimit + i * minGap, Math.min(bottomLimit, d.y));
+      d.x += side === "right" ? 6 : -6;
+      d.leaderEndX = d.x + (side === "right" ? -7 : 7);
+      d.leaderEndY = d.y;
+    });
+  });
+
+  return labels;
+}
+
+function truncateRingLabel(country) {
+  return country.length > 14 ? `${country.slice(0, 13)}…` : country;
+}
+
 export function renderTradeRingChart(container, flows, state) {
   container.selectAll("*").remove();
   // Use a squarer viewBox and a larger radius so the circular ring
@@ -45,7 +100,7 @@ export function renderTradeRingChart(container, flows, state) {
   const selectedKey = routeKey(state.selectedItem);
 
   const yearFlows = flows.filter(d => +d.year === +state.year && d.exporter && d.importer);
-  const countries = aggregateCountryTotals(yearFlows, metric).slice(0, 22);
+  const countries = aggregateCountryTotals(yearFlows, metric).slice(0, 20);
   const keep = new Set(countries.map(d => d.country));
   const links = topN(yearFlows.filter(d => keep.has(d.exporter) && keep.has(d.importer)), metric, Math.min(state.flowLimit || 90, 120));
 
@@ -160,24 +215,23 @@ export function renderTradeRingChart(container, flows, state) {
       });
     });
 
+  const labelLayout = layoutRingLabels(arcData, cx, cy, outerR, width, height);
+
+  labelLayer.selectAll("path")
+    .data(labelLayout)
+    .join("path")
+    .attr("class", "ring-label-leader")
+    .attr("d", d => `M ${d.leaderStartX} ${d.leaderStartY} L ${d.leaderEndX} ${d.leaderEndY}`);
+
   labelLayer.selectAll("text")
-    .data(arcData)
+    .data(labelLayout)
     .join("text")
     .attr("class", "ring-country-label")
-    .attr("x", d => {
-      const a = (d.startAngle + d.endAngle) / 2 - Math.PI / 2;
-      return cx + Math.cos(a) * (outerR + 28);
-    })
-    .attr("y", d => {
-      const a = (d.startAngle + d.endAngle) / 2 - Math.PI / 2;
-      return cy + Math.sin(a) * (outerR + 28);
-    })
-    .attr("text-anchor", d => {
-      const a = (d.startAngle + d.endAngle) / 2;
-      return a < Math.PI ? "start" : "end";
-    })
+    .attr("x", d => d.x)
+    .attr("y", d => d.y)
+    .attr("text-anchor", d => d.anchor)
     .attr("dy", "0.33em")
-    .text(d => d.data.country.length > 13 ? `${d.data.country.slice(0, 12)}…` : d.data.country);
+    .text(d => truncateRingLabel(d.data.country));
 
   svg.append("text").attr("class", "ring-center-label").attr("x", cx).attr("y", cy - 8).text("Trade ring");
   svg.append("text").attr("class", "ring-center-note").attr("x", cx).attr("y", cy + 16).text("directional corridors between top hubs");

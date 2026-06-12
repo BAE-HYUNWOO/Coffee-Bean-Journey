@@ -913,3 +913,81 @@ html body .theme-trade .chapter2-cell-ring .ring-center-note {
   font-weight: 800 !important;
 }
 
+/* ===== Chapter 2 title subtitle placement =====
+   Put the year/subtitle line directly under the main chart title instead
+   of inline after it. */
+html body .theme-trade .chapter2-visual-grid .viz-card-title.interactive-title {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  grid-template-areas: "main help" !important;
+  column-gap: 14px !important;
+  row-gap: 3px !important;
+  align-items: start !important;
+}
+
+html body .theme-trade .chapter2-visual-grid .viz-card-title.interactive-title > div:first-child {
+  grid-area: main !important;
+  display: grid !important;
+  gap: 3px !important;
+  min-width: 0 !important;
+}
+
+html body .theme-trade .chapter2-visual-grid .viz-card-title.interactive-title .viz-help {
+  grid-area: help !important;
+  justify-self: end !important;
+  text-align: right !important;
+  max-width: min(360px, 42vw) !important;
+}
+
+html body .theme-trade .chapter2-visual-grid .viz-card-title.interactive-title span {
+  display: block !important;
+}
+
+html body .theme-trade .chapter2-visual-grid .viz-card-title.interactive-title small {
+  display: block !important;
+  margin-top: 1px !important;
+  white-space: normal !important;
+}
+
+/* ===== Chapter 2 ring label clarity + anti-overlap ===== */
+html body .theme-trade .chapter2-cell-ring .ring-country-label {
+  fill: rgba(31, 20, 14, 0.98) !important;
+  font-size: 13.5px !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.01em !important;
+  paint-order: stroke fill !important;
+  stroke: rgba(255, 248, 239, 0.92) !important;
+  stroke-width: 3.1px !important;
+}
+
+html body .theme-trade .chapter2-cell-ring .ring-label-leader {
+  fill: none !important;
+  stroke: rgba(88, 65, 48, 0.28) !important;
+  stroke-width: 1px !important;
+  stroke-linecap: round !important;
+  pointer-events: none !important;
+}
+
+html body .theme-trade .chapter2-cell-ring .ring-center-label {
+  fill: #26170f !important;
+  font-size: 28px !important;
+  font-weight: 980 !important;
+  paint-order: stroke fill !important;
+  stroke: rgba(255, 248, 239, 0.70) !important;
+  stroke-width: 2px !important;
+}
+
+html body .theme-trade .chapter2-cell-ring .ring-center-note {
+  fill: rgba(48, 32, 23, 0.86) !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  paint-order: stroke fill !important;
+  stroke: rgba(255, 248, 239, 0.62) !important;
+  stroke-width: 1.8px !important;
+}
+
+html body .theme-trade .chapter2-cell-ring .ring-country-arc {
+  stroke-width: 17px !important;
+  opacity: 0.90 !important;
+}
+
