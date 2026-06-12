@@ -824,8 +824,6 @@
   width: 100% !important;
   height: 100% !important;
   min-height: 0 !important;
-  transform: scale(1.15) !important;
-  transform-origin: 50% 50% !important;
 }
 
 .chapter4-board.is-card-grid .chapter4-panel-toolbar {

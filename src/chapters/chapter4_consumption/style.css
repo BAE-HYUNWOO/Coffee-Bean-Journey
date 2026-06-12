@@ -810,3 +810,16 @@
     transform: none;
   }
 }
+
+/* Keep the first card's longer explanation fully readable after flipping. */
+.chapter4-board.is-card-grid
+  .chapter4-section:has(#chapter4-bean-share-shell)
+  .chapter4-section-copy {
+  align-content: start !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  padding: clamp(24px, 2vw, 34px) !important;
+  padding-bottom: 56px !important;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}

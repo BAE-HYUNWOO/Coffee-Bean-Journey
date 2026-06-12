@@ -346,16 +346,6 @@ function renderShell() {
       })}
 
       ${sectionShell({
-        id: "chapter4-profile-shell",
-        section: sectionByKey("profile"),
-        reversed: true,
-        controlGroup: "profile",
-        controls: [],
-        panelClass: "chapter4-panel--wide",
-        chartMarkup: profileShellMarkup(),
-      })}
-
-      ${sectionShell({
         id: "chapter4-outcomes-shell",
         section: sectionByKey("scatter"),
         reversed: false,
@@ -767,7 +757,6 @@ export function renderChapter4(containerSelector) {
       container.html(renderShell(data));
       const copyController = setupCopyController(container.node(), answers);
       copyController.initialize(state);
-      const profileController = setupProfileExplorer(container.node(), data, answers, state);
 
       const consumptionDeck = setupFlipDeck("#chapter4-consumption-deck");
       const rankingDeck = setupFlipDeck("#chapter4-ranking-deck");
@@ -809,14 +798,12 @@ export function renderChapter4(containerSelector) {
       renderers.renderWorldTrend();
       renderers.renderConsumption(false);
       renderers.renderRanking(false);
-      profileController.initialize();
       renderers.renderOutcome(false);
       renderers.renderFocus();
       const cleanupReveal = setupSectionReveal(container.node());
       activeMotionCleanup = () => {
         cleanupReveal();
         copyController.cleanup();
-        profileController.cleanup();
       };
     })
     .catch((error) => {

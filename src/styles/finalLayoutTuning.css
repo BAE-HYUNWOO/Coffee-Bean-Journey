@@ -140,7 +140,7 @@
   grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
   grid-auto-flow: row dense !important;
   grid-auto-rows: 92px !important;
-  gap: clamp(14px, 1.1vw, 22px) !important;
+  gap: clamp(20px, 1.6vw, 30px) !important;
   align-items: stretch !important;
 }
 
@@ -203,7 +203,7 @@
 }
 
 .chapter4-board.is-card-grid .chapter4-panel {
-  padding: clamp(46px, 2.7vw, 60px) clamp(16px, 1.05vw, 24px) clamp(14px, 1vw, 20px) !important;
+  padding: clamp(40px, 2.2vw, 52px) clamp(18px, 1.2vw, 26px) clamp(12px, 0.8vw, 18px) !important;
   height: 100% !important;
   min-height: 0 !important;
   overflow: hidden !important;
@@ -270,7 +270,6 @@
   display: block !important;
 }
 
-/* Chart-type-specific fitting: donut can stay square, label-heavy charts get more room. */
 .chapter4-board.is-card-grid .chapter4-section:has(#chapter4-bean-share-shell) .chapter4-panel svg {
   width: 94% !important;
   height: 94% !important;
@@ -351,6 +350,52 @@
     min-height: 560px !important;
   }
 
+  .chapter4-board.is-card-grid {
+    grid-template-columns: 1fr !important;
+    grid-auto-rows: auto !important;
+    width: calc(100vw - 24px) !important;
+  }
+
+  .chapter4-board.is-card-grid .chapter4-section,
+  .chapter4-board.is-card-grid .chapter4-card-square,
+  .chapter4-board.is-card-grid .chapter4-card-medium,
+  .chapter4-board.is-card-grid .chapter4-card-wide,
+  .chapter4-board.is-card-grid .chapter4-card-large {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    min-height: 430px !important;
+  }
+}
+
+/* Chapter 4: force the remaining cards into a clean 3-column grid. */
+.chapter4-board.is-card-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-auto-flow: row !important;
+  grid-auto-rows: minmax(360px, auto) !important;
+}
+
+.chapter4-board.is-card-grid .chapter4-section,
+.chapter4-board.is-card-grid .chapter4-card-square,
+.chapter4-board.is-card-grid .chapter4-card-medium,
+.chapter4-board.is-card-grid .chapter4-card-wide,
+.chapter4-board.is-card-grid .chapter4-card-large,
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-bean-share-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-sensory-radar-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-altitude-quality-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-processing-method-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-caffeine-range-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-nutrient-compare-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-milk-choice-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-world-trend-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-consumption-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-ranking-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-outcomes-shell),
+.chapter4-board.is-card-grid .chapter4-section:has(#chapter4-focus-shell) {
+  grid-column: span 1 !important;
+  grid-row: span 1 !important;
+}
+
+@media (max-width: 860px) {
   .chapter4-board.is-card-grid {
     grid-template-columns: 1fr !important;
     grid-auto-rows: auto !important;
