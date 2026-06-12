@@ -1,6 +1,6 @@
-import * as d3 from "d3";
+﻿import * as d3 from "d3";
 
-export const DATA_BASE = "/data/chapter2_trade/processed/";
+export const DATA_BASE = `${import.meta.env.BASE_URL}data/chapter2_trade/processed/`;
 
 export function formatMoney(value) {
   const v = Number(value) || 0;
@@ -54,7 +54,7 @@ export function routeDetailHTML(d, metric = "trade_value_usd") {
     `;
   }
   return `
-    <b>${d.exporter} → ${d.importer}</b><br/>
+    <b>${d.exporter} ??${d.importer}</b><br/>
     Year: ${d.year}<br/>
     Trade value: ${formatMoney(d.trade_value_usd)}<br/>
     Net weight: ${formatKg(d.net_weight_kg)}<br/>
@@ -90,3 +90,4 @@ export function arcPath(projection, sourceLonLat, targetLonLat) {
   const dr = Math.sqrt(dx * dx + dy * dy) * 1.35;
   return `M${s[0]},${s[1]} A${dr},${dr} 0 0,1 ${t[0]},${t[1]}`;
 }
+
