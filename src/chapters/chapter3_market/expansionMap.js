@@ -182,6 +182,7 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
         let milestoneYears = [];
         let projection, path, zoom;
         let activeMilestoneData = [];
+        let storeAlpha = 0;
 
         expansionDataRef = expansionData;
         milestoneYears = [...new Set(expansionData.map((d) => d.year))].sort((a, b) => a - b);
@@ -277,25 +278,16 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
             });
 
         /**
-         * Computes and yields an array of visible stores based on a linear historical estimation.
+         * Computes and yields an array of visible stores.
          */
         function getVisibleStores(year) {
+            if (year < END_YEAR) {
+                return [];
+            }
+
             let visible = [];
             for (const code in storesByCountry) {
-                const marketInfo = expansionDataRef.find((m) => m.code === code);
-                if (!marketInfo || year < marketInfo.year) continue;
-
-                const stores = storesByCountry[code];
-                const entryYear = marketInfo.year;
-
-                let count = 0;
-                if (year >= 2021) count = stores.length;
-                else if (year === entryYear) count = 1;
-                else {
-                    const progress = (year - entryYear) / (2021 - entryYear);
-                    count = Math.max(1, Math.floor(stores.length * progress));
-                }
-                visible = visible.concat(stores.slice(0, count));
+                visible = visible.concat(storesByCountry[code]);
             }
             return visible;
         }
@@ -319,6 +311,7 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
                     projection,
                     mapWidth,
                     mapHeight,
+                    storeAlpha,
                 );
 
                 milestoneAnchor.selectAll(".milestone-tooltip").style("transform", function (d) {
@@ -515,14 +508,45 @@ export function drawExpansionSlot(containerId, { worldData, expansionData, store
 
             // Sync canvas elements with current scale variables
             const currentZoom = d3.zoomTransform(svg.node());
-            drawCanvasPoints(
-                ctx,
-                getVisibleStores(currentYear),
-                currentZoom,
-                projection,
-                mapWidth,
-                mapHeight,
-            );
+            const visibleStores = getVisibleStores(currentYear);
+
+            // Sync canvas elements with current scale variables
+            if (currentYear === END_YEAR) {
+                storeAlpha = 0;
+                function fadeIn() {
+                    storeAlpha += 0.03;
+                    if (storeAlpha > 1) storeAlpha = 1;
+
+                    const liveZoom = d3.zoomTransform(svg.node());
+
+                    drawCanvasPoints(
+                        ctx,
+                        getVisibleStores(currentYear),
+                        liveZoom,
+                        projection,
+                        mapWidth,
+                        mapHeight,
+                        storeAlpha,
+                    );
+
+                    if (storeAlpha < 1) {
+                        requestAnimationFrame(fadeIn);
+                    }
+                }
+                fadeIn();
+            } else {
+                storeAlpha = 0;
+                const liveZoom = d3.zoomTransform(svg.node());
+                drawCanvasPoints(
+                    ctx,
+                    getVisibleStores(currentYear),
+                    liveZoom,
+                    projection,
+                    mapWidth,
+                    mapHeight,
+                    storeAlpha,
+                );
+            }
         }
 
         setYear(START_YEAR);
@@ -610,7 +634,7 @@ function setupScrubber(svg, startYear, endYear, milestones, onDrag) {
 /**
  * Renders individual store coordinates using canvas vectors for fast rendering during scale mutations.
  */
-function drawCanvasPoints(ctx, stores, transform, projection, width, height) {
+function drawCanvasPoints(ctx, stores, transform, projection, width, height, alpha = 1) {
     ctx.save();
     ctx.clearRect(0, 0, width, height);
 
@@ -622,7 +646,7 @@ function drawCanvasPoints(ctx, stores, transform, projection, width, height) {
     ctx.translate(transform.x, transform.y);
     ctx.scale(transform.k, transform.k);
 
-    ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+    ctx.fillStyle = `rgba(255, 255, 255, ${0.9 * alpha})`;
     ctx.beginPath();
     stores.forEach((store) => {
         const coords = projection([+store.lon, +store.lat]);
