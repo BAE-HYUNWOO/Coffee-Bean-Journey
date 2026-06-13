@@ -11,8 +11,7 @@ const BRAND_COLORS = {
 };
 
 /**
- * Renders the 2025 Global Top 5 Coffee Franchise Revenue/Profit Comparison Bar Chart.
- * Displays horizontal or vertical bars mapping revenue and profit by brand.
+ * Renders the 2025 Global Top 5 Coffee Franchise Enterprise Value Comparison Bar Chart.
  */
 export function drawEVChart(containerId, rawData) {
     // Initialize chart frame container with metadata
@@ -24,7 +23,7 @@ export function drawEVChart(containerId, rawData) {
         wide: false,
     });
 
-    // Create a relative-positioned wrapper for the chart components
+    // Create a wrapper for the chart components
     const wrapper = body
         .append("div")
         .attr("class", "ch3-chart-1-wrapper")
@@ -43,7 +42,7 @@ export function drawEVChart(containerId, rawData) {
             .style("z-index", 1000);
     }
 
-    // Render chart asynchronously to ensure stable parent layout dimensions
+    // Render chart
     setTimeout(() => {
         const margin = { top: 15, right: 0, bottom: 10, left: 0 };
         const containerWidth = wrapper.node().getBoundingClientRect().width;
@@ -153,7 +152,7 @@ export function drawEVChart(containerId, rawData) {
         // 4. Append company ticker labels inside the bars
         barGroups
             .append("text")
-            .attr("x", 6) // Positioned close to the left edge of the bar
+            .attr("x", 6)
             .attr("y", y.bandwidth() / 2)
             .attr("dy", "0.35em")
             .text((d) => d.ticker)
@@ -194,7 +193,6 @@ export function drawEVChart(containerId, rawData) {
                 tooltipChart.style("opacity", 1);
             })
             .on("mousemove", function (event) {
-                // Update tooltip position relative to the cursor
                 tooltipChart
                     .style("left", event.pageX + 15 + "px")
                     .style("top", event.pageY - 20 + "px");
@@ -212,7 +210,7 @@ export function drawEVChart(containerId, rawData) {
 }
 
 /**
- * Renders the 2021-2025 Starbucks Growth Trajectory Mixed Chart.
+ * Renders the 2003-2025 Starbucks Growth Trajectory Mixed Chart.
  * Displays revenue (line) and store counts (bar) with brushable timeline and Index/Absolute modes.
  */
 export function drawStarbucksChart(containerId, rawData) {
@@ -341,7 +339,7 @@ export function drawStarbucksChart(containerId, rawData) {
             .style("fill", "#4e4e4e")
             .style("font-size", "10px");
 
-        // Construct lower timeline scrubber section
+        // Construct timeline scrubber section
         const scrubberHeight = 30;
         const scrubberMargin = {
             top: containerHeight - scrubberHeight - 17,
